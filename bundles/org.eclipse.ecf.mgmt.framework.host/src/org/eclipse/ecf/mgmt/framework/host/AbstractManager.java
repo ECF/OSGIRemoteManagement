@@ -186,9 +186,9 @@ public abstract class AbstractManager implements IAdaptable {
 
 	protected Bundle selectBundle(BundleSelector s) {
 		Bundle[] bundles = selectBundles(s);
-		return (bundles.length > 0)?bundles[0]:null;
+		return (bundles.length > 0) ? bundles[0] : null;
 	}
-	
+
 	protected ServiceReferenceDTO[] selectServiceReferenceDTOs(
 			ServiceReferenceDTOSelector s) {
 		List<ServiceReferenceDTO> results = new ArrayList<ServiceReferenceDTO>();

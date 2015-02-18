@@ -3,6 +3,7 @@ package org.eclipse.ecf.mgmt.framework.test;
 import org.eclipse.ecf.mgmt.framework.IBundleManager;
 import org.eclipse.ecf.mgmt.framework.IFrameworkManager;
 import org.eclipse.ecf.mgmt.framework.IServiceManager;
+import org.eclipse.ecf.mgmt.framework.wiring.IWiringManager;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
@@ -44,6 +45,15 @@ public class Activator implements BundleActivator {
 				context, IFrameworkManager.class, null);
 		st.open();
 		IFrameworkManager sm = st.getService();
+		st.close();
+		return sm;
+	}
+
+	public static IWiringManager getWiringManager() {
+		ServiceTracker<IWiringManager, IWiringManager> st = new ServiceTracker<IWiringManager, IWiringManager>(
+				context, IWiringManager.class, null);
+		st.open();
+		IWiringManager sm = st.getService();
 		st.close();
 		return sm;
 	}
