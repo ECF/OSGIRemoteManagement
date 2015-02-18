@@ -61,4 +61,11 @@ public class CapabilityMTO implements Serializable {
 		return resource;
 	}
 
+	@Override
+	public String toString() {
+		return "CapabilityMTO [id=" + id + ", namespace=" + namespace
+				+ ", directives=" + directives + ", attributes=" + attributes
+				+ ", resource=" + resource + "]";
+	}
+
 }

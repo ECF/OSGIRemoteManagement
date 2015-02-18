@@ -42,4 +42,10 @@ public class RequirementRefMTO implements Serializable {
 		return resource;
 	}
 
+	@Override
+	public String toString() {
+		return "RequirementRefMTO [requirement=" + requirement + ", resource="
+				+ resource + "]";
+	}
+
 }

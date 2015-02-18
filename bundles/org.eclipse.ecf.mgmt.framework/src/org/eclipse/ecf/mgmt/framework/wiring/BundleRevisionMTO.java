@@ -32,6 +32,14 @@ public class BundleRevisionMTO extends ResourceMTO {
 		return results.toArray(new BundleRevisionMTO[results.size()]);
 	}
 
+	public static BundleRevisionMTO[] createMTOs(BundleRevisionDTO[] dtos) {
+		List<BundleRevisionMTO> results = new ArrayList<BundleRevisionMTO>(
+				dtos.length);
+		for (BundleRevisionDTO dto : dtos)
+			results.add(new BundleRevisionMTO(dto));
+		return results.toArray(new BundleRevisionMTO[results.size()]);
+	}
+
 	public BundleRevisionMTO(BundleRevisionDTO dto) {
 		super(dto);
 		this.symbolicName = dto.symbolicName;
@@ -54,9 +62,9 @@ public class BundleRevisionMTO extends ResourceMTO {
 	@Override
 	public String toString() {
 		return "BundleRevisionMTO [symbolicName=" + symbolicName + ", type="
-				+ type + ", bundle=" + bundle + ", getId()=" + getId()
-				+ ", getCapabilities()=" + Arrays.toString(getCapabilities())
-				+ ", getRequirements()=" + Arrays.toString(getRequirements())
+				+ type + ", bundle=" + bundle + ", id=" + getId()
+				+ ", capabilities=" + Arrays.toString(getCapabilities())
+				+ ", requirements=" + Arrays.toString(getRequirements())
 				+ "]";
 	}
 

@@ -61,4 +61,11 @@ public class RequirementMTO implements Serializable {
 		return resource;
 	}
 
+	@Override
+	public String toString() {
+		return "RequirementMTO [id=" + id + ", namespace=" + namespace
+				+ ", directives=" + directives + ", attributes=" + attributes
+				+ ", resource=" + resource + "]";
+	}
+
 }

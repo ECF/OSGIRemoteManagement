@@ -42,4 +42,10 @@ public class CapabilityRefMTO implements Serializable {
 		return resource;
 	}
 
+	@Override
+	public String toString() {
+		return "CapabilityRefMTO [capability=" + capability + ", resource="
+				+ resource + "]";
+	}
+
 }

@@ -99,14 +99,14 @@ public class BundleWiringMTO implements Serializable {
 		@Override
 		public String toString() {
 			return "NodeMTO [inUse=" + inUse + ", current=" + current
-					+ ", getId()=" + getId() + ", getCapabilities()="
+					+ ", id=" + getId() + ", capabilities="
 					+ Arrays.toString(getCapabilities())
-					+ ", getRequirements()="
+					+ ", requirements="
 					+ Arrays.toString(getRequirements())
-					+ ", getProvidedWires()="
+					+ ", providedWires="
 					+ Arrays.toString(getProvidedWires())
-					+ ", getRequiredWires()="
-					+ Arrays.toString(getRequiredWires()) + ", getResource()="
+					+ ", requiredWires="
+					+ Arrays.toString(getRequiredWires()) + ", resource="
 					+ getResource() + "]";
 		}
 
