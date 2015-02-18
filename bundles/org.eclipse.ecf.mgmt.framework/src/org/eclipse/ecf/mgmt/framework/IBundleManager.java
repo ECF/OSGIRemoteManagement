@@ -9,6 +9,8 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.framework;
 
+import org.eclipse.core.runtime.IStatus;
+
 public interface IBundleManager {
 
 	BundleMTO[] getBundles();
@@ -17,4 +19,7 @@ public interface IBundleManager {
 
 	BundleMTO[] getBundles(String symbolicId);
 
+	IStatus start(long bundleId);
+
+	IStatus stop(long bundleId);
 }

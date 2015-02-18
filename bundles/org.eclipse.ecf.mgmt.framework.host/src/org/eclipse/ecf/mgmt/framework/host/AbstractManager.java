@@ -168,15 +168,15 @@ public abstract class AbstractManager implements IAdaptable {
 			t.printStackTrace(System.err);
 	}
 
-	protected BundleMTO[] findBundleMTOs(BundleSelector s) {
-		Bundle[] bundles = findBundles(s);
+	protected BundleMTO[] selectBundleMTOs(BundleSelector s) {
+		Bundle[] bundles = selectBundles(s);
 		List<BundleMTO> results = new ArrayList<BundleMTO>();
 		for (Bundle b : bundles)
 			results.add(createBundleMTO(b));
 		return results.toArray(new BundleMTO[results.size()]);
 	}
 
-	protected Bundle[] findBundles(BundleSelector s) {
+	protected Bundle[] selectBundles(BundleSelector s) {
 		List<Bundle> results = new ArrayList<Bundle>();
 		for (Bundle b : getContext().getBundles())
 			if (s == null || s.select(b))
@@ -184,7 +184,12 @@ public abstract class AbstractManager implements IAdaptable {
 		return results.toArray(new Bundle[results.size()]);
 	}
 
-	protected ServiceReferenceDTO[] findServiceReferenceDTOs(
+	protected Bundle selectBundle(BundleSelector s) {
+		Bundle[] bundles = selectBundles(s);
+		return (bundles.length > 0)?bundles[0]:null;
+	}
+	
+	protected ServiceReferenceDTO[] selectServiceReferenceDTOs(
 			ServiceReferenceDTOSelector s) {
 		List<ServiceReferenceDTO> results = new ArrayList<ServiceReferenceDTO>();
 		for (ServiceReferenceDTO srd : getServiceReferenceDTOs())
@@ -193,10 +198,10 @@ public abstract class AbstractManager implements IAdaptable {
 		return results.toArray(new ServiceReferenceDTO[results.size()]);
 	}
 
-	protected ServiceReferenceMTO[] findServiceReferenceMTOs(
+	protected ServiceReferenceMTO[] selectServiceReferenceMTOs(
 			ServiceReferenceDTOSelector s) {
 		List<ServiceReferenceMTO> results = new ArrayList<ServiceReferenceMTO>();
-		for (ServiceReferenceDTO srd : findServiceReferenceDTOs(s))
+		for (ServiceReferenceDTO srd : selectServiceReferenceDTOs(s))
 			results.add(new ServiceReferenceMTO(srd));
 		return results.toArray(new ServiceReferenceMTO[results.size()]);
 	}
@@ -207,7 +212,7 @@ public abstract class AbstractManager implements IAdaptable {
 	}
 
 	protected Bundle getFrameworkBundle() {
-		Bundle[] bs = findBundles(new BundleSelector() {
+		Bundle[] bs = selectBundles(new BundleSelector() {
 			public boolean select(Bundle b) {
 				return b.getBundleId() == 0;
 			}
@@ -221,8 +226,8 @@ public abstract class AbstractManager implements IAdaptable {
 
 	protected FrameworkMTO createFrameworkMTO() {
 		FrameworkDTO fdto = getFrameworkDTO();
-		return new FrameworkMTO(findBundleMTOs(null), fdto.properties,
-				findServiceReferenceMTOs(null));
+		return new FrameworkMTO(selectBundleMTOs(null), fdto.properties,
+				selectServiceReferenceMTOs(null));
 	}
 
 	protected List<ServiceReferenceDTO> getServiceReferenceDTOs() {

@@ -17,12 +17,12 @@ public class ServiceManager extends AbstractManager implements IServiceManager {
 
 	@Override
 	public ServiceReferenceMTO[] getServiceReferences() {
-		return findServiceReferenceMTOs(null);
+		return selectServiceReferenceMTOs(null);
 	}
 
 	@Override
 	public ServiceReferenceMTO getServiceReference(final long serviceId) {
-		ServiceReferenceMTO[] mtos = findServiceReferenceMTOs(new ServiceReferenceDTOSelector() {
+		ServiceReferenceMTO[] mtos = selectServiceReferenceMTOs(new ServiceReferenceDTOSelector() {
 			@Override
 			public boolean select(ServiceReferenceDTO srd) {
 				return srd.id == serviceId;
@@ -33,7 +33,7 @@ public class ServiceManager extends AbstractManager implements IServiceManager {
 
 	@Override
 	public ServiceReferenceMTO[] getServiceReferences(final long bundleId) {
-		ServiceReferenceMTO[] mtos = findServiceReferenceMTOs(new ServiceReferenceDTOSelector() {
+		ServiceReferenceMTO[] mtos = selectServiceReferenceMTOs(new ServiceReferenceDTOSelector() {
 			@Override
 			public boolean select(ServiceReferenceDTO srd) {
 				return srd.bundle == bundleId;
