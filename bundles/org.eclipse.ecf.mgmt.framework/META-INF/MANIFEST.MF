@@ -4,7 +4,7 @@ Bundle-Name: ECF Management Framework
 Bundle-SymbolicName: org.eclipse.ecf.mgmt.framework
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Eclipse.org - ECF
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: org.osgi.dto;version="1.0.0",
  org.osgi.framework;version="1.8.0",
  org.osgi.framework.dto;version="1.8.0",

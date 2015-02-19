@@ -7,18 +7,21 @@
  * Contributors:
  *   Composent, Inc. - initial API and implementation
  ******************************************************************************/
-package org.eclipse.ecf.mgmt.framework.wiring;
+package org.eclipse.ecf.mgmt.framework;
 
-public interface IWiringManager {
+import java.util.concurrent.CompletableFuture;
 
-	BundleWiringMTO getBundleWiring(int bundleId);
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.ecf.mgmt.framework.startlevel.FrameworkStartLevelMTO;
 
-	BundleWiringMTO[] getInUseBundleWirings(int bundleId);
+public interface IFrameworkManagerAsync {
 
-	BundleRevisionMTO getBundleRevision(int bundleId);
+	CompletableFuture<FrameworkMTO> getFrameworkAsync();
 
-	BundleRevisionMTO[] getBundleRevisions(int bundleId);
+	CompletableFuture<FrameworkStartLevelMTO> getStartLevelAsync();
 
-	BundleRevisionMTO[] getBundleRevisions(String symbolicName);
+	CompletableFuture<IStatus> setStartLevelAsync(int startLevel);
+
+	CompletableFuture<Void> setInitialBundleStartLevelAsync(int initialBundleStartLevel);
 
 }

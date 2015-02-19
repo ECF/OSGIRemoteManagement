@@ -7,18 +7,16 @@
  * Contributors:
  *   Composent, Inc. - initial API and implementation
  ******************************************************************************/
-package org.eclipse.ecf.mgmt.framework.wiring;
+package org.eclipse.ecf.mgmt.framework;
 
-public interface IWiringManager {
+import java.util.concurrent.CompletableFuture;
 
-	BundleWiringMTO getBundleWiring(int bundleId);
+public interface IServiceManagerAsync {
 
-	BundleWiringMTO[] getInUseBundleWirings(int bundleId);
+	CompletableFuture<ServiceReferenceMTO[]> getServiceReferencesAsync();
 
-	BundleRevisionMTO getBundleRevision(int bundleId);
+	CompletableFuture<ServiceReferenceMTO> getServiceReferenceAsync(long serviceId);
 
-	BundleRevisionMTO[] getBundleRevisions(int bundleId);
-
-	BundleRevisionMTO[] getBundleRevisions(String symbolicName);
+	CompletableFuture<ServiceReferenceMTO> getServiceReferencesAsync(long bundleId);
 
 }

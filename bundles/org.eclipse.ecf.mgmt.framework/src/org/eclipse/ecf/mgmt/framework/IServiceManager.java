@@ -11,10 +11,10 @@ package org.eclipse.ecf.mgmt.framework;
 
 public interface IServiceManager {
 
-	public ServiceReferenceMTO[] getServiceReferences();
+	ServiceReferenceMTO[] getServiceReferences();
 
-	public ServiceReferenceMTO getServiceReference(long serviceId);
+	ServiceReferenceMTO getServiceReference(long serviceId);
 
-	public ServiceReferenceMTO[] getServiceReferences(long bundleId);
+	ServiceReferenceMTO[] getServiceReferences(long bundleId);
 
 }

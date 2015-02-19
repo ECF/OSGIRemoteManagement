@@ -9,16 +9,18 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.framework.wiring;
 
-public interface IWiringManager {
+import java.util.concurrent.CompletableFuture;
 
-	BundleWiringMTO getBundleWiring(int bundleId);
+public interface IWiringManagerAsync {
 
-	BundleWiringMTO[] getInUseBundleWirings(int bundleId);
+	CompletableFuture<BundleWiringMTO> getBundleWiringAsync(int bundleId);
 
-	BundleRevisionMTO getBundleRevision(int bundleId);
+	CompletableFuture<BundleWiringMTO[]> getInUseBundleWiringsAsync(int bundleId);
 
-	BundleRevisionMTO[] getBundleRevisions(int bundleId);
+	CompletableFuture<BundleRevisionMTO> getBundleRevisionAsync(int bundleId);
 
-	BundleRevisionMTO[] getBundleRevisions(String symbolicName);
+	CompletableFuture<BundleRevisionMTO[]> getBundleRevisionsAsync(int bundleId);
+
+	CompletableFuture<BundleRevisionMTO[]> getBundleRevisionsAsync(String symbolicName);
 
 }
