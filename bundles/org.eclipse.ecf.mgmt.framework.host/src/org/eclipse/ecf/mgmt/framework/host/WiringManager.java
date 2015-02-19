@@ -24,8 +24,7 @@ public class WiringManager extends AbstractManager implements IWiringManager {
 	@Override
 	public BundleWiringMTO getBundleWiring(int bundleId) {
 		Bundle b = getBundle0(bundleId);
-		return (b == null) ? null : new BundleWiringMTO(
-				b.adapt(BundleWiringDTO.class));
+		return (b == null) ? null : BundleWiringMTO.createMTO(b.adapt(BundleWiringDTO.class));
 	}
 
 	@Override
@@ -37,15 +36,13 @@ public class WiringManager extends AbstractManager implements IWiringManager {
 	@Override
 	public BundleRevisionMTO getBundleRevision(int bundleId) {
 		Bundle b = getBundle0(bundleId);
-		return (b == null) ? null : new BundleRevisionMTO(
-				b.adapt(BundleRevisionDTO.class));
+		return (b == null) ? null : BundleRevisionMTO.createMTO(b.adapt(BundleRevisionDTO.class));
 	}
 
 	@Override
 	public BundleRevisionMTO[] getBundleRevisions(int bundleId) {
 		Bundle b = getBundle0(bundleId);
-		return (b == null) ? null : BundleRevisionMTO.createMTOs(b
-				.adapt(BundleRevisionDTO[].class));
+		return (b == null) ? null : BundleRevisionMTO.createMTOs(b.adapt(BundleRevisionDTO[].class));
 	}
 
 	@Override
@@ -59,7 +56,7 @@ public class WiringManager extends AbstractManager implements IWiringManager {
 				}
 			});
 			for (Bundle b : bundles)
-				results.add(createBundleRevisionMTO(b));
+				results.add(BundleRevisionMTO.createMTO(b.adapt(BundleRevisionDTO.class)));
 		}
 		return results.toArray(new BundleRevisionMTO[results.size()]);
 	}

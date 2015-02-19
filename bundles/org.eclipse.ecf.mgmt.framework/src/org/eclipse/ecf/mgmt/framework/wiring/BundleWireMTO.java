@@ -20,7 +20,7 @@ public class BundleWireMTO extends WireMTO implements Serializable {
 	private final int providerWiring;
 	private final int requirerWiring;
 
-	public BundleWireMTO(BundleWireDTO dto) {
+	BundleWireMTO(BundleWireDTO dto) {
 		super(dto);
 		this.providerWiring = dto.providerWiring;
 		this.requirerWiring = dto.requirerWiring;
@@ -36,11 +36,9 @@ public class BundleWireMTO extends WireMTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "BundleWireMTO [providerWiring=" + providerWiring
-				+ ", requirerWiring=" + requirerWiring + ", capability="
-				+ getCapability() + ", requirement=" + getRequirement()
-				+ ", provider=" + getProvider() + ", requirer=" + getRequirer()
-				+ "]";
+		return "BundleWireMTO [providerWiring=" + providerWiring + ", requirerWiring=" + requirerWiring
+				+ ", capability=" + getCapability() + ", requirement=" + getRequirement() + ", provider="
+				+ getProvider() + ", requirer=" + getRequirer() + "]";
 	}
 
 }

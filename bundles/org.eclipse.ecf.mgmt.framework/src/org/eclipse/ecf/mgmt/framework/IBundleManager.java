@@ -36,9 +36,9 @@ public interface IBundleManager {
 	BundleMTO installBundle(String url) throws BundleException;
 
 	IStatus uninstallBundle(long bundleId);
-	
+
 	IStatus updateBundle(long bundleId);
-	
+
 	IStatus updateBundle(long bundleId, String url);
 
 }

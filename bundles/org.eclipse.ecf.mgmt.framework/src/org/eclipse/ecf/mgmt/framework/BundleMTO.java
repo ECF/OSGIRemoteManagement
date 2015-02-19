@@ -10,13 +10,46 @@
 package org.eclipse.ecf.mgmt.framework;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.osgi.framework.Bundle;
 import org.osgi.framework.dto.BundleDTO;
 
 public class BundleMTO implements Serializable {
 
 	private static final long serialVersionUID = -8261289274590963132L;
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static Map convertDictionaryToMap(Dictionary dict) {
+		Map result = new HashMap();
+		for (Enumeration e = dict.keys(); e.hasMoreElements();) {
+			String key = (String) e.nextElement();
+			result.put(key, dict.get(key));
+		}
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static Map<String, String> convertHeadersToMap(Bundle b) {
+		return (Map<String, String>) convertDictionaryToMap(b.getHeaders());
+	}
+
+	public static BundleMTO createMTO(Bundle bundle) {
+		return new BundleMTO(bundle.adapt(BundleDTO.class), convertHeadersToMap(bundle), bundle.getLocation());
+	}
+
+	public static BundleMTO[] createMTOs(Bundle[] bundles) {
+		List<BundleMTO> results = new ArrayList<BundleMTO>();
+		for (Bundle b : bundles)
+			results.add(createMTO(b));
+		return results.toArray(new BundleMTO[results.size()]);
+	}
+
 	private final long id;
 	private final long lastModified;
 	private final int state;
@@ -25,8 +58,7 @@ public class BundleMTO implements Serializable {
 	private final Map<String, String> manifest;
 	private final String location;
 
-	public BundleMTO(BundleDTO bundleDTO, Map<String, String> manifest,
-			String location) {
+	BundleMTO(BundleDTO bundleDTO, Map<String, String> manifest, String location) {
 		this.id = bundleDTO.id;
 		this.lastModified = bundleDTO.lastModified;
 		this.state = bundleDTO.state;
@@ -75,10 +107,8 @@ public class BundleMTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "BundleMTO [id=" + id + ", lastModified=" + lastModified
-				+ ", state=" + state + ", symbolicName=" + symbolicName
-				+ ", version=" + version + ", manifest=" + manifest
-				+ ", location=" + location + "]";
+		return "BundleMTO [id=" + id + ", lastModified=" + lastModified + ", state=" + state + ", symbolicName="
+				+ symbolicName + ", version=" + version + ", manifest=" + manifest + ", location=" + location + "]";
 	}
 
 }

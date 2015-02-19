@@ -22,14 +22,13 @@ public class CapabilityRefMTO implements Serializable {
 	private int resource;
 
 	public static CapabilityRefMTO[] createMTOs(List<CapabilityRefDTO> dtos) {
-		List<CapabilityRefMTO> results = new ArrayList<CapabilityRefMTO>(
-				dtos.size());
+		List<CapabilityRefMTO> results = new ArrayList<CapabilityRefMTO>(dtos.size());
 		for (CapabilityRefDTO dto : dtos)
 			results.add(new CapabilityRefMTO(dto));
 		return results.toArray(new CapabilityRefMTO[results.size()]);
 	}
 
-	public CapabilityRefMTO(CapabilityRefDTO dto) {
+	CapabilityRefMTO(CapabilityRefDTO dto) {
 		this.capability = dto.capability;
 		this.resource = dto.resource;
 	}
@@ -44,8 +43,7 @@ public class CapabilityRefMTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "CapabilityRefMTO [capability=" + capability + ", resource="
-				+ resource + "]";
+		return "CapabilityRefMTO [capability=" + capability + ", resource=" + resource + "]";
 	}
 
 }

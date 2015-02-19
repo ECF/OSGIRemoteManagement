@@ -26,14 +26,11 @@ import org.eclipse.ecf.core.status.SerializableStatus;
 import org.eclipse.ecf.mgmt.framework.BundleMTO;
 import org.eclipse.ecf.mgmt.framework.FrameworkMTO;
 import org.eclipse.ecf.mgmt.framework.ServiceReferenceMTO;
-import org.eclipse.ecf.mgmt.framework.wiring.BundleRevisionMTO;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
-import org.osgi.framework.dto.BundleDTO;
 import org.osgi.framework.dto.FrameworkDTO;
 import org.osgi.framework.dto.ServiceReferenceDTO;
-import org.osgi.framework.wiring.dto.BundleRevisionDTO;
 import org.osgi.service.log.LogService;
 
 public abstract class AbstractManager implements IAdaptable {
@@ -52,8 +49,7 @@ public abstract class AbstractManager implements IAdaptable {
 
 	protected static boolean isSerializable(Object o) {
 		try {
-			ObjectOutputStream ois = new ObjectOutputStream(
-					new ByteArrayOutputStream());
+			ObjectOutputStream ois = new ObjectOutputStream(new ByteArrayOutputStream());
 			ois.writeObject(o);
 			return true;
 		} catch (IOException e) {
@@ -98,21 +94,6 @@ public abstract class AbstractManager implements IAdaptable {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected Map convertDictionaryToMap(Dictionary dict) {
-		Map result = new HashMap();
-		for (Enumeration e = dict.keys(); e.hasMoreElements();) {
-			String key = (String) e.nextElement();
-			result.put(key, dict.get(key));
-		}
-		return result;
-	}
-
-	@SuppressWarnings("unchecked")
-	protected Map<String, String> convertHeadersToMap(Bundle b) {
-		return (Map<String, String>) convertDictionaryToMap(b.getHeaders());
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected Map convertProperties(Dictionary dict) {
 		Map result = new HashMap();
 		for (Enumeration e = dict.keys(); e.hasMoreElements();) {
@@ -142,14 +123,12 @@ public abstract class AbstractManager implements IAdaptable {
 
 	protected IStatus createErrorStatus(String message, Throwable t) {
 		logError(message, t);
-		return new SerializableStatus(IStatus.ERROR, getContext().getBundle()
-				.getSymbolicName(), message, t);
+		return new SerializableStatus(IStatus.ERROR, getContext().getBundle().getSymbolicName(), message, t);
 	}
 
 	protected IStatus createErrorStatus(String message) {
 		logError(message, null);
-		return new SerializableStatus(IStatus.ERROR, getContext().getBundle()
-				.getSymbolicName(), message, null);
+		return new SerializableStatus(IStatus.ERROR, getContext().getBundle().getSymbolicName(), message, null);
 	}
 
 	protected void logError(String message, Throwable t) {
@@ -163,10 +142,7 @@ public abstract class AbstractManager implements IAdaptable {
 
 	protected BundleMTO[] selectBundleMTOs(BundleSelector s) {
 		Bundle[] bundles = selectBundles(s);
-		List<BundleMTO> results = new ArrayList<BundleMTO>();
-		for (Bundle b : bundles)
-			results.add(createBundleMTO(b));
-		return results.toArray(new BundleMTO[results.size()]);
+		return BundleMTO.createMTOs(bundles);
 	}
 
 	protected Bundle[] selectBundles(BundleSelector s) {
@@ -182,8 +158,7 @@ public abstract class AbstractManager implements IAdaptable {
 		return (bundles.length > 0) ? bundles[0] : null;
 	}
 
-	protected ServiceReferenceDTO[] selectServiceReferenceDTOs(
-			ServiceReferenceDTOSelector s) {
+	protected ServiceReferenceDTO[] selectServiceReferenceDTOs(ServiceReferenceDTOSelector s) {
 		List<ServiceReferenceDTO> results = new ArrayList<ServiceReferenceDTO>();
 		for (ServiceReferenceDTO srd : getServiceReferenceDTOs())
 			if (s == null || s.select(srd))
@@ -191,21 +166,11 @@ public abstract class AbstractManager implements IAdaptable {
 		return results.toArray(new ServiceReferenceDTO[results.size()]);
 	}
 
-	protected ServiceReferenceMTO[] selectServiceReferenceMTOs(
-			ServiceReferenceDTOSelector s) {
+	protected ServiceReferenceMTO[] selectServiceReferenceMTOs(ServiceReferenceDTOSelector s) {
 		List<ServiceReferenceMTO> results = new ArrayList<ServiceReferenceMTO>();
 		for (ServiceReferenceDTO srd : selectServiceReferenceDTOs(s))
-			results.add(new ServiceReferenceMTO(srd));
+			results.add(ServiceReferenceMTO.createMTO(srd));
 		return results.toArray(new ServiceReferenceMTO[results.size()]);
-	}
-
-	protected BundleMTO createBundleMTO(Bundle bundle) {
-		return new BundleMTO(bundle.adapt(BundleDTO.class),
-				convertHeadersToMap(bundle), bundle.getLocation());
-	}
-
-	protected BundleRevisionMTO createBundleRevisionMTO(Bundle b) {
-		return new BundleRevisionMTO(b.adapt(BundleRevisionDTO.class));
 	}
 
 	protected Bundle getBundle0(long bundleId) {
@@ -227,8 +192,7 @@ public abstract class AbstractManager implements IAdaptable {
 
 	protected FrameworkMTO createFrameworkMTO() {
 		FrameworkDTO fdto = getFrameworkDTO();
-		return new FrameworkMTO(selectBundleMTOs(null), fdto.properties,
-				selectServiceReferenceMTOs(null));
+		return new FrameworkMTO(selectBundleMTOs(null), fdto.properties, selectServiceReferenceMTOs(null));
 	}
 
 	protected List<ServiceReferenceDTO> getServiceReferenceDTOs() {

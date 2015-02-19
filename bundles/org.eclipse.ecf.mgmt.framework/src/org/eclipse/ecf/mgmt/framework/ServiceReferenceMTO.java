@@ -10,7 +10,9 @@
 package org.eclipse.ecf.mgmt.framework;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.osgi.framework.dto.ServiceReferenceDTO;
@@ -24,7 +26,18 @@ public class ServiceReferenceMTO implements Serializable {
 	private final Map<String, Object> properties;
 	private final long[] usingBundles;
 
-	public ServiceReferenceMTO(ServiceReferenceDTO srDTO) {
+	public static ServiceReferenceMTO createMTO(ServiceReferenceDTO dto) {
+		return new ServiceReferenceMTO(dto);
+	}
+
+	public static ServiceReferenceMTO[] createMTOs(ServiceReferenceDTO[] dtos) {
+		List<ServiceReferenceMTO> results = new ArrayList<ServiceReferenceMTO>();
+		for (ServiceReferenceDTO dto : dtos)
+			results.add(createMTO(dto));
+		return results.toArray(new ServiceReferenceMTO[results.size()]);
+	}
+
+	ServiceReferenceMTO(ServiceReferenceDTO srDTO) {
 		this.id = srDTO.id;
 		this.bundle = srDTO.bundle;
 		this.properties = srDTO.properties;
@@ -49,9 +62,8 @@ public class ServiceReferenceMTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ServiceReferenceMTO [id=" + id + ", bundle=" + bundle
-				+ ", properties=" + properties + ", usingBundles="
-				+ Arrays.toString(usingBundles) + "]";
+		return "ServiceReferenceMTO [id=" + id + ", bundle=" + bundle + ", properties=" + properties
+				+ ", usingBundles=" + Arrays.toString(usingBundles) + "]";
 	}
 
 }

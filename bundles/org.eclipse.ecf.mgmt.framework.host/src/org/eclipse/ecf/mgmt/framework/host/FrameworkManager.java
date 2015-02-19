@@ -21,13 +21,10 @@ import org.osgi.framework.FrameworkListener;
 import org.osgi.framework.startlevel.FrameworkStartLevel;
 import org.osgi.framework.startlevel.dto.FrameworkStartLevelDTO;
 
-public class FrameworkManager extends AbstractManager implements
-		IFrameworkManager {
+public class FrameworkManager extends AbstractManager implements IFrameworkManager {
 
-	private static final long DEFAULT_SETSTARTLEVEL_TIMEOUT = new Long(
-			System.getProperty(
-					"org.eclipse.ecf.mgmt.framework.host.defaultSetStartLevelTimeout",
-					"30000"));
+	private static final long DEFAULT_SETSTARTLEVEL_TIMEOUT = new Long(System.getProperty(
+			"org.eclipse.ecf.mgmt.framework.host.defaultSetStartLevelTimeout", "30000"));
 
 	private long setStartLevelTimeout = DEFAULT_SETSTARTLEVEL_TIMEOUT;
 
@@ -38,8 +35,7 @@ public class FrameworkManager extends AbstractManager implements
 
 	@Override
 	public FrameworkStartLevelMTO getStartLevel() {
-		return new FrameworkStartLevelMTO(getBundle0(0).adapt(
-				FrameworkStartLevelDTO.class));
+		return new FrameworkStartLevelMTO(getBundle0(0).adapt(FrameworkStartLevelDTO.class));
 	}
 
 	class ManagerFrameworkListener implements FrameworkListener {
@@ -50,8 +46,7 @@ public class FrameworkManager extends AbstractManager implements
 		public void frameworkEvent(FrameworkEvent event) {
 			synchronized (this) {
 				this.status = (event.getType() == FrameworkEvent.ERROR) ? createErrorStatus(
-						"Framework error on setStartLevel",
-						event.getThrowable()) : SerializableStatus.OK_STATUS;
+						"Framework error on setStartLevel", event.getThrowable()) : SerializableStatus.OK_STATUS;
 				done = true;
 			}
 		}
@@ -59,8 +54,7 @@ public class FrameworkManager extends AbstractManager implements
 
 	@Override
 	public IStatus setStartLevel(int startLevel) {
-		final FrameworkStartLevel fsl = getBundle0(0).adapt(
-				FrameworkStartLevel.class);
+		final FrameworkStartLevel fsl = getBundle0(0).adapt(FrameworkStartLevel.class);
 		final ManagerFrameworkListener fl = new ManagerFrameworkListener();
 		fsl.setStartLevel(startLevel, fl);
 		long timeoutTime = System.currentTimeMillis() + setStartLevelTimeout;
@@ -69,20 +63,17 @@ public class FrameworkManager extends AbstractManager implements
 				try {
 					fl.wait(setStartLevelTimeout / 20);
 				} catch (InterruptedException e) {
-					fl.status = createErrorStatus("setStartLevel interrupted",
-							e);
+					fl.status = createErrorStatus("setStartLevel interrupted", e);
 					fl.done = true;
 				}
 		}
-		return (fl.done) ? fl.status : createErrorStatus(
-				"setStartLevel timeout after " + setStartLevelTimeout + " ms",
+		return (fl.done) ? fl.status : createErrorStatus("setStartLevel timeout after " + setStartLevelTimeout + " ms",
 				new TimeoutException());
 	}
 
 	@Override
 	public void setInitialBundleStartLevel(int initialBundleStartLevel) {
-		final FrameworkStartLevel fsl = getBundle0(0).adapt(
-				FrameworkStartLevel.class);
+		final FrameworkStartLevel fsl = getBundle0(0).adapt(FrameworkStartLevel.class);
 		fsl.setInitialBundleStartLevel(initialBundleStartLevel);
 	}
 

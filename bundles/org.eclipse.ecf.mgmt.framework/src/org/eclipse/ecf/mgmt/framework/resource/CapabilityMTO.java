@@ -33,7 +33,7 @@ public class CapabilityMTO implements Serializable {
 		return results.toArray(new CapabilityMTO[results.size()]);
 	}
 
-	public CapabilityMTO(CapabilityDTO dto) {
+	CapabilityMTO(CapabilityDTO dto) {
 		this.id = dto.id;
 		this.namespace = dto.namespace;
 		this.directives = dto.directives;
@@ -63,9 +63,8 @@ public class CapabilityMTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "CapabilityMTO [id=" + id + ", namespace=" + namespace
-				+ ", directives=" + directives + ", attributes=" + attributes
-				+ ", resource=" + resource + "]";
+		return "CapabilityMTO [id=" + id + ", namespace=" + namespace + ", directives=" + directives + ", attributes="
+				+ attributes + ", resource=" + resource + "]";
 	}
 
 }

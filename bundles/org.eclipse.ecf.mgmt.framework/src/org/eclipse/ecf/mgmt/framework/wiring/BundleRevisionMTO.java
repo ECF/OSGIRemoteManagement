@@ -25,22 +25,24 @@ public class BundleRevisionMTO extends ResourceMTO {
 	private final long bundle;
 
 	public static BundleRevisionMTO[] createMTOs(Set<BundleRevisionDTO> dtos) {
-		List<BundleRevisionMTO> results = new ArrayList<BundleRevisionMTO>(
-				dtos.size());
+		List<BundleRevisionMTO> results = new ArrayList<BundleRevisionMTO>(dtos.size());
 		for (BundleRevisionDTO dto : dtos)
-			results.add(new BundleRevisionMTO(dto));
+			results.add(createMTO(dto));
 		return results.toArray(new BundleRevisionMTO[results.size()]);
 	}
 
 	public static BundleRevisionMTO[] createMTOs(BundleRevisionDTO[] dtos) {
-		List<BundleRevisionMTO> results = new ArrayList<BundleRevisionMTO>(
-				dtos.length);
+		List<BundleRevisionMTO> results = new ArrayList<BundleRevisionMTO>(dtos.length);
 		for (BundleRevisionDTO dto : dtos)
-			results.add(new BundleRevisionMTO(dto));
+			results.add(createMTO(dto));
 		return results.toArray(new BundleRevisionMTO[results.size()]);
 	}
 
-	public BundleRevisionMTO(BundleRevisionDTO dto) {
+	public static BundleRevisionMTO createMTO(BundleRevisionDTO dto) {
+		return new BundleRevisionMTO(dto);
+	}
+
+	BundleRevisionMTO(BundleRevisionDTO dto) {
 		super(dto);
 		this.symbolicName = dto.symbolicName;
 		this.type = dto.type;
@@ -61,10 +63,9 @@ public class BundleRevisionMTO extends ResourceMTO {
 
 	@Override
 	public String toString() {
-		return "BundleRevisionMTO [symbolicName=" + symbolicName + ", type="
-				+ type + ", bundle=" + bundle + ", id=" + getId()
-				+ ", capabilities=" + Arrays.toString(getCapabilities())
-				+ ", requirements=" + Arrays.toString(getRequirements()) + "]";
+		return "BundleRevisionMTO [symbolicName=" + symbolicName + ", type=" + type + ", bundle=" + bundle + ", id="
+				+ getId() + ", capabilities=" + Arrays.toString(getCapabilities()) + ", requirements="
+				+ Arrays.toString(getRequirements()) + "]";
 	}
 
 }

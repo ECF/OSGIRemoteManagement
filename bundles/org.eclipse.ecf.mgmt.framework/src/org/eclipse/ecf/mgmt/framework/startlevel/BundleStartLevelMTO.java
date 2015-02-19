@@ -28,8 +28,7 @@ public class BundleStartLevelMTO implements Serializable {
 		this.persistentlyStarted = dto.persistentlyStarted;
 	}
 
-	public BundleStartLevelMTO(long bundleId, int startLevel,
-			boolean activationPolicyUsed, boolean persistentlyStarted) {
+	public BundleStartLevelMTO(long bundleId, int startLevel, boolean activationPolicyUsed, boolean persistentlyStarted) {
 		this.bundle = bundleId;
 		this.startLevel = startLevel;
 		this.activationPolicyUsed = activationPolicyUsed;
@@ -54,9 +53,8 @@ public class BundleStartLevelMTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "BundleStartLevelMTO [bundle=" + bundle + ", startLevel="
-				+ startLevel + ", activationPolicyUsed=" + activationPolicyUsed
-				+ ", persistentlyStarted=" + persistentlyStarted + "]";
+		return "BundleStartLevelMTO [bundle=" + bundle + ", startLevel=" + startLevel + ", activationPolicyUsed="
+				+ activationPolicyUsed + ", persistentlyStarted=" + persistentlyStarted + "]";
 	}
 
 }

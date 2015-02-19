@@ -26,14 +26,13 @@ public class RequirementMTO implements Serializable {
 	private final int resource;
 
 	public static RequirementMTO[] createMTOs(List<RequirementDTO> dtos) {
-		List<RequirementMTO> results = new ArrayList<RequirementMTO>(
-				dtos.size());
+		List<RequirementMTO> results = new ArrayList<RequirementMTO>(dtos.size());
 		for (RequirementDTO dto : dtos)
 			results.add(new RequirementMTO(dto));
 		return results.toArray(new RequirementMTO[results.size()]);
 	}
 
-	public RequirementMTO(RequirementDTO dto) {
+	RequirementMTO(RequirementDTO dto) {
 		this.id = dto.id;
 		this.namespace = dto.namespace;
 		this.directives = dto.directives;
@@ -63,9 +62,8 @@ public class RequirementMTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "RequirementMTO [id=" + id + ", namespace=" + namespace
-				+ ", directives=" + directives + ", attributes=" + attributes
-				+ ", resource=" + resource + "]";
+		return "RequirementMTO [id=" + id + ", namespace=" + namespace + ", directives=" + directives + ", attributes="
+				+ attributes + ", resource=" + resource + "]";
 	}
 
 }

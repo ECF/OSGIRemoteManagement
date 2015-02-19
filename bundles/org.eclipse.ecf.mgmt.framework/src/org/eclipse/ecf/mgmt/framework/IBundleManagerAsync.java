@@ -38,9 +38,9 @@ public interface IBundleManagerAsync {
 	CompletableFuture<BundleMTO> installBundleAsync(String url) throws BundleException;
 
 	CompletableFuture<IStatus> uninstallBundleAsync(long bundleId);
-	
+
 	CompletableFuture<IStatus> updateBundleAsync(long bundleId);
-	
+
 	CompletableFuture<IStatus> updateBundleAsync(long bundleId, String url);
 
 }

@@ -22,14 +22,13 @@ public class RequirementRefMTO implements Serializable {
 	private int resource;
 
 	public static RequirementRefMTO[] createMTOs(List<RequirementRefDTO> dtos) {
-		List<RequirementRefMTO> results = new ArrayList<RequirementRefMTO>(
-				dtos.size());
+		List<RequirementRefMTO> results = new ArrayList<RequirementRefMTO>(dtos.size());
 		for (RequirementRefDTO dto : dtos)
 			results.add(new RequirementRefMTO(dto));
 		return results.toArray(new RequirementRefMTO[results.size()]);
 	}
 
-	public RequirementRefMTO(RequirementRefDTO dto) {
+	RequirementRefMTO(RequirementRefDTO dto) {
 		this.requirement = dto.requirement;
 		this.resource = dto.resource;
 	}
@@ -44,8 +43,7 @@ public class RequirementRefMTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "RequirementRefMTO [requirement=" + requirement + ", resource="
-				+ resource + "]";
+		return "RequirementRefMTO [requirement=" + requirement + ", resource=" + resource + "]";
 	}
 
 }
