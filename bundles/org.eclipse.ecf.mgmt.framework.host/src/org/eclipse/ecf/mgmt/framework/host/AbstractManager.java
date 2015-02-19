@@ -26,12 +26,14 @@ import org.eclipse.ecf.core.status.SerializableStatus;
 import org.eclipse.ecf.mgmt.framework.BundleMTO;
 import org.eclipse.ecf.mgmt.framework.FrameworkMTO;
 import org.eclipse.ecf.mgmt.framework.ServiceReferenceMTO;
+import org.eclipse.ecf.mgmt.framework.wiring.BundleRevisionMTO;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.dto.BundleDTO;
 import org.osgi.framework.dto.FrameworkDTO;
 import org.osgi.framework.dto.ServiceReferenceDTO;
+import org.osgi.framework.wiring.dto.BundleRevisionDTO;
 import org.osgi.service.log.LogService;
 
 public abstract class AbstractManager implements IAdaptable {
@@ -209,6 +211,14 @@ public abstract class AbstractManager implements IAdaptable {
 	protected BundleMTO createBundleMTO(Bundle bundle) {
 		return new BundleMTO(bundle.adapt(BundleDTO.class),
 				convertHeadersToMap(bundle));
+	}
+
+	protected BundleRevisionMTO createBundleRevisionMTO(Bundle b) {
+		return new BundleRevisionMTO(b.adapt(BundleRevisionDTO.class));
+	}
+
+	protected Bundle getBundle0(long bundleId) {
+		return getContext().getBundle(bundleId);
 	}
 
 	protected Bundle getFrameworkBundle() {

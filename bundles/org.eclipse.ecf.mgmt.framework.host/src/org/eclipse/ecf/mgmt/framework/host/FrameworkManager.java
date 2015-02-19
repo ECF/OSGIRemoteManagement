@@ -9,15 +9,74 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.framework.host;
 
+import java.util.concurrent.TimeoutException;
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.ecf.core.status.SerializableStatus;
 import org.eclipse.ecf.mgmt.framework.FrameworkMTO;
 import org.eclipse.ecf.mgmt.framework.IFrameworkManager;
+import org.eclipse.ecf.mgmt.framework.startlevel.FrameworkStartLevelMTO;
+import org.osgi.framework.FrameworkEvent;
+import org.osgi.framework.FrameworkListener;
+import org.osgi.framework.startlevel.FrameworkStartLevel;
+import org.osgi.framework.startlevel.dto.FrameworkStartLevelDTO;
 
 public class FrameworkManager extends AbstractManager implements
 		IFrameworkManager {
 
+	private static final long DEFAULT_SETSTARTLEVEL_TIMEOUT = new Long(
+			System.getProperty(
+					"org.eclipse.ecf.mgmt.framework.host.defaultSetStartLevelTimeout",
+					"30000"));
+
+	private long setStartLevelTimeout = DEFAULT_SETSTARTLEVEL_TIMEOUT;
+
 	@Override
 	public FrameworkMTO getFramework() {
 		return createFrameworkMTO();
+	}
+
+	@Override
+	public FrameworkStartLevelMTO getStartLevel() {
+		return new FrameworkStartLevelMTO(getBundle0(0).adapt(
+				FrameworkStartLevelDTO.class));
+	}
+
+	class ManagerFrameworkListener implements FrameworkListener {
+		public boolean done = false;
+		public IStatus status;
+
+		@Override
+		public void frameworkEvent(FrameworkEvent event) {
+			synchronized (this) {
+				this.status = (event.getType() == FrameworkEvent.ERROR) ? createErrorStatus(
+						"Framework error on setStartLevel",
+						event.getThrowable()) : SerializableStatus.OK_STATUS;
+				done = true;
+			}
+		}
+	}
+
+	@Override
+	public IStatus setStartLevel(FrameworkStartLevelMTO mto) {
+		FrameworkStartLevel fsl = getBundle0(0)
+				.adapt(FrameworkStartLevel.class);
+		final ManagerFrameworkListener fl = new ManagerFrameworkListener();
+		fsl.setStartLevel(mto.getStartLevel(), fl);
+		long timeoutTime = System.currentTimeMillis() + setStartLevelTimeout;
+		synchronized (fl) {
+			while (!fl.done && (timeoutTime - System.currentTimeMillis() > 0))
+				try {
+					fl.wait(setStartLevelTimeout / 20);
+				} catch (InterruptedException e) {
+					fl.done = true;
+					fl.status = createErrorStatus("setStartLevel interrupted",
+							e);
+				}
+		}
+		return (fl.done) ? fl.status : createErrorStatus(
+				"setStartLevel timeout after " + setStartLevelTimeout + " ms",
+				new TimeoutException());
 	}
 
 }

@@ -9,8 +9,14 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.framework;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.ecf.mgmt.framework.startlevel.FrameworkStartLevelMTO;
+
 public interface IFrameworkManager {
 
-	public FrameworkMTO getFramework();
+	FrameworkMTO getFramework();
 
+	FrameworkStartLevelMTO getStartLevel();
+
+	IStatus setStartLevel(FrameworkStartLevelMTO mto);
 }

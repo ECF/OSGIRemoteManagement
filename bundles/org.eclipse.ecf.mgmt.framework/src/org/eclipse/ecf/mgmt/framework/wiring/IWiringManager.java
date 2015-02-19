@@ -13,10 +13,12 @@ public interface IWiringManager {
 
 	public BundleWiringMTO getBundleWiring(int bundleId);
 
-	public BundleWiringMTO[] getInUseWirings(int bundleId);
-	
+	public BundleWiringMTO[] getInUseBundleWirings(int bundleId);
+
 	public BundleRevisionMTO getBundleRevision(int bundleId);
-	
+
 	public BundleRevisionMTO[] getBundleRevisions(int bundleId);
+
+	public BundleRevisionMTO[] getBundleRevisions(String symbolicName);
 
 }

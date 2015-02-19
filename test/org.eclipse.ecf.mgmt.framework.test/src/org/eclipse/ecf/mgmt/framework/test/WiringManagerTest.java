@@ -26,7 +26,7 @@ public class WiringManagerTest extends TestCase {
 	}
 	
 	public void testAllBundleWiring() throws Exception {
-		BundleWiringMTO[] allWirings = wm.getInUseWirings(0);
+		BundleWiringMTO[] allWirings = wm.getInUseBundleWirings(0);
 		for(BundleWiringMTO mto: allWirings)
 			System.out.println("bundle wiring: "+mto);
 	}

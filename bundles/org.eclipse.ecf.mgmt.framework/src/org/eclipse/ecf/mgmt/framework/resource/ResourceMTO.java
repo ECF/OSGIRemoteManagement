@@ -27,10 +27,6 @@ public class ResourceMTO implements Serializable {
 		this.requirements = RequirementMTO.createMTOs(dto.requirements);
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
 	public int getId() {
 		return id;
 	}

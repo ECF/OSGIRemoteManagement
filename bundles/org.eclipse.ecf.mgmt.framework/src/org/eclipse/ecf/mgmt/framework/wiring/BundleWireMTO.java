@@ -39,8 +39,8 @@ public class BundleWireMTO extends WireMTO implements Serializable {
 		return "BundleWireMTO [providerWiring=" + providerWiring
 				+ ", requirerWiring=" + requirerWiring + ", capability="
 				+ getCapability() + ", requirement=" + getRequirement()
-				+ ", provider=" + getProvider() + ", requirer="
-				+ getRequirer() + "]";
+				+ ", provider=" + getProvider() + ", requirer=" + getRequirer()
+				+ "]";
 	}
 
 }

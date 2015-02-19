@@ -10,6 +10,7 @@
 package org.eclipse.ecf.mgmt.framework;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.ecf.mgmt.framework.startlevel.BundleStartLevelMTO;
 
 public interface IBundleManager {
 
@@ -22,4 +23,12 @@ public interface IBundleManager {
 	IStatus start(long bundleId);
 
 	IStatus stop(long bundleId);
+
+	IStatus start(long bundleId, int options);
+
+	IStatus stop(long bundleId, int options);
+
+	BundleStartLevelMTO getBundleStartLevel(long bundleId);
+
+	void setBundleStartlevel(long bundleId, int startLevel);
 }

@@ -14,8 +14,11 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.ecf.core.status.SerializableStatus;
 import org.eclipse.ecf.mgmt.framework.BundleMTO;
 import org.eclipse.ecf.mgmt.framework.IBundleManager;
+import org.eclipse.ecf.mgmt.framework.startlevel.BundleStartLevelMTO;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.startlevel.BundleStartLevel;
+import org.osgi.framework.startlevel.dto.BundleStartLevelDTO;
 
 public class BundleManager extends AbstractManager implements IBundleManager {
 
@@ -26,7 +29,7 @@ public class BundleManager extends AbstractManager implements IBundleManager {
 
 	@Override
 	public BundleMTO getBundle(long bundleId) {
-		Bundle b = getContext().getBundle(bundleId);
+		Bundle b = getBundle0(bundleId);
 		return (b == null) ? null : createBundleMTO(b);
 	}
 
@@ -39,7 +42,7 @@ public class BundleManager extends AbstractManager implements IBundleManager {
 		});
 	}
 
-	private IStatus startstop(final long bundleId, boolean start) {
+	private IStatus startstop(final long bundleId, int options, boolean start) {
 		Bundle bundle = selectBundle(new BundleSelector() {
 			@Override
 			public boolean select(Bundle b) {
@@ -52,9 +55,9 @@ public class BundleManager extends AbstractManager implements IBundleManager {
 
 		try {
 			if (start)
-				bundle.start();
+				bundle.start(options);
 			else
-				bundle.stop();
+				bundle.stop(options);
 			return new SerializableStatus(Status.OK_STATUS);
 		} catch (BundleException e) {
 			return createErrorStatus(
@@ -64,12 +67,37 @@ public class BundleManager extends AbstractManager implements IBundleManager {
 
 	@Override
 	public IStatus start(long bundleId) {
-		return startstop(bundleId, true);
+		return startstop(bundleId, 0, true);
 	}
 
 	@Override
 	public IStatus stop(long bundleId) {
-		return startstop(bundleId, false);
+		return startstop(bundleId, 0, false);
+	}
+
+	@Override
+	public IStatus start(long bundleId, int options) {
+		return startstop(bundleId, options, true);
+	}
+
+	@Override
+	public IStatus stop(long bundleId, int options) {
+		return startstop(bundleId, options, false);
+	}
+
+	@Override
+	public BundleStartLevelMTO getBundleStartLevel(long bundleId) {
+		Bundle b = getBundle0(bundleId);
+		return (b == null) ? null : new BundleStartLevelMTO(
+				b.adapt(BundleStartLevelDTO.class));
+	}
+
+	@Override
+	public void setBundleStartlevel(long bundleId, int startLevel) {
+		Bundle b = getBundle0(bundleId);
+		if (b == null)
+			return;
+		b.adapt(BundleStartLevel.class).setStartLevel(startLevel);
 	}
 
 }

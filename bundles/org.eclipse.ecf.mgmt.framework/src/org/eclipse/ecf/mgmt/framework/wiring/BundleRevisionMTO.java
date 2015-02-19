@@ -64,8 +64,7 @@ public class BundleRevisionMTO extends ResourceMTO {
 		return "BundleRevisionMTO [symbolicName=" + symbolicName + ", type="
 				+ type + ", bundle=" + bundle + ", id=" + getId()
 				+ ", capabilities=" + Arrays.toString(getCapabilities())
-				+ ", requirements=" + Arrays.toString(getRequirements())
-				+ "]";
+				+ ", requirements=" + Arrays.toString(getRequirements()) + "]";
 	}
 
 }
