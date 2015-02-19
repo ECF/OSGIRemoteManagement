@@ -73,8 +73,7 @@ public class FrameworkManager extends AbstractManager implements IFrameworkManag
 
 	@Override
 	public void setInitialBundleStartLevel(int initialBundleStartLevel) {
-		final FrameworkStartLevel fsl = getBundle0(0).adapt(FrameworkStartLevel.class);
-		fsl.setInitialBundleStartLevel(initialBundleStartLevel);
+		getBundle0(0).adapt(FrameworkStartLevel.class).setInitialBundleStartLevel(initialBundleStartLevel);
 	}
 
 }
