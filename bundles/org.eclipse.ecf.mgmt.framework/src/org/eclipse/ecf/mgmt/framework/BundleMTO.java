@@ -23,14 +23,17 @@ public class BundleMTO implements Serializable {
 	private final String symbolicName;
 	private final String version;
 	private final Map<String, String> manifest;
+	private final String location;
 
-	public BundleMTO(BundleDTO bundleDTO, Map<String, String> manifest) {
+	public BundleMTO(BundleDTO bundleDTO, Map<String, String> manifest,
+			String location) {
 		this.id = bundleDTO.id;
 		this.lastModified = bundleDTO.lastModified;
 		this.state = bundleDTO.state;
 		this.symbolicName = bundleDTO.symbolicName;
 		this.version = bundleDTO.version;
 		this.manifest = manifest;
+		this.location = location;
 	}
 
 	public long getId() {
@@ -66,11 +69,16 @@ public class BundleMTO implements Serializable {
 		return manifest;
 	}
 
+	public String getLocation() {
+		return location;
+	}
+
 	@Override
 	public String toString() {
 		return "BundleMTO [id=" + id + ", lastModified=" + lastModified
 				+ ", state=" + state + ", symbolicName=" + symbolicName
-				+ ", version=" + version + ", manifest=" + manifest + "]";
+				+ ", version=" + version + ", manifest=" + manifest
+				+ ", location=" + location + "]";
 	}
 
 }

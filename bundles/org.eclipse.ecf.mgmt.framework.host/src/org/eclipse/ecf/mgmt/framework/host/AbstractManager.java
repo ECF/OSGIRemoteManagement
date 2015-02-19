@@ -50,6 +50,17 @@ public abstract class AbstractManager implements IAdaptable {
 	private LogService logService;
 	private IAdapterManager adapterManager;
 
+	protected static boolean isSerializable(Object o) {
+		try {
+			ObjectOutputStream ois = new ObjectOutputStream(
+					new ByteArrayOutputStream());
+			ois.writeObject(o);
+			return true;
+		} catch (IOException e) {
+			return false;
+		}
+	}
+
 	protected BundleContext getContext() {
 		return bundleContext;
 	}
@@ -99,26 +110,6 @@ public abstract class AbstractManager implements IAdaptable {
 	@SuppressWarnings("unchecked")
 	protected Map<String, String> convertHeadersToMap(Bundle b) {
 		return (Map<String, String>) convertDictionaryToMap(b.getHeaders());
-	}
-
-	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
-		if (adapter.isInstance(this))
-			return this;
-		final IAdapterManager adapterManager = getAdapterManager();
-		if (adapterManager == null)
-			return null;
-		return adapterManager.loadAdapter(this, adapter.getName());
-	}
-
-	protected static boolean isSerializable(Object o) {
-		try {
-			ObjectOutputStream ois = new ObjectOutputStream(
-					new ByteArrayOutputStream());
-			ois.writeObject(o);
-			return true;
-		} catch (IOException e) {
-			return false;
-		}
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -210,7 +201,7 @@ public abstract class AbstractManager implements IAdaptable {
 
 	protected BundleMTO createBundleMTO(Bundle bundle) {
 		return new BundleMTO(bundle.adapt(BundleDTO.class),
-				convertHeadersToMap(bundle));
+				convertHeadersToMap(bundle), bundle.getLocation());
 	}
 
 	protected BundleRevisionMTO createBundleRevisionMTO(Bundle b) {
@@ -242,6 +233,15 @@ public abstract class AbstractManager implements IAdaptable {
 
 	protected List<ServiceReferenceDTO> getServiceReferenceDTOs() {
 		return getFrameworkDTO().services;
+	}
+
+	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
+		if (adapter.isInstance(this))
+			return this;
+		final IAdapterManager adapterManager = getAdapterManager();
+		if (adapterManager == null)
+			return null;
+		return adapterManager.loadAdapter(this, adapter.getName());
 	}
 
 }

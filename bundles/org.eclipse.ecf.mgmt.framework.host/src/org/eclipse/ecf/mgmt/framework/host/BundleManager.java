@@ -9,6 +9,9 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.framework.host;
 
+import java.io.IOException;
+import java.net.URL;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ecf.core.status.SerializableStatus;
@@ -52,7 +55,6 @@ public class BundleManager extends AbstractManager implements IBundleManager {
 		if (bundle == null)
 			return createErrorStatus("Cannot find bundle with bundleId="
 					+ bundleId, new NullPointerException());
-
 		try {
 			if (start)
 				bundle.start(options);
@@ -98,6 +100,59 @@ public class BundleManager extends AbstractManager implements IBundleManager {
 		if (b == null)
 			return;
 		b.adapt(BundleStartLevel.class).setStartLevel(startLevel);
+	}
+
+	@Override
+	public BundleMTO installBundle(String url) throws BundleException {
+		Bundle b = getContext().installBundle(url);
+		return createBundleMTO(b);
+	}
+
+	@Override
+	public IStatus uninstallBundle(long bundleId) {
+		Bundle b = getBundle0(bundleId);
+		if (b == null)
+			return createErrorStatus("Bundle with id=" + bundleId
+					+ " not found to uninstall", new NullPointerException());
+		try {
+			b.uninstall();
+			return SerializableStatus.OK_STATUS;
+		} catch (BundleException e) {
+			return createErrorStatus("Cannot uninstall bundle with id="
+					+ bundleId, e);
+		}
+	}
+
+	public IStatus updateBundle(long bundleId) {
+		Bundle b = getBundle0(bundleId);
+		if (b == null)
+			return createErrorStatus("Bundle with id=" + bundleId
+					+ " not found to update", new NullPointerException());
+		try {
+			b.update();
+			return SerializableStatus.OK_STATUS;
+		} catch (BundleException e) {
+			return createErrorStatus("Cannot uninstall bundle with id="
+					+ bundleId, e);
+		}
+	}
+
+	public IStatus updateBundle(long bundleId, String urlString) {
+		Bundle b = getBundle0(bundleId);
+		if (b == null)
+			return createErrorStatus("Bundle with id=" + bundleId
+					+ " not found to update", new NullPointerException());
+		try {
+			final URL url = new URL(urlString);
+			b.update(url.openStream());
+			return SerializableStatus.OK_STATUS;
+		} catch (BundleException e) {
+			return createErrorStatus(
+					"Cannot update bundle with id=" + bundleId, e);
+		} catch (IOException e) {
+			return createErrorStatus("Cannot read from url=" + urlString
+					+ " to load bundleId=" + bundleId, e);
+		}
 	}
 
 }
