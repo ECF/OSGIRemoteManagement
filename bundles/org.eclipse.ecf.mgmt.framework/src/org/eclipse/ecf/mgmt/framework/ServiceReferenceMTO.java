@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.osgi.framework.Constants;
 import org.osgi.framework.dto.ServiceReferenceDTO;
 
 public class ServiceReferenceMTO implements Serializable {
@@ -60,6 +61,16 @@ public class ServiceReferenceMTO implements Serializable {
 		return usingBundles;
 	}
 
+	public String[] getServices() {
+		return (String[]) properties.get(Constants.OBJECTCLASS);
+	}
+	
+	public int getRanking() {
+		Integer ranking = (Integer) properties.get(Constants.SERVICE_RANKING);
+		if (ranking == null) return 0;
+		else return ranking.intValue();
+	}
+	
 	@Override
 	public String toString() {
 		return "ServiceReferenceMTO [id=" + id + ", bundle=" + bundle + ", properties=" + properties
