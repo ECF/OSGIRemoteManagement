@@ -17,6 +17,6 @@ public interface IServiceManagerAsync {
 
 	CompletableFuture<ServiceReferenceMTO> getServiceReferenceAsync(long serviceId);
 
-	CompletableFuture<ServiceReferenceMTO> getServiceReferencesAsync(long bundleId);
+	CompletableFuture<ServiceReferenceMTO[]> getServiceReferencesAsync(long bundleId);
 
 }
