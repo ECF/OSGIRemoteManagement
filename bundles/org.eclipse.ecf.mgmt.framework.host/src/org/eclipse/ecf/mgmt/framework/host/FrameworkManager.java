@@ -58,25 +58,32 @@ public class FrameworkManager extends AbstractManager implements
 	}
 
 	@Override
-	public IStatus setStartLevel(FrameworkStartLevelMTO mto) {
-		FrameworkStartLevel fsl = getBundle0(0)
-				.adapt(FrameworkStartLevel.class);
+	public IStatus setStartLevel(int startLevel) {
+		final FrameworkStartLevel fsl = getBundle0(0).adapt(
+				FrameworkStartLevel.class);
 		final ManagerFrameworkListener fl = new ManagerFrameworkListener();
-		fsl.setStartLevel(mto.getStartLevel(), fl);
+		fsl.setStartLevel(startLevel, fl);
 		long timeoutTime = System.currentTimeMillis() + setStartLevelTimeout;
 		synchronized (fl) {
 			while (!fl.done && (timeoutTime - System.currentTimeMillis() > 0))
 				try {
 					fl.wait(setStartLevelTimeout / 20);
 				} catch (InterruptedException e) {
-					fl.done = true;
 					fl.status = createErrorStatus("setStartLevel interrupted",
 							e);
+					fl.done = true;
 				}
 		}
 		return (fl.done) ? fl.status : createErrorStatus(
 				"setStartLevel timeout after " + setStartLevelTimeout + " ms",
 				new TimeoutException());
+	}
+
+	@Override
+	public void setInitialBundleStartLevel(int initialBundleStartLevel) {
+		final FrameworkStartLevel fsl = getBundle0(0).adapt(
+				FrameworkStartLevel.class);
+		fsl.setInitialBundleStartLevel(initialBundleStartLevel);
 	}
 
 }

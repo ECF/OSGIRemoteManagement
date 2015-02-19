@@ -18,5 +18,8 @@ public interface IFrameworkManager {
 
 	FrameworkStartLevelMTO getStartLevel();
 
-	IStatus setStartLevel(FrameworkStartLevelMTO mto);
+	IStatus setStartLevel(int startLevel);
+
+	void setInitialBundleStartLevel(int initialBundleStartLevel);
+
 }
