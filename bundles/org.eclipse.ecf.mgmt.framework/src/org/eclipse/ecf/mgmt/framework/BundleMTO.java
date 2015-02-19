@@ -9,6 +9,7 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.framework;
 
+import java.io.Externalizable;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -24,19 +25,29 @@ public class BundleMTO implements Serializable {
 
 	private static final long serialVersionUID = -8261289274590963132L;
 
+	public static boolean isSerializable(Object o) {
+		if (o instanceof Serializable || o instanceof Externalizable)
+			return true;
+		return false;
+	}
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static Map convertDictionaryToMap(Dictionary dict) {
+	public static Map convertProperties(Dictionary dict) {
 		Map result = new HashMap();
 		for (Enumeration e = dict.keys(); e.hasMoreElements();) {
 			String key = (String) e.nextElement();
-			result.put(key, dict.get(key));
+			Object value = dict.get(key);
+			if (isSerializable(value))
+				result.put(key, value);
+			else
+				result.put(key, String.valueOf(value));
 		}
 		return result;
 	}
 
 	@SuppressWarnings("unchecked")
 	public static Map<String, String> convertHeadersToMap(Bundle b) {
-		return (Map<String, String>) convertDictionaryToMap(b.getHeaders());
+		return (Map<String, String>) convertProperties(b.getHeaders());
 	}
 
 	public static BundleMTO createMTO(Bundle bundle) {

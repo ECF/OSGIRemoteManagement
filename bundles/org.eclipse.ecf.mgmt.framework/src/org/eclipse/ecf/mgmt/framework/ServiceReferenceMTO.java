@@ -64,13 +64,15 @@ public class ServiceReferenceMTO implements Serializable {
 	public String[] getServices() {
 		return (String[]) properties.get(Constants.OBJECTCLASS);
 	}
-	
+
 	public int getRanking() {
 		Integer ranking = (Integer) properties.get(Constants.SERVICE_RANKING);
-		if (ranking == null) return 0;
-		else return ranking.intValue();
+		if (ranking == null)
+			return 0;
+		else
+			return ranking.intValue();
 	}
-	
+
 	@Override
 	public String toString() {
 		return "ServiceReferenceMTO [id=" + id + ", bundle=" + bundle + ", properties=" + properties

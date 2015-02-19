@@ -9,15 +9,8 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.framework.host;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterManager;
@@ -28,7 +21,6 @@ import org.eclipse.ecf.mgmt.framework.FrameworkMTO;
 import org.eclipse.ecf.mgmt.framework.ServiceReferenceMTO;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 import org.osgi.framework.dto.FrameworkDTO;
 import org.osgi.framework.dto.ServiceReferenceDTO;
 import org.osgi.service.log.LogService;
@@ -46,16 +38,6 @@ public abstract class AbstractManager implements IAdaptable {
 	private BundleContext bundleContext;
 	private LogService logService;
 	private IAdapterManager adapterManager;
-
-	protected static boolean isSerializable(Object o) {
-		try {
-			ObjectOutputStream ois = new ObjectOutputStream(new ByteArrayOutputStream());
-			ois.writeObject(o);
-			return true;
-		} catch (IOException e) {
-			return false;
-		}
-	}
 
 	protected BundleContext getContext() {
 		return bundleContext;
@@ -91,34 +73,6 @@ public abstract class AbstractManager implements IAdaptable {
 
 	void deactivate() {
 		this.bundleContext = null;
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected Map convertProperties(Dictionary dict) {
-		Map result = new HashMap();
-		for (Enumeration e = dict.keys(); e.hasMoreElements();) {
-			String key = (String) e.nextElement();
-			Object value = dict.get(key);
-			if (isSerializable(value))
-				result.put(key, value);
-			else
-				result.put(key, value.toString());
-		}
-		return result;
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected Map convertProperties(ServiceReference serviceReference) {
-		Map props = new HashMap();
-		String keys[] = serviceReference.getPropertyKeys();
-		for (int i = 0; i < keys.length; i++) {
-			Object value = serviceReference.getProperty(keys[i]);
-			if (isSerializable(value))
-				props.put(keys[i], value);
-			else
-				props.put(keys[i], value.toString());
-		}
-		return props;
 	}
 
 	protected IStatus createErrorStatus(String message, Throwable t) {
