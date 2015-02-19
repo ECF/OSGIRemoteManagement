@@ -9,15 +9,12 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.framework;
 
-import java.io.Externalizable;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.ecf.mgmt.PropertiesUtil;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.dto.BundleDTO;
 
@@ -25,33 +22,9 @@ public class BundleMTO implements Serializable {
 
 	private static final long serialVersionUID = -8261289274590963132L;
 
-	public static boolean isSerializable(Object o) {
-		if (o instanceof Serializable || o instanceof Externalizable)
-			return true;
-		return false;
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static Map convertProperties(Dictionary dict) {
-		Map result = new HashMap();
-		for (Enumeration e = dict.keys(); e.hasMoreElements();) {
-			String key = (String) e.nextElement();
-			Object value = dict.get(key);
-			if (isSerializable(value))
-				result.put(key, value);
-			else
-				result.put(key, String.valueOf(value));
-		}
-		return result;
-	}
-
-	@SuppressWarnings("unchecked")
-	public static Map<String, String> convertHeadersToMap(Bundle b) {
-		return (Map<String, String>) convertProperties(b.getHeaders());
-	}
-
 	public static BundleMTO createMTO(Bundle bundle) {
-		return new BundleMTO(bundle.adapt(BundleDTO.class), convertHeadersToMap(bundle), bundle.getLocation());
+		return new BundleMTO(bundle.adapt(BundleDTO.class), PropertiesUtil.convertHeadersToMap(bundle.getHeaders()),
+				bundle.getLocation());
 	}
 
 	public static BundleMTO[] createMTOs(Bundle[] bundles) {
