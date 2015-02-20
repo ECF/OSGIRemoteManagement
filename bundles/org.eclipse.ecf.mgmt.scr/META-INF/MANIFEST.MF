@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ECF Service Component Runtime Management
+Bundle-SymbolicName: org.eclipse.ecf.mgmt.scr
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Eclipse.org - ECF
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: org.apache.felix.scr;version="1.6.0",
+ org.eclipse.ecf.mgmt;version="1.0.0",
+ org.eclipse.ecf.mgmt.framework;version="1.0.0",
+ org.osgi.framework,
+ org.osgi.framework.dto,
+ org.osgi.service.component;version="1.2.2"
+Require-Bundle: org.eclipse.equinox.common
+Bundle-ActivationPolicy: lazy
+Export-Package: org.eclipse.ecf.mgmt.scr;version="1.0.0"
