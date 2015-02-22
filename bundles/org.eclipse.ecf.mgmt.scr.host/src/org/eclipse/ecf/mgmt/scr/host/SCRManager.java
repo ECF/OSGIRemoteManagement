@@ -45,7 +45,8 @@ public class SCRManager extends AbstractManager implements ISCRManager {
 	}
 
 	public ComponentMTO getComponent(long componentId) {
-		return getComponentMTO(scrService.getComponent(componentId));
+		Component c = scrService.getComponent(componentId);
+		return (c == null)?null:getComponentMTO(c);
 	}
 
 	private ComponentMTO getComponentMTO(Component comp) {

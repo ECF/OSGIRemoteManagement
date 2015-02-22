@@ -47,11 +47,11 @@ public abstract class AbstractManager implements IAdaptable {
 		return logService;
 	}
 
-	void bindLogService(LogService logService) {
+	public void bindLogService(LogService logService) {
 		this.logService = logService;
 	}
 
-	void unbindLogService(LogService logService) {
+	public void unbindLogService(LogService logService) {
 		this.logService = null;
 	}
 
@@ -59,19 +59,19 @@ public abstract class AbstractManager implements IAdaptable {
 		return adapterManager;
 	}
 
-	void bindAdapterManager(IAdapterManager adapterManager) {
+	public void bindAdapterManager(IAdapterManager adapterManager) {
 		this.adapterManager = adapterManager;
 	}
 
-	void unbindAdapterManager(IAdapterManager adapterManager) {
+	public void unbindAdapterManager(IAdapterManager adapterManager) {
 		this.adapterManager = null;
 	}
 
-	void activate(BundleContext context) {
+	public void activate(BundleContext context) {
 		this.bundleContext = context;
 	}
 
-	void deactivate() {
+	public void deactivate() {
 		this.bundleContext = null;
 	}
 

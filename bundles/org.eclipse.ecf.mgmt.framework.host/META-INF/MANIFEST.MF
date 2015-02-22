@@ -21,3 +21,4 @@ Import-Package: org.eclipse.ecf.core.status;version="1.1.0",
 Require-Bundle: org.eclipse.equinox.common
 Service-Component: OSGI-INF/bundlemanager.xml, OSGI-INF/servicemanager.xml, OSGI-INF/frameworkmanager.xml, OSGI-INF/wiringmanager.xml
 Export-Package: org.eclipse.ecf.mgmt.framework.host
+Bundle-ActivationPolicy: lazy

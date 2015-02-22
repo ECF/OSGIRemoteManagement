@@ -37,7 +37,8 @@ public class ComponentReferenceMTO implements Serializable {
 
 	public static ComponentReferenceMTO[] createMTOs(Reference[] references) {
 		List<ComponentReferenceMTO> results = new ArrayList<ComponentReferenceMTO>();
-		for (Reference r : references)
+		if (references != null)
+			for (Reference r : references)
 			results.add(createMTO(r));
 		return results.toArray(new ComponentReferenceMTO[results.size()]);
 	}
