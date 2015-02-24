@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ECF Remote Service Admin Managment
+Bundle-SymbolicName: org.eclipse.ecf.mgmt.rsa
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Eclipse.org - ECF
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Import-Package: org.eclipse.ecf.core.identity;version="3.2.0",
+ org.eclipse.ecf.mgmt;version="1.0.0",
+ org.eclipse.ecf.mgmt.framework;version="1.0.0",
+ org.eclipse.ecf.remoteservice;version="7.2.0",
+ org.osgi.framework,
+ org.osgi.service.remoteserviceadmin;version="1.1.0"

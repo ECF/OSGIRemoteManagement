@@ -14,7 +14,9 @@ import java.io.Serializable;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class PropertiesUtil {
 
@@ -24,6 +26,20 @@ public class PropertiesUtil {
 		return false;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static Map convertMapToSerializableMap(Map map) {
+		Map result = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
+		for(Iterator i = map.keySet().iterator(); i.hasNext(); ) {
+			Object key = i.next();
+			Object value = map.get(key);
+			if (isSerializable(value))
+				result.put(key, value);
+			else
+				result.put(key, String.valueOf(value));
+		}
+		return result;
+	}
+	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Map convertDictionaryToMap(Dictionary dict) {
 		Map result = new HashMap();
