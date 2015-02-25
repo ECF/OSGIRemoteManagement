@@ -43,7 +43,7 @@ public class ExportReferenceMTO implements Serializable {
 		return exportedService;
 	}
 
-	public EndpointDescriptionMTO getEndpoint() {
+	public EndpointDescriptionMTO getExportedEndpoint() {
 		return endpoint;
 	}
 
