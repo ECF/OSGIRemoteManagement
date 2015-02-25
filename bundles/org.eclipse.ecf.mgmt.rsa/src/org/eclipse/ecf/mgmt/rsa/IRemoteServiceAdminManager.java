@@ -15,22 +15,24 @@ import org.eclipse.ecf.mgmt.framework.ServiceReferenceMTO;
 
 public interface IRemoteServiceAdminManager {
 
+	RemoteServiceAdminEventMTO[] getRemoteServiceAdminEvents();
+
 	RemoteServiceAdminEventMTO[] getRemoteServiceAdminEvents(int[] typeFilter);
 
 	ExportReferenceMTO[] getExportedServices();
 
 	ImportReferenceMTO[] getImportedEndpoints();
 
-	ExportRegistrationMTO registerService(ServiceReferenceMTO serviceReference, Map<String, ?> overridingProperties);
+	ExportRegistrationMTO[] registerService(ServiceReferenceMTO serviceReference, Map<String, ?> overridingProperties);
 
-	EndpointDescriptionMTO update(ExportRegistrationMTO exportRegistration, Map<String, ?> properties);
+	EndpointDescriptionMTO update(ExportReferenceMTO exportReference, Map<String, ?> properties);
 
-	void close(ExportRegistrationMTO exportRegistration);
+	void close(ExportReferenceMTO exportReference);
 
 	ImportRegistrationMTO importService(EndpointDescriptionMTO endpointDescription);
 
 	boolean updateImport(EndpointDescriptionMTO endpoint);
 
-	void close(ImportRegistrationMTO importRegistration);
+	void close(ImportReferenceMTO importRegistration);
 
 }

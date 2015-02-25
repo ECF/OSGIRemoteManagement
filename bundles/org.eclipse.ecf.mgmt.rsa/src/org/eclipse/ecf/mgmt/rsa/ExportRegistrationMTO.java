@@ -10,14 +10,15 @@
 package org.eclipse.ecf.mgmt.rsa;
 
 import org.eclipse.ecf.mgmt.PropertiesUtil;
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.EndpointDescription;
 
 public class ExportRegistrationMTO {
 
 	private final ExportReferenceMTO exportReference;
 	private final Throwable exception;
 
-	public ExportRegistrationMTO(ExportReferenceMTO exportReference) {
-		this.exportReference = exportReference;
+	public ExportRegistrationMTO(EndpointDescription ed) {
+		this.exportReference = new ExportReferenceMTO(ed);
 		this.exception = null;
 	}
 

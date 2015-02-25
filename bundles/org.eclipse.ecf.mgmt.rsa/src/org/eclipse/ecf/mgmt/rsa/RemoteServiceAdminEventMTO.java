@@ -11,6 +11,10 @@ package org.eclipse.ecf.mgmt.rsa;
 
 import java.io.Serializable;
 
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin;
+import org.osgi.service.remoteserviceadmin.ExportReference;
+import org.osgi.service.remoteserviceadmin.ImportReference;
+
 public class RemoteServiceAdminEventMTO implements Serializable {
 
 	private static final long serialVersionUID = 6351054561253577383L;
@@ -20,21 +24,16 @@ public class RemoteServiceAdminEventMTO implements Serializable {
 	private final ExportReferenceMTO exportReference;
 	private final Throwable exception;
 
-	private RemoteServiceAdminEventMTO(int type, long bundleId, ImportReferenceMTO importReference,
-			ExportReferenceMTO exportReference, Throwable exception) {
-		this.type = type;
-		this.source = bundleId;
-		this.importReference = importReference;
-		this.exportReference = exportReference;
-		this.exception = exception;
-	}
-
-	public RemoteServiceAdminEventMTO(int type, long bundleId, ImportReferenceMTO importReference, Throwable exception) {
-		this(type, bundleId, importReference, null, exception);
-	}
-
-	public RemoteServiceAdminEventMTO(int type, long bundleId, ExportReferenceMTO exportReference, Throwable exception) {
-		this(type, bundleId, null, exportReference, exception);
+	public RemoteServiceAdminEventMTO(RemoteServiceAdmin.RemoteServiceAdminEvent event) {
+		this.type = event.getType();
+		this.source = event.getSource().getBundleId();
+		ImportReference ir = event.getImportReference();
+		this.importReference = ir == null ? null : new ImportReferenceMTO(
+				(org.eclipse.ecf.osgi.services.remoteserviceadmin.EndpointDescription) ir.getImportedEndpoint());
+		ExportReference er = event.getExportReference();
+		this.exportReference = er == null ? null : new ExportReferenceMTO(
+				(org.eclipse.ecf.osgi.services.remoteserviceadmin.EndpointDescription) er.getExportedEndpoint());
+		this.exception = event.getException();
 	}
 
 	public int getType() {

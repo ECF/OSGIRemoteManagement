@@ -67,11 +67,11 @@ public abstract class AbstractManager implements IAdaptable {
 		this.adapterManager = null;
 	}
 
-	public void activate(BundleContext context) {
+	public void activate(BundleContext context) throws Exception {
 		this.bundleContext = context;
 	}
 
-	public void deactivate() {
+	public void deactivate() throws Exception {
 		this.bundleContext = null;
 	}
 

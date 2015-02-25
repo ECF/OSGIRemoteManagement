@@ -16,24 +16,26 @@ import org.eclipse.ecf.mgmt.framework.ServiceReferenceMTO;
 
 public interface IRemoteServiceAdminManagerAsync {
 
+	CompletableFuture<RemoteServiceAdminEventMTO[]> getRemoteServiceAdminEventsAsync();
+
 	CompletableFuture<RemoteServiceAdminEventMTO[]> getRemoteServiceAdminEventsAsync(int[] typeFilter);
 
 	CompletableFuture<ExportReferenceMTO[]> getExportedServicesAsync();
 
 	CompletableFuture<ImportReferenceMTO[]> getImportedEndpointsAsync();
 
-	CompletableFuture<ExportRegistrationMTO> registerServiceAsync(ServiceReferenceMTO serviceReference,
+	CompletableFuture<ExportRegistrationMTO[]> registerServiceAsync(ServiceReferenceMTO serviceReference,
 			Map<String, ?> overridingProperties);
 
-	CompletableFuture<EndpointDescriptionMTO> updateAsync(ExportRegistrationMTO exportRegistration,
+	CompletableFuture<EndpointDescriptionMTO> updateAsync(ExportReferenceMTO exportReference,
 			Map<String, ?> properties);
 
-	CompletableFuture<Void> closeAsync(ExportRegistrationMTO exportRegistration);
+	CompletableFuture<Void> closeAsync(ExportReferenceMTO exportReference);
 
 	CompletableFuture<ImportRegistrationMTO> importServiceAsync(EndpointDescriptionMTO endpointDescription);
 
 	CompletableFuture<Boolean> updateImportAsync(EndpointDescriptionMTO endpoint);
 
-	CompletableFuture<Void> closeAsync(ImportRegistrationMTO importRegistration);
+	CompletableFuture<Void> closeAsync(ImportReferenceMTO importReference);
 
 }
