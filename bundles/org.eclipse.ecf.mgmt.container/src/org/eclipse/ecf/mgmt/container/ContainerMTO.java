@@ -17,11 +17,11 @@ import org.eclipse.ecf.mgmt.identity.NamespaceMTO;
 public class ContainerMTO implements Serializable {
 
 	private static final long serialVersionUID = -1565412302911016694L;
-	private IDMTO id;
-	private IDMTO connectedID;
-	private NamespaceMTO connectNamespace;
-	private ContainerTypeDescriptionMTO containerTypeDescription;
-	private String className;
+	private final IDMTO id;
+	private final IDMTO connectedID;
+	private final NamespaceMTO connectNamespace;
+	private final ContainerTypeDescriptionMTO containerTypeDescription;
+	private final String className;
 
 	public ContainerMTO(IDMTO id, IDMTO connectedID,
 			NamespaceMTO namespace,
@@ -30,6 +30,7 @@ public class ContainerMTO implements Serializable {
 		this.id = id;
 		this.connectedID = connectedID;
 		this.connectNamespace = namespace;
+		this.containerTypeDescription = containerTypeDescription;
 		this.className = className;
 	}
 
