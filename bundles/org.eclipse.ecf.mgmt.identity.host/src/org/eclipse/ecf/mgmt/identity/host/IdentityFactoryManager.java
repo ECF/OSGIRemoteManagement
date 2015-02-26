@@ -47,12 +47,12 @@ public class IdentityFactoryManager extends AbstractManager implements IIdentity
 	}
 
 	public static NamespaceMTO createNamespaceMTO(Namespace ns) {
-		return new NamespaceMTO(ns.getName(), ns.getDescription(), ns.getScheme(), ns.getSupportedSchemes(),
-				convertClassArrayToNameArray(ns.getSupportedParameterTypes()));
+		return ns == null ? null : new NamespaceMTO(ns.getName(), ns.getDescription(), ns.getScheme(),
+				ns.getSupportedSchemes(), convertClassArrayToNameArray(ns.getSupportedParameterTypes()));
 	}
 
 	public static IDMTO createIDMTO(ID id) {
-		return new IDMTO(createNamespaceMTO(id.getNamespace()), id.getName(), id.toExternalForm());
+		return id == null ? null : new IDMTO(createNamespaceMTO(id.getNamespace()), id.getName(), id.toExternalForm());
 	}
 
 	@Override
