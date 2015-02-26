@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ECF Container Management API
+Bundle-SymbolicName: org.eclipse.ecf.mgmt.container
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Eclipse.org - ECF
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Import-Package: org.eclipse.ecf.mgmt.identity;version="1.0.0"
+Export-Package: org.eclipse.ecf.mgmt.container;version="1.0.0"
