@@ -11,5 +11,7 @@ Import-Package: org.eclipse.ecf.core;version="3.0.0",
  org.eclipse.ecf.mgmt.container;version="1.0.0",
  org.eclipse.ecf.mgmt.framework.host,
  org.eclipse.ecf.mgmt.identity;version="1.0.0",
- org.eclipse.ecf.mgmt.identity.host
+ org.eclipse.ecf.mgmt.identity.host,
+ org.osgi.framework
 Require-Bundle: org.eclipse.equinox.common
+Service-Component: OSGI-INF/containerfactorymanager.xml
