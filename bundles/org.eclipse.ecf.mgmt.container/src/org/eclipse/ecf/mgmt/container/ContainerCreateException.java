@@ -9,6 +9,8 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.container;
 
+import org.eclipse.ecf.mgmt.PropertiesUtil;
+
 public class ContainerCreateException extends Exception {
 
 	private static final long serialVersionUID = -1553113325873646907L;
@@ -22,12 +24,14 @@ public class ContainerCreateException extends Exception {
 	}
 
 	public ContainerCreateException(String message, Throwable cause) {
-		super(message, cause);
+		super(message, (cause == null) ? null : PropertiesUtil.isSerializable(cause) ? cause : new Throwable(
+				cause.getMessage()));
 	}
 
 	public ContainerCreateException(String message, Throwable cause, boolean enableSuppression,
 			boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
+		super(message, (cause == null) ? null : PropertiesUtil.isSerializable(cause) ? cause : new Throwable(
+				cause.getMessage()), enableSuppression, writableStackTrace);
 	}
 
 }
