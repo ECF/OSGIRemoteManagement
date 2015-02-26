@@ -27,7 +27,7 @@ public class IdentityFactoryManager extends AbstractManager implements IIdentity
 	}
 
 	@SuppressWarnings("rawtypes")
-	static final String[][] convertClassArrayToNameArray(Class[][] clazzes) {
+	public static final String[][] convertClassArrayToNameArray(Class[][] clazzes) {
 		String[][] results = new String[clazzes.length][];
 		for (int i = 0; i < clazzes.length; i++) {
 			results[i] = new String[clazzes[i].length];
@@ -37,12 +37,12 @@ public class IdentityFactoryManager extends AbstractManager implements IIdentity
 		return results;
 	}
 
-	NamespaceMTO createNamespaceMTO(Namespace ns) {
+	public static NamespaceMTO createNamespaceMTO(Namespace ns) {
 		return new NamespaceMTO(ns.getName(), ns.getDescription(), ns.getScheme(), ns.getSupportedSchemes(),
 				convertClassArrayToNameArray(ns.getSupportedParameterTypes()));
 	}
 
-	IDMTO createIDMTO(ID id) {
+	public static IDMTO createIDMTO(ID id) {
 		return new IDMTO(createNamespaceMTO(id.getNamespace()), id.getName(), id.toExternalForm());
 	}
 
@@ -63,62 +63,45 @@ public class IdentityFactoryManager extends AbstractManager implements IIdentity
 		return (ns == null) ? null : createNamespaceMTO(ns);
 	}
 
+	IDMTO create0(ID id) {
+		try {
+			return createIDMTO(id);
+		} catch (org.eclipse.ecf.core.identity.IDCreateException e) {
+			throw new org.eclipse.ecf.mgmt.identity.IDCreateException(e.getMessage(), e.getCause());
+		}
+	}
+
 	@Override
 	public IDMTO createID(String namespaceName, Object[] args) {
 		Namespace ns = idFactory.getNamespaceByName(namespaceName);
 		if (ns == null)
 			return null;
-		try {
-			return createIDMTO(idFactory.createID(ns, args));
-		} catch (org.eclipse.ecf.core.identity.IDCreateException e) {
-			throw new org.eclipse.ecf.mgmt.identity.IDCreateException(e.getMessage(), e.getCause());
-		}
+		return create0(idFactory.createID(ns, args));
 	}
 
 	@Override
 	public IDMTO createStringID(String id) {
-		try {
-			return createIDMTO(idFactory.createStringID(id));
-		} catch (org.eclipse.ecf.core.identity.IDCreateException e) {
-			throw new org.eclipse.ecf.mgmt.identity.IDCreateException(e.getMessage(), e.getCause());
-		}
+		return create0(idFactory.createStringID(id));
 	}
 
 	@Override
 	public IDMTO createLongID(long id) {
-		try {
-			return createIDMTO(idFactory.createLongID(id));
-		} catch (org.eclipse.ecf.core.identity.IDCreateException e) {
-			throw new org.eclipse.ecf.mgmt.identity.IDCreateException(e.getMessage(), e.getCause());
-		}
+		return create0(idFactory.createLongID(id));
 	}
 
 	@Override
 	public IDMTO createGUID(int byteLength) {
-		try {
-			return createIDMTO(idFactory.createGUID(byteLength));
-		} catch (org.eclipse.ecf.core.identity.IDCreateException e) {
-			throw new org.eclipse.ecf.mgmt.identity.IDCreateException(e.getMessage(), e.getCause());
-		}
+		return create0(idFactory.createGUID(byteLength));
 	}
 
 	@Override
 	public IDMTO createGUID() {
-		try {
-			return createIDMTO(idFactory.createGUID());
-		} catch (org.eclipse.ecf.core.identity.IDCreateException e) {
-			throw new org.eclipse.ecf.mgmt.identity.IDCreateException(e.getMessage(), e.getCause());
-		}
+		return create0(idFactory.createGUID());
 	}
 
 	@Override
 	public IDMTO createURIID(URI uri) {
-
-		try {
-			return createIDMTO(idFactory.createID(URIID.class.getName(), new Object[] { uri }));
-		} catch (org.eclipse.ecf.core.identity.IDCreateException e) {
-			throw new org.eclipse.ecf.mgmt.identity.IDCreateException(e.getMessage(), e.getCause());
-		}
+		return create0(idFactory.createID(URIID.class.getName(), new Object[] { uri }));
 	}
 
 }
