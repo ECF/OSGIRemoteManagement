@@ -25,6 +25,14 @@ public class IDMTO implements Serializable {
 		this.externalForm = externalForm;
 	}
 
+	public IDMTO(NamespaceMTO namespace, String name) {
+		this(namespace, name, name);
+	}
+	
+	public IDMTO(String namespaceName, String name) {
+		this(new NamespaceMTO(namespaceName), name);
+	}
+	
 	public String getName() {
 		return name;
 	}

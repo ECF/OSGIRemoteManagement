@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ecf.core.identity.ID;
+import org.eclipse.ecf.core.identity.IDFactory;
 import org.eclipse.ecf.core.identity.IIDFactory;
 import org.eclipse.ecf.core.identity.Namespace;
 import org.eclipse.ecf.core.identity.URIID;
@@ -55,6 +56,13 @@ public class IdentityFactoryManager extends AbstractManager implements IIdentity
 		return id == null ? null : new IDMTO(createNamespaceMTO(id.getNamespace()), id.getName(), id.toExternalForm());
 	}
 
+	public static ID createID(IDMTO mto) {
+		if (mto == null) return null;
+		IIDFactory f = IDFactory.getDefault();
+		Namespace ns = f.getNamespaceByName(mto.getNamespace().getName());
+		return (ns == null)?null:f.createID(ns, mto.getName());
+	}
+	
 	@Override
 	public NamespaceMTO[] getNamespaces() {
 		@SuppressWarnings("rawtypes")

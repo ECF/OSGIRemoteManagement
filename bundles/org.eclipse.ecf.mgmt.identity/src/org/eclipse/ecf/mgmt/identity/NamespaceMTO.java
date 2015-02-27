@@ -30,6 +30,14 @@ public class NamespaceMTO implements Serializable {
 		this.supportedParameterTypes = supportedParameterTypes;
 	}
 
+	public NamespaceMTO(String name, String description, String scheme) {
+		this(name, description, scheme, null, null);
+	}
+	
+	public NamespaceMTO(String name) {
+		this(name, null, null);
+	}
+	
 	public String getName() {
 		return name;
 	}
