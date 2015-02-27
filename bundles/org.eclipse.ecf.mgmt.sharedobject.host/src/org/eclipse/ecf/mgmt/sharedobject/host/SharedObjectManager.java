@@ -21,6 +21,7 @@ import org.eclipse.ecf.core.sharedobject.ISharedObject;
 import org.eclipse.ecf.core.sharedobject.ISharedObjectContainer;
 import org.eclipse.ecf.core.sharedobject.SharedObjectCreateException;
 import org.eclipse.ecf.core.sharedobject.SharedObjectDescription;
+import org.eclipse.ecf.core.sharedobject.SharedObjectTypeDescription;
 import org.eclipse.ecf.core.status.SerializableStatus;
 import org.eclipse.ecf.mgmt.framework.host.AbstractManager;
 import org.eclipse.ecf.mgmt.identity.IDMTO;
@@ -31,6 +32,17 @@ import org.eclipse.ecf.mgmt.sharedobject.SharedObjectMTO;
 public class SharedObjectManager extends AbstractManager implements ISharedObjectManager {
 
 	private IContainerManager containerManager;
+
+	class DynamicSharedObjectDescription extends SharedObjectDescription {
+
+		private static final long serialVersionUID = -2416436445621199485L;
+
+		public DynamicSharedObjectDescription(String className, ID id,
+				Map<String,?> props) {
+			super(new SharedObjectTypeDescription(className, null), id, props);
+		}
+
+	}
 
 	void bindContainerManager(IContainerManager containerManager) {
 		this.containerManager = containerManager;
@@ -84,7 +96,7 @@ public class SharedObjectManager extends AbstractManager implements ISharedObjec
 			return createErrorStatus("cannot create soID for=" + sharedObjectID);
 		try {
 			c.getSharedObjectManager().createSharedObject(
-					new SharedObjectDescription(sharedObjectClassName, soid, properties));
+					new DynamicSharedObjectDescription(sharedObjectClassName, soid, properties));
 		} catch (SharedObjectCreateException e) {
 			return createErrorStatus("Could not create shared object with id=" + sharedObjectID);
 		}
