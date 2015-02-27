@@ -28,11 +28,15 @@ public class IDMTO implements Serializable {
 	public IDMTO(NamespaceMTO namespace, String name) {
 		this(namespace, name, name);
 	}
-	
+
 	public IDMTO(String namespaceName, String name) {
 		this(new NamespaceMTO(namespaceName), name);
 	}
-	
+
+	public IDMTO(String stringIDName) {
+		this(new NamespaceMTO("org.eclipse.ecf.core.identity.StringID"), stringIDName);
+	}
+
 	public String getName() {
 		return name;
 	}
