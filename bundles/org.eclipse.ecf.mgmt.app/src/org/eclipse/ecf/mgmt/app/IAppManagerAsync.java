@@ -9,6 +9,7 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.app;
 
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import org.eclipse.core.runtime.IStatus;
@@ -22,7 +23,7 @@ public interface IAppManagerAsync {
 	
 	CompletableFuture<AppInstanceMTO> getRunningAppAsync(String appInstanceId);
 	
-	CompletableFuture<IStatus> startAsync(String appId, String[] appArgs);
+	CompletableFuture<IStatus> startAsync(String appId, @SuppressWarnings("rawtypes") Map appArgs);
 
 	CompletableFuture<IStatus> stopAsync(String appInstanceId);
 

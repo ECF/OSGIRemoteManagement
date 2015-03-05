@@ -9,6 +9,8 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.app;
 
+import java.util.Map;
+
 import org.eclipse.core.runtime.IStatus;
 
 public interface IAppManager {
@@ -20,7 +22,7 @@ public interface IAppManager {
 	
 	AppInstanceMTO getRunningApp(String appInstanceId);
 	
-	IStatus start(String appId, String[] appArgs);
+	IStatus start(String appId, @SuppressWarnings("rawtypes") Map appArgs);
 
 	IStatus stop(String appInstanceId);
 

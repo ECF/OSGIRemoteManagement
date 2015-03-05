@@ -16,21 +16,11 @@ public class AppMTO implements Serializable {
 
 	private static final long serialVersionUID = 1056529815986643544L;
 	private final String id;
-	private final String name;
 	private final Map<String,?> properties;
-	private final boolean locked;
-	private final boolean launchable;
-	private final boolean visible;
 
-	public AppMTO(String id, String name,
-			Map<String,?> properties, boolean locked,
-			boolean launchable, boolean visible) {
+	public AppMTO(String id, Map<String,?> properties) {
 		this.id = id;
-		this.name = name;
 		this.properties = properties;
-		this.locked = locked;
-		this.launchable = launchable;
-		this.visible = visible;
 	}
 
 	public String getId() {
@@ -38,29 +28,40 @@ public class AppMTO implements Serializable {
 	}
 
 	public String getName() {
-		return name;
+		return (String) properties.get("application.name");
 	}
 
 	public Map<String,?> getProperties() {
 		return properties;
 	}
 
+	private boolean getBooleanProperty(String name) {
+		Object propValue = properties.get(name); //$NON-NLS-1$
+		boolean isProp = false;
+		if (propValue instanceof Boolean) 
+			isProp = ((Boolean) propValue).booleanValue();
+		else if (propValue instanceof String) 
+			isProp = Boolean.getBoolean((String) propValue);
+		return isProp;
+	}
+	
 	public boolean isLocked() {
-		return locked;
+		return getBooleanProperty("application.locked");
 	}
 
 	public boolean isLaunchable() {
-		return launchable;
+		return getBooleanProperty("application.launchable"); //$NON-NLS-1$
 	}
 
 	public boolean isVisible() {
-		return visible;
+		return getBooleanProperty("application.visible"); //$NON-NLS-1$
 	}
 
 	@Override
 	public String toString() {
-		return "AppMTO [id=" + id + ", name=" + name + ", properties=" + properties + ", locked=" + locked
-				+ ", launchable=" + launchable + ", visible=" + visible + "]";
+		return "AppMTO [getId()=" + getId() + ", getName()=" + getName() + ", isLocked()=" + isLocked()
+				+ ", isLaunchable()=" + isLaunchable() + ", isVisible()=" + isVisible() + ", getProperties()="
+				+ getProperties() + "]";
 	}
-
+	
 }
