@@ -1,4 +1,4 @@
-package org.eclipse.ecf.mgmt.app.host;
+package org.eclipse.ecf.mgmt.application.host;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -8,9 +8,9 @@ import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ecf.core.status.SerializableStatus;
-import org.eclipse.ecf.mgmt.app.AppInstanceMTO;
-import org.eclipse.ecf.mgmt.app.AppMTO;
-import org.eclipse.ecf.mgmt.app.IAppManager;
+import org.eclipse.ecf.mgmt.application.ApplicationInstanceMTO;
+import org.eclipse.ecf.mgmt.application.ApplicationMTO;
+import org.eclipse.ecf.mgmt.application.IApplicationManager;
 import org.eclipse.ecf.mgmt.framework.host.AbstractManager;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -19,7 +19,7 @@ import org.osgi.service.application.ApplicationDescriptor;
 import org.osgi.service.application.ApplicationHandle;
 import org.osgi.util.tracker.ServiceTracker;
 
-public class AppManager extends AbstractManager implements IAppManager {
+public class ApplicationManager extends AbstractManager implements IApplicationManager {
 
 	private ServiceTracker<ApplicationDescriptor, ApplicationDescriptor> appDescTracker;
 	private ServiceTracker<ApplicationHandle, ApplicationHandle> appInstTracker;
@@ -49,20 +49,20 @@ public class AppManager extends AbstractManager implements IAppManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	private AppMTO createAppMTO(ApplicationDescriptor appDescriptor) {
-		return new AppMTO(appDescriptor.getApplicationId(), (Map<String, ?>) appDescriptor.getProperties(null));
+	private ApplicationMTO createAppMTO(ApplicationDescriptor appDescriptor) {
+		return new ApplicationMTO(appDescriptor.getApplicationId(), (Map<String, ?>) appDescriptor.getProperties(null));
 	}
 
-	private AppMTO createAppMTO(ServiceReference<ApplicationDescriptor> appDescSR) {
+	private ApplicationMTO createAppMTO(ServiceReference<ApplicationDescriptor> appDescSR) {
 		ApplicationDescriptor appDescriptor = getContext().getService(appDescSR);
-		AppMTO result = (appDescriptor != null) ? createAppMTO(appDescriptor) : null;
+		ApplicationMTO result = (appDescriptor != null) ? createAppMTO(appDescriptor) : null;
 		getContext().ungetService(appDescSR);
 		return result;
 	}
 
-	private AppInstanceMTO createAppInstanceMTO(ServiceReference<ApplicationHandle> appInstSR) {
+	private ApplicationInstanceMTO createAppInstanceMTO(ServiceReference<ApplicationHandle> appInstSR) {
 		ApplicationHandle appInstanceHandle = getContext().getService(appInstSR);
-		AppInstanceMTO result = (appInstanceHandle != null) ? new AppInstanceMTO(appInstanceHandle.getInstanceId(),
+		ApplicationInstanceMTO result = (appInstanceHandle != null) ? new ApplicationInstanceMTO(appInstanceHandle.getInstanceId(),
 				appInstanceHandle.getState(), createAppMTO(appInstanceHandle.getApplicationDescriptor())) : null;
 		getContext().ungetService(appInstSR);
 		return result;
@@ -83,35 +83,35 @@ public class AppManager extends AbstractManager implements IAppManager {
 	}
 
 	@Override
-	public AppMTO[] getApps() {
-		List<AppMTO> results = getAppSRs(null).stream().map(sr -> {
+	public ApplicationMTO[] getApplications() {
+		List<ApplicationMTO> results = getAppSRs(null).stream().map(sr -> {
 			return createAppMTO(sr);
 		}).collect(Collectors.toList());
-		return results.toArray(new AppMTO[results.size()]);
+		return results.toArray(new ApplicationMTO[results.size()]);
 	}
 
 	@Override
-	public AppMTO getApp(String appId) {
+	public ApplicationMTO getApplication(String appId) {
 		List<ServiceReference<ApplicationDescriptor>> results = getAppSRs(appId);
 		return results.size() > 0 ? createAppMTO(results.get(0)) : null;
 	}
 
 	@Override
-	public AppInstanceMTO[] getRunningApps() {
-		List<AppInstanceMTO> results = getAppInstSRs(null).stream().map(sr -> {
+	public ApplicationInstanceMTO[] getRunningApplications() {
+		List<ApplicationInstanceMTO> results = getAppInstSRs(null).stream().map(sr -> {
 			return createAppInstanceMTO(sr);
 		}).collect(Collectors.toList());
-		return results.toArray(new AppInstanceMTO[results.size()]);
+		return results.toArray(new ApplicationInstanceMTO[results.size()]);
 	}
 
 	@Override
-	public AppInstanceMTO getRunningApp(String appInstanceId) {
+	public ApplicationInstanceMTO getRunningApplication(String appInstanceId) {
 		List<ServiceReference<ApplicationHandle>> results = getAppInstSRs(appInstanceId);
 		return results.size() > 0 ? createAppInstanceMTO(results.get(0)) : null;
 	}
 
 	@Override
-	public IStatus start(String appId, @SuppressWarnings("rawtypes") Map appArgs) {
+	public IStatus startApplication(String appId, @SuppressWarnings("rawtypes") Map appArgs) {
 		List<ServiceReference<ApplicationDescriptor>> results = getAppSRs(appId);
 		if (results.size() == 0)
 			return createErrorStatus("Could not find appId=" + appId + " to start");
@@ -130,7 +130,7 @@ public class AppManager extends AbstractManager implements IAppManager {
 	}
 
 	@Override
-	public IStatus stop(String appInstanceId) {
+	public IStatus stopApplication(String appInstanceId) {
 		List<ServiceReference<ApplicationHandle>> results = getAppInstSRs(appInstanceId);
 		if (results.size() == 0)
 			return createErrorStatus("Could not find appInstanceId=" + appInstanceId + " to stop");
@@ -149,7 +149,7 @@ public class AppManager extends AbstractManager implements IAppManager {
 	}
 
 	@Override
-	public IStatus lock(String appId) {
+	public IStatus lockApplication(String appId) {
 		List<ServiceReference<ApplicationDescriptor>> results = getAppSRs(appId);
 		if (results.size() == 0)
 			return createErrorStatus("Could not find appId=" + appId + " to start");
@@ -168,7 +168,7 @@ public class AppManager extends AbstractManager implements IAppManager {
 	}
 
 	@Override
-	public IStatus unlock(String appId) {
+	public IStatus unlockApplication(String appId) {
 		List<ServiceReference<ApplicationDescriptor>> results = getAppSRs(appId);
 		if (results.size() == 0)
 			return createErrorStatus("Could not find appId=" + appId + " to start");

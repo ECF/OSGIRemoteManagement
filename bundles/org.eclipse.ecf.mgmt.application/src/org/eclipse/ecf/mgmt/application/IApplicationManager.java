@@ -7,26 +7,26 @@
  * Contributors:
  *   Composent, Inc. - initial API and implementation
  ******************************************************************************/
-package org.eclipse.ecf.mgmt.app;
+package org.eclipse.ecf.mgmt.application;
 
 import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
 
-public interface IAppManager {
-	AppMTO[] getApps();
+public interface IApplicationManager {
+	ApplicationMTO[] getApplications();
 	
-	AppMTO getApp(String appId);
+	ApplicationMTO getApplication(String applicationId);
 
-	AppInstanceMTO[] getRunningApps();
+	ApplicationInstanceMTO[] getRunningApplications();
 	
-	AppInstanceMTO getRunningApp(String appInstanceId);
+	ApplicationInstanceMTO getRunningApplication(String applicationInstanceId);
 	
-	IStatus start(String appId, @SuppressWarnings("rawtypes") Map appArgs);
+	IStatus startApplication(String applicationId, @SuppressWarnings("rawtypes") Map args);
 
-	IStatus stop(String appInstanceId);
+	IStatus stopApplication(String appInstanceId);
 
-	IStatus lock(String appId);
+	IStatus lockApplication(String applicationId);
 
-	IStatus unlock(String appId);
+	IStatus unlockApplication(String applicationId);
 }

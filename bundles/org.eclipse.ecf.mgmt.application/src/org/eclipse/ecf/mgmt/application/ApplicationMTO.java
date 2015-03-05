@@ -7,18 +7,18 @@
  * Contributors:
  *   Composent, Inc. - initial API and implementation
  ******************************************************************************/
-package org.eclipse.ecf.mgmt.app;
+package org.eclipse.ecf.mgmt.application;
 
 import java.io.Serializable;
 import java.util.Map;
 
-public class AppMTO implements Serializable {
+public class ApplicationMTO implements Serializable {
 
 	private static final long serialVersionUID = 1056529815986643544L;
 	private final String id;
 	private final Map<String,?> properties;
 
-	public AppMTO(String id, Map<String,?> properties) {
+	public ApplicationMTO(String id, Map<String,?> properties) {
 		this.id = id;
 		this.properties = properties;
 	}
@@ -59,7 +59,7 @@ public class AppMTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "AppMTO [getId()=" + getId() + ", getName()=" + getName() + ", isLocked()=" + isLocked()
+		return "ApplicationMTO [getId()=" + getId() + ", getName()=" + getName() + ", isLocked()=" + isLocked()
 				+ ", isLaunchable()=" + isLaunchable() + ", isVisible()=" + isVisible() + ", getProperties()="
 				+ getProperties() + "]";
 	}
