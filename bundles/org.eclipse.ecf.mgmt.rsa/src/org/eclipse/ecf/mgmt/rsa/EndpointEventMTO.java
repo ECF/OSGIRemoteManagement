@@ -10,8 +10,7 @@
 package org.eclipse.ecf.mgmt.rsa;
 
 import java.io.Serializable;
-
-import org.osgi.service.remoteserviceadmin.EndpointDescription;
+import java.util.Map;
 
 public class EndpointEventMTO implements Serializable {
 
@@ -19,9 +18,9 @@ public class EndpointEventMTO implements Serializable {
 	private final int type;
 	private final EndpointDescriptionMTO endpoint;
 
-	public EndpointEventMTO(int type, EndpointDescription endpoint) {
+	public EndpointEventMTO(int type, Map<String, ?> endpointProps) {
 		this.type = type;
-		this.endpoint = new EndpointDescriptionMTO(endpoint.getProperties());
+		this.endpoint = new EndpointDescriptionMTO(endpointProps);
 	}
 
 	public int getType() {

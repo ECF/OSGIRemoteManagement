@@ -24,18 +24,17 @@ public interface IRemoteServiceAdminManagerAsync {
 
 	CompletableFuture<ImportReferenceMTO[]> getImportedEndpointsAsync();
 
-	CompletableFuture<ExportRegistrationMTO[]> registerServiceAsync(ServiceReferenceMTO serviceReference,
+	CompletableFuture<ExportRegistrationMTO[]> exportServiceAsync(ServiceReferenceMTO serviceReference,
 			Map<String, ?> overridingProperties);
 
-	CompletableFuture<EndpointDescriptionMTO> updateAsync(ExportReferenceMTO exportReference,
-			Map<String, ?> properties);
+	CompletableFuture<EndpointDescriptionMTO> updateExportAsync(ExportReferenceMTO exportReference, Map<String, ?> properties);
 
-	CompletableFuture<Void> closeAsync(ExportReferenceMTO exportReference);
+	CompletableFuture<Boolean> closeExportAsync(ExportReferenceMTO exportReference);
 
 	CompletableFuture<ImportRegistrationMTO> importServiceAsync(EndpointDescriptionMTO endpointDescription);
 
 	CompletableFuture<Boolean> updateImportAsync(EndpointDescriptionMTO endpoint);
 
-	CompletableFuture<Void> closeAsync(ImportReferenceMTO importReference);
+	CompletableFuture<Boolean> closeImportAsync(ImportReferenceMTO importReference);
 
 }

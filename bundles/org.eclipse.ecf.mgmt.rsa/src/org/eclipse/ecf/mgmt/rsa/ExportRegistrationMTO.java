@@ -9,16 +9,20 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.rsa;
 
+import java.util.Map;
+
+import org.eclipse.ecf.core.identity.ID;
 import org.eclipse.ecf.mgmt.PropertiesUtil;
-import org.eclipse.ecf.osgi.services.remoteserviceadmin.EndpointDescription;
 
 public class ExportRegistrationMTO {
 
 	private final ExportReferenceMTO exportReference;
 	private final Throwable exception;
 
-	public ExportRegistrationMTO(EndpointDescription ed) {
-		this.exportReference = new ExportReferenceMTO(ed);
+	public ExportRegistrationMTO(ID containerID, long remoteServiceId, long exportedServiceId,
+			Map<String, ?> endpointProperties) {
+		this.exportReference = new ExportReferenceMTO(containerID, remoteServiceId, exportedServiceId,
+				endpointProperties);
 		this.exception = null;
 	}
 

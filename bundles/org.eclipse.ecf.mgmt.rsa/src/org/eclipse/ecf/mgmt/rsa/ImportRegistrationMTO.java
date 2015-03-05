@@ -9,6 +9,9 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.rsa;
 
+import java.util.Map;
+
+import org.eclipse.ecf.core.identity.ID;
 import org.eclipse.ecf.mgmt.PropertiesUtil;
 
 public class ImportRegistrationMTO {
@@ -16,8 +19,10 @@ public class ImportRegistrationMTO {
 	private final ImportReferenceMTO importReference;
 	private final Throwable exception;
 
-	public ImportRegistrationMTO(ImportReferenceMTO importReference) {
-		this.importReference = importReference;
+	public ImportRegistrationMTO(ID containerID, long remoteServiceId, long exportedServiceId,
+			Map<String, ?> endpointProperties) {
+		this.importReference = new ImportReferenceMTO(containerID, remoteServiceId, exportedServiceId,
+				endpointProperties);
 		this.exception = null;
 	}
 

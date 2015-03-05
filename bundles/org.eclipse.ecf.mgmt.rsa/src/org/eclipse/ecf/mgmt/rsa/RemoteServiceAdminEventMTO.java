@@ -10,30 +10,33 @@
 package org.eclipse.ecf.mgmt.rsa;
 
 import java.io.Serializable;
+import java.util.Map;
 
-import org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin;
-import org.osgi.service.remoteserviceadmin.ExportReference;
-import org.osgi.service.remoteserviceadmin.ImportReference;
+import org.eclipse.ecf.core.identity.ID;
 
 public class RemoteServiceAdminEventMTO implements Serializable {
 
 	private static final long serialVersionUID = 6351054561253577383L;
 	private final int type;
 	private final long source;
-	private final ImportReferenceMTO importReference;
-	private final ExportReferenceMTO exportReference;
+	private ImportReferenceMTO importReference;
+	private ExportReferenceMTO exportReference;
 	private final Throwable exception;
 
-	public RemoteServiceAdminEventMTO(RemoteServiceAdmin.RemoteServiceAdminEvent event) {
-		this.type = event.getType();
-		this.source = event.getSource().getBundleId();
-		ImportReference ir = event.getImportReference();
-		this.importReference = ir == null ? null : new ImportReferenceMTO(
-				(org.eclipse.ecf.osgi.services.remoteserviceadmin.EndpointDescription) ir.getImportedEndpoint());
-		ExportReference er = event.getExportReference();
-		this.exportReference = er == null ? null : new ExportReferenceMTO(
-				(org.eclipse.ecf.osgi.services.remoteserviceadmin.EndpointDescription) er.getExportedEndpoint());
-		this.exception = event.getException();
+	public RemoteServiceAdminEventMTO(int eventType, long bundleId, ID containerID, long remoteServiceId,
+			long exportedServiceId, Map<String, ?> endpointProperties, Throwable exception) {
+		this.type = eventType;
+		this.source = bundleId;
+		if (type == 1 || type == 4 || type == 5 || type == 8 || type == 9) {
+			this.importReference = new ImportReferenceMTO(containerID, remoteServiceId, exportedServiceId,
+					endpointProperties);
+			this.exportReference = null;
+		} else if (type == 2 || type == 6 || type == 7 || type == 10) {
+			this.exportReference = new ExportReferenceMTO(containerID, remoteServiceId, exportedServiceId,
+					endpointProperties);
+			this.importReference = null;
+		}
+		this.exception = exception;
 	}
 
 	public int getType() {

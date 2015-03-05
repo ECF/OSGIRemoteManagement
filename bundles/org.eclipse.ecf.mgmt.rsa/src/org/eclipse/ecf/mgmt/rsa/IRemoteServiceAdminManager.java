@@ -23,16 +23,16 @@ public interface IRemoteServiceAdminManager {
 
 	ImportReferenceMTO[] getImportedEndpoints();
 
-	ExportRegistrationMTO[] registerService(ServiceReferenceMTO serviceReference, Map<String, ?> overridingProperties);
+	ExportRegistrationMTO[] exportService(ServiceReferenceMTO serviceReference, Map<String, ?> overridingProperties);
 
-	EndpointDescriptionMTO update(ExportReferenceMTO exportReference, Map<String, ?> properties);
+	EndpointDescriptionMTO updateExport(ExportReferenceMTO exportReference, Map<String, ?> properties);
 
-	void close(ExportReferenceMTO exportReference);
+	boolean closeExport(ExportReferenceMTO exportReference);
 
 	ImportRegistrationMTO importService(EndpointDescriptionMTO endpointDescription);
 
 	boolean updateImport(EndpointDescriptionMTO endpoint);
 
-	void close(ImportReferenceMTO importRegistration);
+	boolean closeImport(ImportReferenceMTO importRegistration);
 
 }

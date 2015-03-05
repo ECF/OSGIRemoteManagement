@@ -17,14 +17,14 @@ import org.eclipse.ecf.mgmt.PropertiesUtil;
 public class EndpointDescriptionMTO implements Serializable {
 
 	private static final long serialVersionUID = -7058001347405515626L;
-	private final Map<String, ?> properties;
+	private final Map<String, Object> properties;
 
 	@SuppressWarnings("unchecked")
 	public EndpointDescriptionMTO(Map<String, ?> properties) {
 		this.properties = PropertiesUtil.convertMapToSerializableMap(properties);
 	}
 
-	public Map<String, ?> getProperties() {
+	public Map<String, Object> getProperties() {
 		return this.properties;
 	}
 

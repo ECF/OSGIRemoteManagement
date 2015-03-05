@@ -10,9 +10,9 @@
 package org.eclipse.ecf.mgmt.rsa;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import org.eclipse.ecf.core.identity.ID;
-import org.eclipse.ecf.osgi.services.remoteserviceadmin.EndpointDescription;
 
 public class ExportReferenceMTO implements Serializable {
 
@@ -23,12 +23,13 @@ public class ExportReferenceMTO implements Serializable {
 	private final long exportedService;
 	private final EndpointDescriptionMTO endpoint;
 
-	public ExportReferenceMTO(EndpointDescription ed) {
+	public ExportReferenceMTO(ID containerID, long remoteServiceId, long exportedServiceId,
+			Map<String, ?> endpointProperties) {
 		super();
-		this.containerID = ed.getContainerID();
-		this.remoteServiceId = ed.getRemoteServiceId();
-		this.exportedService = ed.getServiceId();
-		this.endpoint = new EndpointDescriptionMTO(ed.getProperties());
+		this.containerID = containerID;
+		this.remoteServiceId = remoteServiceId;
+		this.exportedService = exportedServiceId;
+		this.endpoint = new EndpointDescriptionMTO(endpointProperties);
 	}
 
 	public ID getContainerID() {
