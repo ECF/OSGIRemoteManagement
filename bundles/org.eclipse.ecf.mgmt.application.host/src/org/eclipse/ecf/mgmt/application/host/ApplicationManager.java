@@ -49,18 +49,18 @@ public class ApplicationManager extends AbstractManager implements IApplicationM
 	}
 
 	@SuppressWarnings("unchecked")
-	private ApplicationMTO createAppMTO(ApplicationDescriptor appDescriptor) {
+	protected ApplicationMTO createAppMTO(ApplicationDescriptor appDescriptor) {
 		return new ApplicationMTO(appDescriptor.getApplicationId(), (Map<String, ?>) appDescriptor.getProperties(null));
 	}
 
-	private ApplicationMTO createAppMTO(ServiceReference<ApplicationDescriptor> appDescSR) {
+	protected ApplicationMTO createAppMTO(ServiceReference<ApplicationDescriptor> appDescSR) {
 		ApplicationDescriptor appDescriptor = getContext().getService(appDescSR);
 		ApplicationMTO result = (appDescriptor != null) ? createAppMTO(appDescriptor) : null;
 		getContext().ungetService(appDescSR);
 		return result;
 	}
 
-	private ApplicationInstanceMTO createAppInstanceMTO(ServiceReference<ApplicationHandle> appInstSR) {
+	protected ApplicationInstanceMTO createAppInstanceMTO(ServiceReference<ApplicationHandle> appInstSR) {
 		ApplicationHandle appInstanceHandle = getContext().getService(appInstSR);
 		ApplicationInstanceMTO result = (appInstanceHandle != null) ? new ApplicationInstanceMTO(appInstanceHandle.getInstanceId(),
 				appInstanceHandle.getState(), createAppMTO(appInstanceHandle.getApplicationDescriptor())) : null;
@@ -68,14 +68,14 @@ public class ApplicationManager extends AbstractManager implements IApplicationM
 		return result;
 	}
 
-	List<ServiceReference<ApplicationDescriptor>> getAppSRs(String appId) {
+	protected List<ServiceReference<ApplicationDescriptor>> getAppSRs(String appId) {
 		ServiceReference<ApplicationDescriptor>[] appSRs = appDescTracker.getServiceReferences();
 		return (appSRs == null) ? Collections.emptyList() : select(Arrays.asList(appSRs),p -> {
 			return appId == null || appId.equals(p.getProperty(Constants.SERVICE_PID));
 		});
 	}
 
-	List<ServiceReference<ApplicationHandle>> getAppInstSRs(String appInstId) {
+	protected List<ServiceReference<ApplicationHandle>> getAppInstSRs(String appInstId) {
 		ServiceReference<ApplicationHandle>[] appSRs = appInstTracker.getServiceReferences();
 		return (appSRs == null) ? Collections.emptyList() : select(Arrays.asList(appSRs),p -> {
 			return appInstId == null || appInstId.equals(p.getProperty(Constants.SERVICE_PID));

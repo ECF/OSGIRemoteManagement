@@ -2,10 +2,10 @@ package org.eclipse.ecf.mgmt.framework.test;
 
 import java.util.Arrays;
 
+import junit.framework.TestCase;
+
 import org.eclipse.ecf.mgmt.framework.BundleMTO;
 import org.eclipse.ecf.mgmt.framework.IBundleManager;
-
-import junit.framework.TestCase;
 
 public class BundleManagerTest extends TestCase {
 
