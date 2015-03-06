@@ -34,30 +34,30 @@ public class ContainerFactoryManager extends AbstractManager implements IContain
 	private IContainerManager containerManager;
 	private IIDFactory idFactory;
 
-	void bindContainerManager(IContainerManager containerManager) {
+	protected void bindContainerManager(IContainerManager containerManager) {
 		this.containerManager = containerManager;
 	}
 
-	void unbindContainerManager(IContainerManager unbindContainerManager) {
+	protected void unbindContainerManager(IContainerManager unbindContainerManager) {
 		this.containerManager = null;
 	}
 
-	void bindIDFactory(IIDFactory idFactory) {
+	protected void bindIDFactory(IIDFactory idFactory) {
 		this.idFactory = idFactory;
 	}
 
-	void unbindIDFactory(IIDFactory idFactory) {
+	protected void unbindIDFactory(IIDFactory idFactory) {
 		this.idFactory = null;
 	}
 
-	ContainerTypeDescriptionMTO createMTO(ContainerTypeDescription ctd) {
+	protected ContainerTypeDescriptionMTO createMTO(ContainerTypeDescription ctd) {
 		return ctd == null ? null : new ContainerTypeDescriptionMTO(ctd.getName(), ctd.getDescription(),
 				ctd.isHidden(), ctd.isServer(), ctd.getSupportedAdapterTypes(),
 				IdentityFactoryManager.convertClassArrayToNameArray(ctd.getSupportedParameterTypes()),
 				ctd.getSupportedIntents(), ctd.getSupportedConfigs());
 	}
 
-	ContainerMTO createMTO(IContainer container) {
+	protected ContainerMTO createMTO(IContainer container) {
 		if (container == null)
 			return null;
 		ID containerID = container.getID();
@@ -68,24 +68,28 @@ public class ContainerFactoryManager extends AbstractManager implements IContain
 		return new ContainerMTO(containerIDMTO, connectedIDMTO, nsMTO, createMTO(ctd), container.getClass().getName());
 	}
 
-	ContainerMTO[] createMTOs(IContainer[] containers) {
+	protected ContainerMTO[] createMTOs(IContainer[] containers) {
 		List<ContainerMTO> results = new ArrayList<ContainerMTO>(containers.length);
 		for (int i = 0; i < containers.length; i++)
 			results.add(createMTO(containers[i]));
 		return results.toArray(new ContainerMTO[results.size()]);
 	}
 
-	@Override
-	public ContainerMTO[] getContainers() {
-		return createMTOs(containerManager.getAllContainers());
-	}
-
-	ID createID(IDMTO mto) {
+	protected ID createID(IDMTO mto) {
 		try {
 			return idFactory.createID(mto.getNamespace().getName(), mto.getName());
 		} catch (IDCreateException e) {
 			return null;
 		}
+	}
+
+	protected ContainerTypeDescription getDescription(String descriptionName) {
+		return containerManager.getContainerFactory().getDescriptionByName(descriptionName);
+	}
+
+	@Override
+	public ContainerMTO[] getContainers() {
+		return createMTOs(containerManager.getAllContainers());
 	}
 
 	@Override
@@ -102,10 +106,6 @@ public class ContainerFactoryManager extends AbstractManager implements IContain
 		for (Iterator i = ctds.iterator(); i.hasNext();)
 			results.add(createMTO((ContainerTypeDescription) i.next()));
 		return results.toArray(new ContainerTypeDescriptionMTO[results.size()]);
-	}
-
-	ContainerTypeDescription getDescription(String descriptionName) {
-		return containerManager.getContainerFactory().getDescriptionByName(descriptionName);
 	}
 
 	@Override

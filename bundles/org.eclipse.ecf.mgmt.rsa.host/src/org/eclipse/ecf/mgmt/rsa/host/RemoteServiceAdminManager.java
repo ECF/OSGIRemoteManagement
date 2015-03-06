@@ -18,6 +18,8 @@ import org.eclipse.ecf.mgmt.rsa.ImportRegistrationMTO;
 import org.eclipse.ecf.mgmt.rsa.RemoteServiceAdminEventMTO;
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.EndpointDescription;
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin;
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin.ExportReference;
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin.ImportReference;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
@@ -33,53 +35,49 @@ public class RemoteServiceAdminManager extends AbstractManager implements IRemot
 	private RemoteServiceAdmin remoteServiceAdmin;
 	private List<RemoteServiceAdmin.RemoteServiceAdminEvent> adminEvents;
 
-	void bindRemoteServiceAdmin(org.osgi.service.remoteserviceadmin.RemoteServiceAdmin rsa) {
+	protected void bindRemoteServiceAdmin(org.osgi.service.remoteserviceadmin.RemoteServiceAdmin rsa) {
 		this.remoteServiceAdmin = (RemoteServiceAdmin) rsa;
 	}
 
-	void unbindRemoteServiceAdmin(org.osgi.service.remoteserviceadmin.RemoteServiceAdmin rsa) {
+	protected void unbindRemoteServiceAdmin(org.osgi.service.remoteserviceadmin.RemoteServiceAdmin rsa) {
 		this.remoteServiceAdmin = null;
 	}
 
 	@Override
 	public void remoteAdminEvent(RemoteServiceAdminEvent event) {
-		handleRemoteServiceAdminEvent(event);
-	}
-
-	private void handleRemoteServiceAdminEvent(RemoteServiceAdminEvent event) {
 		if (!(event instanceof RemoteServiceAdmin.RemoteServiceAdminEvent))
 			return;
 		adminEvents.add((RemoteServiceAdmin.RemoteServiceAdminEvent) event);
 	}
 
-	public void activate(BundleContext context) throws Exception {
+	protected void activate(BundleContext context) throws Exception {
 		super.activate(context);
 		adminEvents = Collections.synchronizedList(new ArrayList<RemoteServiceAdmin.RemoteServiceAdminEvent>());
 	}
 
-	public void deactivate() throws Exception {
+	protected void deactivate() throws Exception {
 		adminEvents.clear();
 		super.deactivate();
 	}
 
-	private RemoteServiceAdminEventMTO createEventMTO(RemoteServiceAdmin.RemoteServiceAdminEvent e) {
+	protected RemoteServiceAdminEventMTO createEventMTO(RemoteServiceAdmin.RemoteServiceAdminEvent e) {
 		EndpointDescription ed = e.getEndpointDescription();
 		return new RemoteServiceAdminEventMTO(e.getType(), e.getSource().getBundleId(), e.getContainerID(),
 				(ed == null) ? 0L : ed.getRemoteServiceId(), (ed == null) ? 0L : ed.getServiceId(), (ed == null) ? null
 						: ed.getProperties(), e.getException());
 	}
 
-	private ExportReferenceMTO createExportReferenceMTO(EndpointDescription ed) {
+	protected ExportReferenceMTO createExportReferenceMTO(EndpointDescription ed) {
 		return new ExportReferenceMTO(ed.getContainerID(), ed.getRemoteServiceId(), ed.getServiceId(),
 				ed.getProperties());
 	}
 
-	private ImportReferenceMTO createImportReferenceMTO(EndpointDescription ed) {
+	protected ImportReferenceMTO createImportReferenceMTO(EndpointDescription ed) {
 		return new ImportReferenceMTO(ed.getContainerID(), ed.getRemoteServiceId(), ed.getServiceId(),
 				ed.getProperties());
 	}
 
-	private ExportRegistrationMTO createExportRegistrationMTO(ExportRegistration er) {
+	protected ExportRegistrationMTO createExportRegistrationMTO(ExportRegistration er) {
 		Throwable t = er.getException();
 		if (t != null)
 			return new ExportRegistrationMTO(t);
@@ -88,13 +86,22 @@ public class RemoteServiceAdminManager extends AbstractManager implements IRemot
 				ed.getProperties());
 	}
 
-	private ImportRegistrationMTO createImportRegistrationMTO(ImportRegistration ir) {
+	protected ImportRegistrationMTO createImportRegistrationMTO(ImportRegistration ir) {
 		Throwable t = ir.getException();
 		if (t != null)
 			return new ImportRegistrationMTO(t);
 		EndpointDescription ed = (EndpointDescription) ir.getImportReference().getImportedEndpoint();
 		return new ImportRegistrationMTO(ed.getConnectTargetID(), ed.getServiceId(), ed.getServiceId(),
 				ed.getProperties());
+	}
+
+	protected List<RemoteServiceAdminEvent> getEvents(boolean export) {
+		return adminEvents
+				.stream()
+				.filter(e -> {
+					return (e.getType() == RemoteServiceAdminEvent.EXPORT_REGISTRATION && e.getException() == null && ((export && e
+							.getExportReference() != null) || (!export && e.getImportReference() != null)));
+				}).collect(Collectors.toList());
 	}
 
 	@Override
@@ -117,15 +124,6 @@ public class RemoteServiceAdminManager extends AbstractManager implements IRemot
 			return createEventMTO(e);
 		}).collect(Collectors.toList());
 		return results.toArray(new RemoteServiceAdminEventMTO[results.size()]);
-	}
-
-	List<RemoteServiceAdminEvent> getEvents(boolean export) {
-		return adminEvents
-				.stream()
-				.filter(e -> {
-					return (e.getType() == RemoteServiceAdminEvent.EXPORT_REGISTRATION && e.getException() == null && ((export && e
-							.getExportReference() != null) || (!export && e.getImportReference() != null)));
-				}).collect(Collectors.toList());
 	}
 
 	@Override
@@ -178,20 +176,68 @@ public class RemoteServiceAdminManager extends AbstractManager implements IRemot
 		return null;
 	}
 
+	protected org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin.ExportRegistration findExportRegistration(
+			ServiceReference<?> sr) {
+		List<org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin.ExportRegistration> results = select(
+				remoteServiceAdmin.getExportedRegistrations(), er -> {
+					ExportReference exRef = (ExportReference) er.getExportReference();
+					if (exRef == null)
+						return false;
+					return sr.equals(exRef.getExportedService());
+				});
+		return results.size() == 0 ? null : results.get(0);
+	}
+
+	protected org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin.ImportRegistration findImportRegistration(
+			EndpointDescription ed) {
+		List<org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin.ImportRegistration> results = select(
+				remoteServiceAdmin.getImportedRegistrations(), ir -> {
+					ImportReference iRef = (ImportReference) ir.getImportReference();
+					if (iRef == null)
+						return false;
+					return ed.equals(iRef.getImportedEndpoint());
+				});
+		return results.size() == 0 ? null : results.get(0);
+	}
+
+	protected org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin.ImportRegistration findImportRegistration(
+			ServiceReference<?> sr) {
+		List<org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin.ImportRegistration> results = select(
+				remoteServiceAdmin.getImportedRegistrations(), ir -> {
+					ImportReference iRef = (ImportReference) ir.getImportReference();
+					if (iRef == null)
+						return false;
+					return sr.equals(iRef.getImportedService());
+				});
+		return results.size() == 0 ? null : results.get(0);
+	}
+
 	@Override
 	public EndpointDescriptionMTO updateExport(ExportReferenceMTO exportReference, Map<String, ?> properties) {
 		@SuppressWarnings("rawtypes")
 		ServiceReference sr = findServiceReference(exportReference.getExportedService());
 		if (sr == null)
 			return null;
-		// TODO Auto-generated method stub
-		return null;
+		RemoteServiceAdmin.ExportRegistration exportRegistration = findExportRegistration(sr);
+		if (exportRegistration == null)
+			return null;
+		EndpointDescription updated = (EndpointDescription) exportRegistration.update(properties);
+		if (updated == null)
+			return null;
+		return new EndpointDescriptionMTO(updated.getProperties());
 	}
 
 	@Override
 	public boolean closeExport(ExportReferenceMTO exportReference) {
-		// TODO Auto-generated method stub
-		return false;
+		@SuppressWarnings("rawtypes")
+		ServiceReference sr = findServiceReference(exportReference.getExportedService());
+		if (sr == null)
+			return false;
+		RemoteServiceAdmin.ExportRegistration exportRegistration = findExportRegistration(sr);
+		if (exportRegistration == null)
+			return false;
+		exportRegistration.close();
+		return true;
 	}
 
 	@Override
@@ -203,14 +249,24 @@ public class RemoteServiceAdminManager extends AbstractManager implements IRemot
 
 	@Override
 	public boolean updateImport(EndpointDescriptionMTO endpoint) {
-		// TODO Auto-generated method stub
-		return false;
+		EndpointDescription updateEd = new EndpointDescription(endpoint.getProperties());
+		RemoteServiceAdmin.ImportRegistration importRegistration = findImportRegistration(updateEd);
+		if (importRegistration == null)
+			return false;
+		return importRegistration.update(updateEd);
 	}
 
 	@Override
 	public boolean closeImport(ImportReferenceMTO importReference) {
-		// TODO Auto-generated method stub
-		return false;
+		@SuppressWarnings("rawtypes")
+		ServiceReference sr = findServiceReference(importReference.getImportedService());
+		if (sr == null)
+			return false;
+		RemoteServiceAdmin.ImportRegistration importRegistration = findImportRegistration(sr);
+		if (importRegistration == null)
+			return false;
+		importRegistration.close();
+		return true;
 	}
 
 	@Override

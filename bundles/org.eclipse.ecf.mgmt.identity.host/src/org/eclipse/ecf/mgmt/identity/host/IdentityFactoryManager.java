@@ -26,12 +26,20 @@ public class IdentityFactoryManager extends AbstractManager implements IIdentity
 
 	private IIDFactory idFactory;
 
-	void bindIDFactory(IIDFactory idFactory) {
+	protected void bindIDFactory(IIDFactory idFactory) {
 		this.idFactory = idFactory;
 	}
 
-	void unbindIDFactory(IIDFactory idFactory) {
+	protected void unbindIDFactory(IIDFactory idFactory) {
 		this.idFactory = null;
+	}
+
+	protected IDMTO create0(ID id) {
+		try {
+			return createIDMTO(id);
+		} catch (org.eclipse.ecf.core.identity.IDCreateException e) {
+			throw new org.eclipse.ecf.mgmt.identity.IDCreateException(e.getMessage(), e.getCause());
+		}
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -74,14 +82,6 @@ public class IdentityFactoryManager extends AbstractManager implements IIdentity
 	public NamespaceMTO getNamespace(String name) {
 		Namespace ns = idFactory.getNamespaceByName(name);
 		return (ns == null) ? null : createNamespaceMTO(ns);
-	}
-
-	IDMTO create0(ID id) {
-		try {
-			return createIDMTO(id);
-		} catch (org.eclipse.ecf.core.identity.IDCreateException e) {
-			throw new org.eclipse.ecf.mgmt.identity.IDCreateException(e.getMessage(), e.getCause());
-		}
 	}
 
 	@Override

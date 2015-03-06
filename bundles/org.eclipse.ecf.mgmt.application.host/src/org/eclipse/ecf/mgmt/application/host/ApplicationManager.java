@@ -25,7 +25,7 @@ public class ApplicationManager extends AbstractManager implements IApplicationM
 	private ServiceTracker<ApplicationHandle, ApplicationHandle> appInstTracker;
 
 	@Override
-	public void activate(BundleContext context) throws Exception {
+	protected void activate(BundleContext context) throws Exception {
 		super.activate(context);
 		appDescTracker = new ServiceTracker<ApplicationDescriptor, ApplicationDescriptor>(context,
 				ApplicationDescriptor.class, null);
@@ -36,7 +36,7 @@ public class ApplicationManager extends AbstractManager implements IApplicationM
 	}
 
 	@Override
-	public void deactivate() throws Exception {
+	protected void deactivate() throws Exception {
 		if (appDescTracker != null) {
 			appDescTracker.close();
 			appDescTracker = null;
