@@ -10,8 +10,6 @@
 package org.eclipse.ecf.mgmt.identity.host;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ecf.core.identity.ID;
@@ -63,14 +61,12 @@ public class IdentityFactoryManager extends AbstractManager implements IIdentity
 		return (ns == null)?null:f.createID(ns, mto.getName());
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public NamespaceMTO[] getNamespaces() {
-		@SuppressWarnings("rawtypes")
-		List namespaces = idFactory.getNamespaces();
-		List<NamespaceMTO> results = new ArrayList<NamespaceMTO>();
-		for (@SuppressWarnings("rawtypes")
-		Iterator i = namespaces.iterator(); i.hasNext();)
-			results.add(createNamespaceMTO((Namespace) i.next()));
+		List<NamespaceMTO> results = selectAndMap(idFactory.getNamespaces(),null,n -> {
+			return createNamespaceMTO((Namespace) n);
+		});
 		return results.toArray(new NamespaceMTO[results.size()]);
 	}
 

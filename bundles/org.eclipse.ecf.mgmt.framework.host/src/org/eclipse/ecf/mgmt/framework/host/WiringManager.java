@@ -9,7 +9,6 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.framework.host;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.ecf.mgmt.framework.wiring.BundleRevisionMTO;
@@ -47,17 +46,13 @@ public class WiringManager extends AbstractManager implements IWiringManager {
 
 	@Override
 	public BundleRevisionMTO[] getBundleRevisions(final String symbolicName) {
-		List<BundleRevisionMTO> results = new ArrayList<BundleRevisionMTO>();
-		if (symbolicName != null) {
-			Bundle[] bundles = selectBundles(new BundleSelector() {
-				@Override
-				public boolean select(Bundle b) {
-					return symbolicName.equals(b.getSymbolicName());
-				}
-			});
-			for (Bundle b : bundles)
-				results.add(BundleRevisionMTO.createMTO(b.adapt(BundleRevisionDTO.class)));
-		}
+		if (symbolicName == null)
+			return null;
+		List<BundleRevisionMTO> results = selectAndMap(getAllBundles(), b -> {
+			return symbolicName.equals(b.getSymbolicName());
+		}, b -> {
+			return BundleRevisionMTO.createMTO(b.adapt(BundleRevisionDTO.class));
+		});
 		return results.toArray(new BundleRevisionMTO[results.size()]);
 	}
 

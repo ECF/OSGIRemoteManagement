@@ -9,8 +9,11 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.framework.host;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterManager;
@@ -22,18 +25,9 @@ import org.eclipse.ecf.mgmt.framework.ServiceReferenceMTO;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.dto.FrameworkDTO;
-import org.osgi.framework.dto.ServiceReferenceDTO;
 import org.osgi.service.log.LogService;
 
 public abstract class AbstractManager implements IAdaptable {
-
-	interface BundleSelector {
-		boolean select(Bundle b);
-	}
-
-	interface ServiceReferenceDTOSelector {
-		boolean select(ServiceReferenceDTO srd);
-	}
 
 	private BundleContext bundleContext;
 	private LogService logService;
@@ -47,11 +41,11 @@ public abstract class AbstractManager implements IAdaptable {
 		return logService;
 	}
 
-	public void bindLogService(LogService logService) {
+	protected void bindLogService(LogService logService) {
 		this.logService = logService;
 	}
 
-	public void unbindLogService(LogService logService) {
+	protected void unbindLogService(LogService logService) {
 		this.logService = null;
 	}
 
@@ -59,19 +53,19 @@ public abstract class AbstractManager implements IAdaptable {
 		return adapterManager;
 	}
 
-	public void bindAdapterManager(IAdapterManager adapterManager) {
+	protected void bindAdapterManager(IAdapterManager adapterManager) {
 		this.adapterManager = adapterManager;
 	}
 
-	public void unbindAdapterManager(IAdapterManager adapterManager) {
+	protected void unbindAdapterManager(IAdapterManager adapterManager) {
 		this.adapterManager = null;
 	}
 
-	public void activate(BundleContext context) throws Exception {
+	protected void activate(BundleContext context) throws Exception {
 		this.bundleContext = context;
 	}
 
-	public void deactivate() throws Exception {
+	protected void deactivate() throws Exception {
 		this.bundleContext = null;
 	}
 
@@ -81,8 +75,7 @@ public abstract class AbstractManager implements IAdaptable {
 	}
 
 	protected IStatus createErrorStatus(String message) {
-		logError(message, null);
-		return new SerializableStatus(IStatus.ERROR, getContext().getBundle().getSymbolicName(), message, null);
+		return createErrorStatus(message, null);
 	}
 
 	protected void logError(String message, Throwable t) {
@@ -94,37 +87,20 @@ public abstract class AbstractManager implements IAdaptable {
 			t.printStackTrace(System.err);
 	}
 
-	protected BundleMTO[] selectBundleMTOs(BundleSelector s) {
-		Bundle[] bundles = selectBundles(s);
-		return BundleMTO.createMTOs(bundles);
+	protected List<Bundle> getAllBundles() {
+		return Arrays.asList(getContext().getBundles());
 	}
 
-	protected Bundle[] selectBundles(BundleSelector s) {
-		List<Bundle> results = new ArrayList<Bundle>();
-		for (Bundle b : getContext().getBundles())
-			if (s == null || s.select(b))
-				results.add(b);
-		return results.toArray(new Bundle[results.size()]);
+	protected <T> List<T> select(List<T> source, final Predicate<T> filter) {
+		return source.stream().filter(new Predicate<T>() {
+			public boolean test(T ins) {
+				return filter == null;
+			}
+		}.or(filter)).collect(Collectors.toList());
 	}
 
-	protected Bundle selectBundle(BundleSelector s) {
-		Bundle[] bundles = selectBundles(s);
-		return (bundles.length > 0) ? bundles[0] : null;
-	}
-
-	protected ServiceReferenceDTO[] selectServiceReferenceDTOs(ServiceReferenceDTOSelector s) {
-		List<ServiceReferenceDTO> results = new ArrayList<ServiceReferenceDTO>();
-		for (ServiceReferenceDTO srd : getServiceReferenceDTOs())
-			if (s == null || s.select(srd))
-				results.add(srd);
-		return results.toArray(new ServiceReferenceDTO[results.size()]);
-	}
-
-	protected ServiceReferenceMTO[] selectServiceReferenceMTOs(ServiceReferenceDTOSelector s) {
-		List<ServiceReferenceMTO> results = new ArrayList<ServiceReferenceMTO>();
-		for (ServiceReferenceDTO srd : selectServiceReferenceDTOs(s))
-			results.add(ServiceReferenceMTO.createMTO(srd));
-		return results.toArray(new ServiceReferenceMTO[results.size()]);
+	protected <T, R> List<R> selectAndMap(List<T> source, final Predicate<T> filter, Function<T, R> map) {
+		return select(source, filter).stream().map(map).collect(Collectors.toList());
 	}
 
 	protected Bundle getBundle0(long bundleId) {
@@ -132,12 +108,7 @@ public abstract class AbstractManager implements IAdaptable {
 	}
 
 	protected Bundle getFrameworkBundle() {
-		Bundle[] bs = selectBundles(new BundleSelector() {
-			public boolean select(Bundle b) {
-				return b.getBundleId() == 0;
-			}
-		});
-		return bs[0];
+		return getBundle0(0);
 	}
 
 	protected FrameworkDTO getFrameworkDTO() {
@@ -145,15 +116,20 @@ public abstract class AbstractManager implements IAdaptable {
 	}
 
 	protected FrameworkMTO createFrameworkMTO() {
-		FrameworkDTO fdto = getFrameworkDTO();
-		return new FrameworkMTO(selectBundleMTOs(null), fdto.properties, selectServiceReferenceMTOs(null));
-	}
-
-	protected List<ServiceReferenceDTO> getServiceReferenceDTOs() {
-		return getFrameworkDTO().services;
+		List<BundleMTO> bundleMTOs = selectAndMap(getAllBundles(), null, b -> {
+			return BundleMTO.createMTO(b);
+		});
+		FrameworkDTO frameworkDTO = getFrameworkDTO();
+		List<ServiceReferenceMTO> srMTOs = selectAndMap(frameworkDTO.services, null, srDTO -> {
+			return ServiceReferenceMTO.createMTO(srDTO);
+		});
+		return new FrameworkMTO(bundleMTOs.toArray(new BundleMTO[bundleMTOs.size()]), frameworkDTO.properties,
+				srMTOs.toArray(new ServiceReferenceMTO[srMTOs.size()]));
 	}
 
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
+		if (adapter == null)
+			return null;
 		if (adapter.isInstance(this))
 			return this;
 		final IAdapterManager adapterManager = getAdapterManager();

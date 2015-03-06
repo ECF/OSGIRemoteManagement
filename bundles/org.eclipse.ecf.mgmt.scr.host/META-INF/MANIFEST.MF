@@ -17,3 +17,4 @@ Import-Package: org.apache.felix.scr;version="1.6.0",
 Require-Bundle: org.eclipse.equinox.common
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/scrmanager.xml
+Export-Package: org.eclipse.ecf.mgmt.scr.host;version="1.0.0"

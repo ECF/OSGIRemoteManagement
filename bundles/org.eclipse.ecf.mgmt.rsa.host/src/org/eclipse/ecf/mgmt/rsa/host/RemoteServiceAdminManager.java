@@ -139,7 +139,7 @@ public class RemoteServiceAdminManager extends AbstractManager implements IRemot
 	@Override
 	public ImportReferenceMTO[] getImportedEndpoints() {
 		List<ImportReferenceMTO> results = getEvents(false).stream().map(e -> {
-			return createImportReferenceMTO((EndpointDescription) e.getExportReference().getExportedEndpoint());
+			return createImportReferenceMTO((EndpointDescription) e.getImportReference().getImportedEndpoint());
 		}).collect(Collectors.toList());
 		return results.toArray(new ImportReferenceMTO[results.size()]);
 	}

@@ -9,7 +9,7 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.scr.host;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -63,16 +63,13 @@ public class SCRManager extends AbstractManager implements ISCRManager {
 		return ComponentMTO.createMTO(ref, comp);
 	}
 
-	private ComponentMTO[] getComponentMTOs(Component[] comps) {
-		List<ComponentMTO> results = new ArrayList<ComponentMTO>();
-		for (Component c : comps)
-			results.add(getComponentMTO(c));
-		return results.toArray(new ComponentMTO[results.size()]);
-	}
-
 	private ComponentMTO[] getComponentMTOsForBundle(Bundle bundle) {
 		Component[] comps = (bundle == null) ? scrService.getComponents() : scrService.getComponents(bundle);
-		return (comps != null) ? getComponentMTOs(comps) : new ComponentMTO[0];
+		if (comps == null) return new ComponentMTO[0];
+		List<ComponentMTO> results = selectAndMap(Arrays.asList(comps),null,c -> {
+			return getComponentMTO(c);
+		});
+		return results.toArray(new ComponentMTO[results.size()]);
 	}
 
 	public ComponentMTO[] getComponents() {

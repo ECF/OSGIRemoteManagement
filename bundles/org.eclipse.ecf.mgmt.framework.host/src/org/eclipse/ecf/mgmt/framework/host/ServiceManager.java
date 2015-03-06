@@ -9,37 +9,39 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.framework.host;
 
+import java.util.List;
+import java.util.function.Function;
+
 import org.eclipse.ecf.mgmt.framework.IServiceManager;
 import org.eclipse.ecf.mgmt.framework.ServiceReferenceMTO;
 import org.osgi.framework.dto.ServiceReferenceDTO;
 
 public class ServiceManager extends AbstractManager implements IServiceManager {
 
+	private static final Function<ServiceReferenceDTO, ServiceReferenceMTO> srmapper = srd -> {
+		return ServiceReferenceMTO.createMTO(srd);
+	};
+
 	@Override
 	public ServiceReferenceMTO[] getServiceReferences() {
-		return selectServiceReferenceMTOs(null);
+		List<ServiceReferenceMTO> results = selectAndMap(getFrameworkDTO().services, null, srmapper);
+		return results.toArray(new ServiceReferenceMTO[results.size()]);
 	}
 
 	@Override
 	public ServiceReferenceMTO getServiceReference(final long serviceId) {
-		ServiceReferenceMTO[] mtos = selectServiceReferenceMTOs(new ServiceReferenceDTOSelector() {
-			@Override
-			public boolean select(ServiceReferenceDTO srd) {
-				return srd.id == serviceId;
-			}
-		});
-		return (mtos.length == 1) ? mtos[0] : null;
+		List<ServiceReferenceMTO> results = selectAndMap(getFrameworkDTO().services, srd -> {
+			return srd.id == serviceId;
+		}, srmapper);
+		return results.size() > 0 ? results.get(0) : null;
 	}
 
 	@Override
 	public ServiceReferenceMTO[] getServiceReferences(final long bundleId) {
-		ServiceReferenceMTO[] mtos = selectServiceReferenceMTOs(new ServiceReferenceDTOSelector() {
-			@Override
-			public boolean select(ServiceReferenceDTO srd) {
-				return srd.bundle == bundleId;
-			}
-		});
-		return mtos;
+		List<ServiceReferenceMTO> results = selectAndMap(getFrameworkDTO().services, srd -> {
+			return srd.bundle == bundleId;
+		}, srmapper);
+		return results.toArray(new ServiceReferenceMTO[results.size()]);
 	}
 
 }

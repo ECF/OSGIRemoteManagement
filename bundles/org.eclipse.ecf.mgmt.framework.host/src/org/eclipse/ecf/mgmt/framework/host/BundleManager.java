@@ -11,10 +11,13 @@ package org.eclipse.ecf.mgmt.framework.host;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
+import java.util.function.Function;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ecf.core.status.SerializableStatus;
+import org.eclipse.ecf.mgmt.framework.BundleInstallException;
 import org.eclipse.ecf.mgmt.framework.BundleMTO;
 import org.eclipse.ecf.mgmt.framework.IBundleManager;
 import org.eclipse.ecf.mgmt.framework.startlevel.BundleStartLevelMTO;
@@ -25,33 +28,31 @@ import org.osgi.framework.startlevel.dto.BundleStartLevelDTO;
 
 public class BundleManager extends AbstractManager implements IBundleManager {
 
+	private static final Function<Bundle, BundleMTO> mapper = b -> {
+		return BundleMTO.createMTO(b);
+	};
+
 	@Override
 	public BundleMTO[] getBundles() {
-		return selectBundleMTOs(null);
+		List<BundleMTO> results = selectAndMap(getAllBundles(), null, mapper);
+		return results.toArray(new BundleMTO[results.size()]);
 	}
 
 	@Override
 	public BundleMTO getBundle(long bundleId) {
-		Bundle b = getBundle0(bundleId);
-		return (b == null) ? null : BundleMTO.createMTO(b);
+		return BundleMTO.createMTO(getBundle0(bundleId));
 	}
 
 	@Override
 	public BundleMTO[] getBundles(final String symbolicName) {
-		return selectBundleMTOs(new BundleSelector() {
-			public boolean select(Bundle b) {
-				return (b.getSymbolicName().equals(symbolicName));
-			}
-		});
+		List<BundleMTO> results = selectAndMap(getAllBundles(), b -> {
+			return b.getSymbolicName().equals(symbolicName);
+		}, mapper);
+		return results.toArray(new BundleMTO[results.size()]);
 	}
 
 	private IStatus startstop(final long bundleId, int options, boolean start) {
-		Bundle bundle = selectBundle(new BundleSelector() {
-			@Override
-			public boolean select(Bundle b) {
-				return b.getBundleId() == bundleId;
-			}
-		});
+		Bundle bundle = getBundle0(bundleId);
 		if (bundle == null)
 			return createErrorStatus("Cannot find bundle with bundleId=" + bundleId, new NullPointerException());
 		try {
@@ -101,9 +102,13 @@ public class BundleManager extends AbstractManager implements IBundleManager {
 	}
 
 	@Override
-	public BundleMTO installBundle(String url) throws BundleException {
-		Bundle b = getContext().installBundle(url);
-		return BundleMTO.createMTO(b);
+	public BundleMTO installBundle(String url) throws BundleInstallException {
+		try {
+			return BundleMTO.createMTO(getContext().installBundle(url));
+		} catch (BundleException e) {
+			logError("Cannot install bundle with url=" + url, e);
+			throw new BundleInstallException("Cannot install bundle with url=" + url);
+		}
 	}
 
 	@Override
@@ -116,7 +121,7 @@ public class BundleManager extends AbstractManager implements IBundleManager {
 			b.uninstall();
 			return SerializableStatus.OK_STATUS;
 		} catch (BundleException e) {
-			return createErrorStatus("Cannot uninstall bundle with id=" + bundleId, e);
+			return createErrorStatus("Could not uninstall bundle=" + bundleId, e);
 		}
 	}
 
@@ -128,17 +133,17 @@ public class BundleManager extends AbstractManager implements IBundleManager {
 			b.update();
 			return SerializableStatus.OK_STATUS;
 		} catch (BundleException e) {
-			return createErrorStatus("Cannot uninstall bundle with id=" + bundleId, e);
+			return createErrorStatus("Cannot update bundle=" + bundleId, e);
 		}
 	}
 
 	public IStatus updateBundle(long bundleId, String urlString) {
 		Bundle b = getBundle0(bundleId);
 		if (b == null)
-			return createErrorStatus("Bundle with id=" + bundleId + " not found to update", new NullPointerException());
+			return createErrorStatus("Bundle with id=" + bundleId + " and urlString=" + urlString
+					+ " not found to update", new NullPointerException());
 		try {
-			final URL url = new URL(urlString);
-			b.update(url.openStream());
+			b.update(new URL(urlString).openStream());
 			return SerializableStatus.OK_STATUS;
 		} catch (BundleException e) {
 			return createErrorStatus("Cannot update bundle with id=" + bundleId, e);

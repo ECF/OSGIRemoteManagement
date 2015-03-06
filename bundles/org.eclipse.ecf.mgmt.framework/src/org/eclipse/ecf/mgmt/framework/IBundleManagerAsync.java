@@ -13,7 +13,6 @@ import java.util.concurrent.CompletableFuture;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ecf.mgmt.framework.startlevel.BundleStartLevelMTO;
-import org.osgi.framework.BundleException;
 
 public interface IBundleManagerAsync {
 
@@ -35,7 +34,7 @@ public interface IBundleManagerAsync {
 
 	CompletableFuture<Void> setBundleStartlevelAsync(long bundleId, int startLevel);
 
-	CompletableFuture<BundleMTO> installBundleAsync(String url) throws BundleException;
+	CompletableFuture<BundleMTO> installBundleAsync(String url) throws BundleInstallException;
 
 	CompletableFuture<IStatus> uninstallBundleAsync(long bundleId);
 

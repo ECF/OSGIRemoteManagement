@@ -70,16 +70,16 @@ public class ApplicationManager extends AbstractManager implements IApplicationM
 
 	List<ServiceReference<ApplicationDescriptor>> getAppSRs(String appId) {
 		ServiceReference<ApplicationDescriptor>[] appSRs = appDescTracker.getServiceReferences();
-		return (appSRs == null) ? Collections.emptyList() : Arrays.asList(appSRs).stream().filter(p -> {
+		return (appSRs == null) ? Collections.emptyList() : select(Arrays.asList(appSRs),p -> {
 			return appId == null || appId.equals(p.getProperty(Constants.SERVICE_PID));
-		}).collect(Collectors.toList());
+		});
 	}
 
 	List<ServiceReference<ApplicationHandle>> getAppInstSRs(String appInstId) {
 		ServiceReference<ApplicationHandle>[] appSRs = appInstTracker.getServiceReferences();
-		return (appSRs == null) ? Collections.emptyList() : Arrays.asList(appSRs).stream().filter(p -> {
+		return (appSRs == null) ? Collections.emptyList() : select(Arrays.asList(appSRs),p -> {
 			return appInstId == null || appInstId.equals(p.getProperty(Constants.SERVICE_PID));
-		}).collect(Collectors.toList());
+		});
 	}
 
 	@Override

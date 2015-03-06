@@ -16,3 +16,4 @@ Import-Package: org.eclipse.ecf.core;version="3.0.0",
 Require-Bundle: org.eclipse.equinox.common
 Service-Component: OSGI-INF/containerfactorymanager.xml
 Bundle-ActivationPolicy: lazy
+Export-Package: org.eclipse.ecf.mgmt.container.host;version="1.0.0"

@@ -11,7 +11,6 @@ package org.eclipse.ecf.mgmt.framework;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ecf.mgmt.framework.startlevel.BundleStartLevelMTO;
-import org.osgi.framework.BundleException;
 
 public interface IBundleManager {
 
@@ -33,7 +32,7 @@ public interface IBundleManager {
 
 	void setBundleStartlevel(long bundleId, int startLevel);
 
-	BundleMTO installBundle(String url) throws BundleException;
+	BundleMTO installBundle(String url) throws BundleInstallException;
 
 	IStatus uninstallBundle(long bundleId);
 

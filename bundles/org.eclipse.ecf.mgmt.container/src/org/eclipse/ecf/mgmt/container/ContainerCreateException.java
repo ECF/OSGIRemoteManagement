@@ -9,7 +9,7 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.container;
 
-import org.eclipse.ecf.mgmt.PropertiesUtil;
+import org.eclipse.ecf.mgmt.SerializationUtil;
 
 public class ContainerCreateException extends Exception {
 
@@ -24,13 +24,13 @@ public class ContainerCreateException extends Exception {
 	}
 
 	public ContainerCreateException(String message, Throwable cause) {
-		super(message, (cause == null) ? null : PropertiesUtil.isSerializable(cause) ? cause : new Throwable(
+		super(message, (cause == null) ? null : SerializationUtil.isSerializable(cause) ? cause : new Throwable(
 				cause.getMessage()));
 	}
 
 	public ContainerCreateException(String message, Throwable cause, boolean enableSuppression,
 			boolean writableStackTrace) {
-		super(message, (cause == null) ? null : PropertiesUtil.isSerializable(cause) ? cause : new Throwable(
+		super(message, (cause == null) ? null : SerializationUtil.isSerializable(cause) ? cause : new Throwable(
 				cause.getMessage()), enableSuppression, writableStackTrace);
 	}
 

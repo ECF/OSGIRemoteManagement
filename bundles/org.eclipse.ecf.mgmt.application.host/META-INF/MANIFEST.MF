@@ -13,3 +13,4 @@ Import-Package: org.eclipse.ecf.core.status;version="1.1.0",
  org.osgi.service.application,
  org.osgi.util.tracker
 Bundle-ActivationPolicy: lazy
+Export-Package: org.eclipse.ecf.mgmt.application.host;version="1.0.0"

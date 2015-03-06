@@ -23,6 +23,7 @@ public class BundleMTO implements Serializable {
 	private static final long serialVersionUID = -8261289274590963132L;
 
 	public static BundleMTO createMTO(Bundle bundle) {
+		if (bundle == null) return null;
 		return new BundleMTO(bundle.adapt(BundleDTO.class), PropertiesUtil.convertHeadersToMap(bundle.getHeaders()),
 				bundle.getLocation());
 	}

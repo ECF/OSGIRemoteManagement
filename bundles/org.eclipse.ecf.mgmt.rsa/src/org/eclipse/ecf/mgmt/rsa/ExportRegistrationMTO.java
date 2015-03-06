@@ -12,7 +12,7 @@ package org.eclipse.ecf.mgmt.rsa;
 import java.util.Map;
 
 import org.eclipse.ecf.core.identity.ID;
-import org.eclipse.ecf.mgmt.PropertiesUtil;
+import org.eclipse.ecf.mgmt.SerializationUtil;
 
 public class ExportRegistrationMTO {
 
@@ -27,7 +27,7 @@ public class ExportRegistrationMTO {
 	}
 
 	public ExportRegistrationMTO(Throwable exception) {
-		this.exception = PropertiesUtil.isSerializable(exception) ? exception : new Throwable(exception.toString());
+		this.exception = SerializationUtil.isSerializable(exception) ? exception : new Throwable(exception.toString());
 		this.exportReference = null;
 	}
 

@@ -9,7 +9,7 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.identity;
 
-import org.eclipse.ecf.mgmt.PropertiesUtil;
+import org.eclipse.ecf.mgmt.SerializationUtil;
 
 public class IDCreateException extends RuntimeException {
 
@@ -20,11 +20,11 @@ public class IDCreateException extends RuntimeException {
 	}
 
 	public IDCreateException(Throwable cause) {
-		super(PropertiesUtil.isSerializable(cause) ? cause : new Throwable(cause.getMessage()));
+		super(SerializationUtil.isSerializable(cause) ? cause : new Throwable(cause.getMessage()));
 	}
 
 	public IDCreateException(String message, Throwable cause) {
-		super(message, PropertiesUtil.isSerializable(cause) ? cause : new Throwable(cause.getMessage()));
+		super(message, SerializationUtil.isSerializable(cause) ? cause : new Throwable(cause.getMessage()));
 	}
 
 }
