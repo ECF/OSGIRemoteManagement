@@ -7,24 +7,24 @@
  * Contributors:
  *   Composent, Inc. - initial API and implementation
  ******************************************************************************/
-package org.eclipse.ecf.mgmt.scr;
+package org.eclipse.ecf.mgmt.sharedobject;
+
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.ecf.mgmt.identity.IDMTO;
 
-/**
- * Service component runtime manager service interface.
- * 
- */
-public interface ISCRManager {
+public interface ISharedObjectManagerAsync {
 
-	ComponentMTO[] getComponents(long bundleId);
+	CompletableFuture<SharedObjectMTO[]> getSharedObjectsAsync(IDMTO containerID);
 
-	ComponentMTO getComponent(long componentId);
+	CompletableFuture<IStatus> createSharedObjectAsync(IDMTO containerID,
+			IDMTO sharedObjectID, String sharedObjectClassName,
+			Map<String,?> properties);
 
-	ComponentMTO[] getComponents();
+	CompletableFuture<IStatus> destroySharedObjectAsync(IDMTO containerID,
+			IDMTO sharedObject);
 
-	IStatus enable(long id);
 
-	IStatus disable(long id);
-	
 }

@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ecf.mgmt.identity.IDMTO;
 
 public interface ISharedObjectManager {
+	
 	SharedObjectMTO[] getSharedObjects(IDMTO containerID);
 
 	IStatus createSharedObject(IDMTO containerID,

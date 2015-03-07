@@ -9,22 +9,24 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.scr;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.eclipse.core.runtime.IStatus;
 
 /**
  * Service component runtime manager service interface.
  * 
  */
-public interface ISCRManager {
+public interface ISCRManagerAsync {
 
-	ComponentMTO[] getComponents(long bundleId);
+	CompletableFuture<ComponentMTO[]> getComponentsAsync(long bundleId);
 
-	ComponentMTO getComponent(long componentId);
+	CompletableFuture<ComponentMTO> getComponentAsync(long componentId);
 
-	ComponentMTO[] getComponents();
+	CompletableFuture<ComponentMTO[]> getComponentsAsync();
 
-	IStatus enable(long id);
+	CompletableFuture<IStatus> enableAsync(long componentId);
 
-	IStatus disable(long id);
-	
+	CompletableFuture<IStatus> disableAsync(long componentId);
+
 }
