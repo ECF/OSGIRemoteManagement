@@ -16,7 +16,7 @@ public class ExtensionMTO implements Serializable {
 
 	private static final long serialVersionUID = -6840724444591107433L;
 	private String label;
-	private String identifier;
+	private String extensionPointUniqueIdentifier;
 	private String namespaceIdentifier;
 	private String simpleIdentifier;
 	private String uniqueIdentifier;
@@ -24,11 +24,11 @@ public class ExtensionMTO implements Serializable {
 	private long contributorId;
 	private ConfigurationElementMTO configurationElements[];
 
-	public ExtensionMTO(String label, String identifier, String namespaceIdentifier, String simpleIdentifier,
+	public ExtensionMTO(String label, String extensionPointUniqueIdentifier, String namespaceIdentifier, String simpleIdentifier,
 			String uniqueIdentifier, boolean valid, long contributorId,
 			ConfigurationElementMTO[] configurationElementInfos) {
 		this.label = label;
-		this.identifier = identifier;
+		this.extensionPointUniqueIdentifier = extensionPointUniqueIdentifier;
 		this.namespaceIdentifier = namespaceIdentifier;
 		this.simpleIdentifier = simpleIdentifier;
 		this.uniqueIdentifier = uniqueIdentifier;
@@ -41,8 +41,8 @@ public class ExtensionMTO implements Serializable {
 		return label;
 	}
 
-	public String getIdentifier() {
-		return identifier;
+	public String getExtensionPointUniqueIdentifier() {
+		return extensionPointUniqueIdentifier;
 	}
 
 	public String getNamespaceIdentifier() {
@@ -71,7 +71,7 @@ public class ExtensionMTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ExtensionMTO [label=" + label + ", identifier=" + identifier + ", namespaceIdentifier="
+		return "ExtensionMTO [label=" + label + ", extensionPointUniqueIdentifier=" + extensionPointUniqueIdentifier + ", namespaceIdentifier="
 				+ namespaceIdentifier + ", simpleIdentifier=" + simpleIdentifier + ", uniqueIdentifier="
 				+ uniqueIdentifier + ", valid=" + valid + ", contributorId=" + contributorId
 				+ ", configurationElements=" + Arrays.toString(configurationElements) + "]";
