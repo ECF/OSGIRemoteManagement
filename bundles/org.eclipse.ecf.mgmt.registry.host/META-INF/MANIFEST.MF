@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ECF Registry Management Host Impl
+Bundle-SymbolicName: org.eclipse.ecf.mgmt.registry.host
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Eclipse.org - ECF
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: org.eclipse.ecf.mgmt.framework.host;version="1.0.0",
+ org.eclipse.ecf.mgmt.registry;version="1.0.0",
+ org.osgi.framework;version="1.8.0"
+Require-Bundle: org.eclipse.equinox.common,
+ org.eclipse.equinox.registry
+Export-Package: org.eclipse.ecf.mgmt.registry.host;version="1.0.0"

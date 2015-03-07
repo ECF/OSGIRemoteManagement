@@ -107,6 +107,13 @@ public abstract class AbstractManager implements IAdaptable {
 		return getContext().getBundle(bundleId);
 	}
 
+	protected Bundle getBundle0(String symbolicName) {
+		List<Bundle> results = select(getAllBundles(),b -> {
+			return b.getSymbolicName().equals(symbolicName);
+		});
+		return results.size()==0?null:results.get(0);
+	}
+	
 	protected Bundle getFrameworkBundle() {
 		return getBundle0(0);
 	}
