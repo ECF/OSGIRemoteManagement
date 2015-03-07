@@ -94,9 +94,9 @@ public abstract class AbstractManager implements IAdaptable {
 	protected <T> List<T> select(List<T> source, final Predicate<T> filter) {
 		return source.stream().filter(new Predicate<T>() {
 			public boolean test(T ins) {
-				return filter == null;
+				return filter == null?true:filter.test(ins);
 			}
-		}.or(filter)).collect(Collectors.toList());
+		}).collect(Collectors.toList());
 	}
 
 	protected <T, R> List<R> selectAndMap(List<T> source, final Predicate<T> filter, Function<T, R> map) {

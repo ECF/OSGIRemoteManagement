@@ -12,5 +12,4 @@ Import-Package: org.eclipse.ecf.core.identity;version="3.2.0",
  org.osgi.framework
 Require-Bundle: org.eclipse.equinox.common
 Bundle-ActivationPolicy: lazy
-Service-Component: OSGI-INF/identityfactorymanager.xml
 Export-Package: org.eclipse.ecf.mgmt.identity.host;version="1.0.0"

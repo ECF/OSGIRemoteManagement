@@ -30,28 +30,19 @@ public class SCRManager extends AbstractManager implements ISCRManager {
 
 	private ScrService scrService;
 
-	void bindScrService(ScrService svc) {
+	protected void bindScrService(ScrService svc) {
 		this.scrService = svc;
 	}
 
-	void unbindScrService(ScrService svc) {
+	protected void unbindScrService(ScrService svc) {
 		this.scrService = null;
 	}
 
 	private Hashtable<CompRef, CompRef> compRefs = new Hashtable<CompRef, CompRef>(101);
 
-	private Long getComponentId(Component comp) {
-		return (Long) comp.getProperties().get(ComponentConstants.COMPONENT_ID);
-	}
-
-	public ComponentMTO getComponent(long componentId) {
-		Component c = scrService.getComponent(componentId);
-		return (c == null)?null:getComponentMTO(c);
-	}
-
-	private ComponentMTO getComponentMTO(Component comp) {
+	protected ComponentMTO createMTO(Component comp) {
 		CompRef ref = null;
-		CompRef cRef = new CompRef(comp.getBundle().getBundleId(), comp.getName(), getComponentId(comp));
+		CompRef cRef = new CompRef(comp.getBundle().getBundleId(), comp.getName(), (Long) comp.getProperties().get(ComponentConstants.COMPONENT_ID));
 		synchronized (compRefs) {
 			ref = (CompRef) compRefs.get(cRef);
 			if (ref == null) {
@@ -63,20 +54,16 @@ public class SCRManager extends AbstractManager implements ISCRManager {
 		return ComponentMTO.createMTO(ref, comp);
 	}
 
-	private ComponentMTO[] getComponentMTOsForBundle(Bundle bundle) {
+	protected ComponentMTO[] getComponentMTOsForBundle(Bundle bundle) {
 		Component[] comps = (bundle == null) ? scrService.getComponents() : scrService.getComponents(bundle);
 		if (comps == null) return new ComponentMTO[0];
 		List<ComponentMTO> results = selectAndMap(Arrays.asList(comps),null,c -> {
-			return getComponentMTO(c);
+			return createMTO(c);
 		});
 		return results.toArray(new ComponentMTO[results.size()]);
 	}
 
-	public ComponentMTO[] getComponents() {
-		return getComponentMTOsForBundle(null);
-	}
-
-	private IStatus enableDisableComponent(long id, boolean enable) {
+	protected IStatus enableDisableComponent(long id, boolean enable) {
 		CompRef cRef = findCRefForId(id);
 		if (cRef == null)
 			return createErrorStatus("Component with id=" + id + " cannot be found"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -94,37 +81,35 @@ public class SCRManager extends AbstractManager implements ISCRManager {
 		}
 	}
 
+	public ComponentMTO getComponent(long componentId) {
+		Component c = scrService.getComponent(componentId);
+		return (c == null)?null:createMTO(c);
+	}
+
+	public ComponentMTO[] getComponents() {
+		return getComponentMTOsForBundle(null);
+	}
+
 	public IStatus enable(long id) {
 		return enableDisableComponent(id, true);
 	}
 
-	private Component findComponent(ScrService scrService, CompRef cRef) {
-		Bundle bundle = findBundleForId(cRef.getBundleId());
-		if (bundle == null)
-			return null;
-		Component[] bundleComponents = scrService.getComponents(bundle);
-		if (bundleComponents == null)
-			return null;
-		for (int i = 0; i < bundleComponents.length; i++) {
-			String cRefName = cRef.getName();
-			if (cRefName != null && cRefName.equals(bundleComponents[i].getName()))
-				return bundleComponents[i];
+	protected Component findComponent(ScrService scrService, CompRef cRef) {
+		Bundle bundle = getBundle0(cRef.getBundleId());
+		if (bundle != null) {
+			Component[] bundleComponents = scrService.getComponents(bundle);
+			if (bundleComponents != null) {
+				for (int i = 0; i < bundleComponents.length; i++) {
+					String cRefName = cRef.getName();
+					if (cRefName != null && cRefName.equals(bundleComponents[i].getName()))
+						return bundleComponents[i];
+				}
+			}
 		}
 		return null;
 	}
 
-	private Bundle findBundleForId(long bid) {
-		Bundle[] bundles = getContext().getBundles();
-		if (bundles == null)
-			return null;
-		for (int i = 0; i < bundles.length; i++) {
-			if (bundles[i].getBundleId() == bid)
-				return bundles[i];
-		}
-		return null;
-	}
-
-	private CompRef findCRefForId(long id) {
+	protected CompRef findCRefForId(long id) {
 		synchronized (compRefs) {
 			for (Iterator<CompRef> i = compRefs.keySet().iterator(); i.hasNext();) {
 				CompRef cr = (CompRef) i.next();
@@ -141,9 +126,7 @@ public class SCRManager extends AbstractManager implements ISCRManager {
 
 	public ComponentMTO[] getComponents(long bundleId) {
 		Bundle bundle = getBundle0(bundleId);
-		if (bundle == null)
-			return null;
-		return getComponentMTOsForBundle(bundle);
+		return (bundle == null)?null:getComponentMTOsForBundle(bundle);
 	}
 
 }

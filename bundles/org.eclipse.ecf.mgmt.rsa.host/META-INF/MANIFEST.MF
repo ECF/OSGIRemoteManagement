@@ -14,5 +14,4 @@ Import-Package: org.eclipse.ecf.core.identity,
  org.osgi.service.remoteserviceadmin;version="1.1.0"
 Require-Bundle: org.eclipse.equinox.common
 Bundle-ActivationPolicy: lazy
-Service-Component: OSGI-INF/rsamanager.xml
 Export-Package: org.eclipse.ecf.mgmt.rsa.host;version="1.0.0"
