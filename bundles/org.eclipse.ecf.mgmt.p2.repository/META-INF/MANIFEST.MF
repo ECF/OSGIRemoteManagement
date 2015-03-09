@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ECF P2 Repository Management
+Bundle-SymbolicName: org.eclipse.ecf.mgmt.p2.repository
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Eclipse.org - ECF
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Import-Package: org.eclipse.ecf.mgmt.p2;version="1.0.0"
+Require-Bundle: org.eclipse.equinox.common
+Export-Package: org.eclipse.ecf.mgmt.p2.repository;version="1.0.0"

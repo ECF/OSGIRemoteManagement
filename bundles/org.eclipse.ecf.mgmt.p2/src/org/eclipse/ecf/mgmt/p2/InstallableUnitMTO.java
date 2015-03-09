@@ -10,25 +10,22 @@
 package org.eclipse.ecf.mgmt.p2;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Map;
 
-@SuppressWarnings("rawtypes")
 public class InstallableUnitMTO implements Serializable {
 
 	private static final long serialVersionUID = 7741324381427433225L;
 	private final VersionedId id;
-	private final Map<String,?> properties;
+	private final Map<String, ?> properties;
 	private final boolean singleton;
 	private final boolean resolved;
-	private final Collection<LicenseMTO> licenses;
+	private final LicenseMTO[] licenses;
 	private final CopyrightMTO copyright;
 	private final UpdateDescriptorMTO updateDescriptor;
 
-	public InstallableUnitMTO(VersionedId id, Map<String,?> properties,
-			boolean singleton, boolean resolved,
-			Collection<LicenseMTO> licenses, CopyrightMTO copyright,
-			UpdateDescriptorMTO updateDescriptor) {
+	public InstallableUnitMTO(VersionedId id, Map<String, ?> properties,
+			boolean singleton, boolean resolved, LicenseMTO[] licenses,
+			CopyrightMTO copyright, UpdateDescriptorMTO updateDescriptor) {
 		this.id = id;
 		this.properties = properties;
 		this.singleton = singleton;
@@ -42,7 +39,7 @@ public class InstallableUnitMTO implements Serializable {
 		return id;
 	}
 
-	public Map<String,?> getProperties() {
+	public Map<String, ?> getProperties() {
 		return properties;
 	}
 
@@ -54,7 +51,7 @@ public class InstallableUnitMTO implements Serializable {
 		return resolved;
 	}
 
-	public Collection getLicenses() {
+	public LicenseMTO[] getLicenses() {
 		return licenses;
 	}
 

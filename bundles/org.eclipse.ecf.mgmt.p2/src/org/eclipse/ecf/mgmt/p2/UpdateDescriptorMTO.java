@@ -11,7 +11,6 @@ package org.eclipse.ecf.mgmt.p2;
 
 import java.io.Serializable;
 import java.net.URI;
-import java.util.Collection;
 
 public class UpdateDescriptorMTO implements Serializable {
 
@@ -19,10 +18,10 @@ public class UpdateDescriptorMTO implements Serializable {
 	private final URI location;
 	private final int severity;
 	private final String description;
-	private final Collection<InstallableUnitMTO> iusBeingUpdated;
+	private final InstallableUnitMTO[] iusBeingUpdated;
 
 	public UpdateDescriptorMTO(URI location, int severity, String description,
-			Collection<InstallableUnitMTO> iusBeingUpdated) {
+			InstallableUnitMTO[] iusBeingUpdated) {
 		this.location = location;
 		this.severity = severity;
 		this.description = description;
@@ -33,7 +32,7 @@ public class UpdateDescriptorMTO implements Serializable {
 		return location;
 	}
 
-	public Collection<InstallableUnitMTO> getIUSBeingUpdated() {
+	public InstallableUnitMTO[] getIUSBeingUpdated() {
 		return iusBeingUpdated;
 	}
 
