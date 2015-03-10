@@ -21,18 +21,16 @@ public class InstallableUnitMTO implements Serializable {
 	private final boolean resolved;
 	private final LicenseMTO[] licenses;
 	private final CopyrightMTO copyright;
-	private final UpdateDescriptorMTO updateDescriptor;
 
 	public InstallableUnitMTO(VersionedId id, Map<String, ?> properties,
 			boolean singleton, boolean resolved, LicenseMTO[] licenses,
-			CopyrightMTO copyright, UpdateDescriptorMTO updateDescriptor) {
+			CopyrightMTO copyright) {
 		this.id = id;
 		this.properties = properties;
 		this.singleton = singleton;
 		this.resolved = resolved;
 		this.licenses = licenses;
 		this.copyright = copyright;
-		this.updateDescriptor = updateDescriptor;
 	}
 
 	public VersionedId getId() {
@@ -59,10 +57,6 @@ public class InstallableUnitMTO implements Serializable {
 		return copyright;
 	}
 
-	public UpdateDescriptorMTO getUpdateDescriptor() {
-		return updateDescriptor;
-	}
-
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("InstallableUnitMTO[id=");
@@ -77,8 +71,6 @@ public class InstallableUnitMTO implements Serializable {
 		buffer.append(licenses);
 		buffer.append(", copyright=");
 		buffer.append(copyright);
-		buffer.append(", updateDescriptor=");
-		buffer.append(updateDescriptor);
 		buffer.append("]");
 		return buffer.toString();
 	}
