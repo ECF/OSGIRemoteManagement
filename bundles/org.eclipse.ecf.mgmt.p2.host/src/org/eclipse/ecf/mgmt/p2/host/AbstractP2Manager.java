@@ -1,4 +1,4 @@
-package org.eclipse.ecf.p2.host;
+package org.eclipse.ecf.mgmt.p2.host;
 
 import java.util.ArrayList;
 import java.util.Arrays;
