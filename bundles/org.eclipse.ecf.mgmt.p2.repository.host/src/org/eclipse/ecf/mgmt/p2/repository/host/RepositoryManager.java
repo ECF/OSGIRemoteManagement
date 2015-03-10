@@ -3,26 +3,18 @@ package org.eclipse.ecf.mgmt.p2.repository.host;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ecf.core.status.SerializableMultiStatus;
 import org.eclipse.ecf.core.status.SerializableStatus;
-import org.eclipse.ecf.mgmt.framework.host.AbstractManager;
-import org.eclipse.ecf.mgmt.p2.CopyrightMTO;
 import org.eclipse.ecf.mgmt.p2.InstallableUnitMTO;
-import org.eclipse.ecf.mgmt.p2.LicenseMTO;
-import org.eclipse.ecf.mgmt.p2.VersionedId;
 import org.eclipse.ecf.mgmt.p2.repository.IRepositoryManager;
 import org.eclipse.ecf.mgmt.p2.repository.RepositoryMTO;
-import org.eclipse.equinox.p2.core.IProvisioningAgent;
+import org.eclipse.ecf.p2.host.AbstractP2Manager;
 import org.eclipse.equinox.p2.core.ProvisionException;
-import org.eclipse.equinox.p2.metadata.ICopyright;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.p2.metadata.ILicense;
-import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.equinox.p2.query.IQueryable;
 import org.eclipse.equinox.p2.query.QueryUtil;
 import org.eclipse.equinox.p2.repository.artifact.IArtifactRepository;
@@ -30,18 +22,8 @@ import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 
-public class RepositoryManager extends AbstractManager implements
+public class RepositoryManager extends AbstractP2Manager implements
 		IRepositoryManager {
-
-	private IProvisioningAgent agent;
-
-	protected void bindProvisioningAgent(IProvisioningAgent agent) {
-		this.agent = agent;
-	}
-
-	protected void unbindProvisioningAgent(IProvisioningAgent agent) {
-		this.agent = null;
-	}
 
 	protected IMetadataRepositoryManager getMetadataRepositoryManager() {
 		return (IMetadataRepositoryManager) agent
@@ -55,8 +37,7 @@ public class RepositoryManager extends AbstractManager implements
 
 	@Override
 	public URI[] getKnownMetadataRepositories(int flags) {
-		IMetadataRepositoryManager mrm = getMetadataRepositoryManager();
-		return (mrm != null) ? mrm.getKnownRepositories(flags) : null;
+		return getMetadataRepositoryManager().getKnownRepositories(flags);
 	}
 
 	@Override
@@ -66,8 +47,7 @@ public class RepositoryManager extends AbstractManager implements
 
 	@Override
 	public URI[] getKnownArtifactRepositories(int flags) {
-		IArtifactRepositoryManager arm = getArtifactRepositoryManager();
-		return (arm != null) ? arm.getKnownRepositories(flags) : null;
+		return getArtifactRepositoryManager().getKnownRepositories(flags);
 	}
 
 	@Override
@@ -77,11 +57,9 @@ public class RepositoryManager extends AbstractManager implements
 
 	@Override
 	public IStatus addArtifactRepository(URI location, int flags) {
-		IArtifactRepositoryManager manager = getArtifactRepositoryManager();
-		if (manager == null)
-			return createErrorStatus("No artifact repository manager found");
 		try {
-			manager.loadRepository(location, flags, null);
+			getArtifactRepositoryManager()
+					.loadRepository(location, flags, null);
 			return new SerializableStatus(Status.OK_STATUS);
 		} catch (ProvisionException e) {
 			// fall through and create a new repository
@@ -90,7 +68,8 @@ public class RepositoryManager extends AbstractManager implements
 		// for convenience create and add a repository here
 		String repositoryName = location + " - metadata";
 		try {
-			manager.createRepository(location, repositoryName,
+			getArtifactRepositoryManager().createRepository(location,
+					repositoryName,
 					IArtifactRepositoryManager.TYPE_SIMPLE_REPOSITORY, null);
 			return new SerializableStatus(Status.OK_STATUS);
 		} catch (ProvisionException e) {
@@ -105,20 +84,18 @@ public class RepositoryManager extends AbstractManager implements
 
 	@Override
 	public IStatus addMetadataRepository(URI location, int flags) {
-		IMetadataRepositoryManager manager = getMetadataRepositoryManager();
-		if (manager == null)
-			return createErrorStatus("No metadata repository manager found");
 		try {
-			manager.loadRepository(location, flags, null);
+			getArtifactRepositoryManager()
+					.loadRepository(location, flags, null);
 			return new SerializableStatus(Status.OK_STATUS);
 		} catch (ProvisionException e) {
 			// fall through and create a new repository
 		}
-
 		// for convenience create and add a repository here
 		String repositoryName = location + " - metadata";
 		try {
-			manager.createRepository(location, repositoryName,
+			getArtifactRepositoryManager().createRepository(location,
+					repositoryName,
 					IMetadataRepositoryManager.TYPE_SIMPLE_REPOSITORY, null);
 			return new SerializableStatus(Status.OK_STATUS);
 		} catch (ProvisionException e) {
@@ -133,19 +110,13 @@ public class RepositoryManager extends AbstractManager implements
 
 	@Override
 	public IStatus removeArtifactRepository(URI location) {
-		IArtifactRepositoryManager manager = getArtifactRepositoryManager();
-		if (manager == null)
-			return createErrorStatus("No artifact repository manager found");
-		manager.removeRepository(location);
+		getArtifactRepositoryManager().removeRepository(location);
 		return new SerializableStatus(Status.OK_STATUS);
 	}
 
 	@Override
 	public IStatus removeMetadataRepository(URI location) {
-		IMetadataRepositoryManager manager = getMetadataRepositoryManager();
-		if (manager == null)
-			return createErrorStatus("No metadata repository manager found");
-		manager.removeRepository(location);
+		getArtifactRepositoryManager().removeRepository(location);
 		return new SerializableStatus(Status.OK_STATUS);
 	}
 
@@ -182,30 +153,24 @@ public class RepositoryManager extends AbstractManager implements
 
 	@Override
 	public IStatus refreshArtifactRepository(URI location) {
-		IArtifactRepositoryManager manager = getArtifactRepositoryManager();
-		if (manager == null)
-			return createErrorStatus("No artifact repository manager found");
 		try {
-			manager.refreshRepository(location, null);
+			getArtifactRepositoryManager().refreshRepository(location, null);
+			return new SerializableStatus(Status.OK_STATUS);
 		} catch (ProvisionException e) {
 			return createErrorStatus("error refreshing repository location="
 					+ location, e);
 		}
-		return new SerializableStatus(Status.OK_STATUS);
 	}
 
 	@Override
 	public IStatus refreshMetadataRepository(URI location) {
-		IMetadataRepositoryManager manager = getMetadataRepositoryManager();
-		if (manager == null)
-			return createErrorStatus("No artifact repository manager found");
 		try {
-			manager.refreshRepository(location, null);
+			getMetadataRepositoryManager().refreshRepository(location, null);
+			return new SerializableStatus(Status.OK_STATUS);
 		} catch (ProvisionException e) {
 			return createErrorStatus("error refreshing repository location="
 					+ location, e);
 		}
-		return new SerializableStatus(Status.OK_STATUS);
 	}
 
 	@Override
@@ -321,55 +286,20 @@ public class RepositoryManager extends AbstractManager implements
 
 	@Override
 	public InstallableUnitMTO[] getInstallableFeatures(URI location) {
-		IMetadataRepositoryManager manager = getMetadataRepositoryManager();
-		if (manager == null)
-			return null;
-		@SuppressWarnings("rawtypes")
-		IQueryable queryable = null;
+		IQueryable<IInstallableUnit> queryable = null;
 		if (location == null) {
-			queryable = manager;
-		} else {
+			queryable = getMetadataRepositoryManager();
+		} else
 			try {
-				queryable = manager.loadRepository(location, null);
+				queryable = getMetadataRepositoryManager().loadRepository(location, null);
 			} catch (Exception e) {
 				return null;
 			}
-		}
 		if (queryable == null)
 			return null;
-		@SuppressWarnings("unchecked")
-		IInstallableUnit[] units = (IInstallableUnit[]) queryable.query(
+		return getInstallableUnitsMTO((IInstallableUnit[]) queryable.query(
 				QueryUtil.createIUGroupQuery(), null).toArray(
-				IInstallableUnit.class);
-		if (units == null)
-			return null;
-		List<InstallableUnitMTO> results = selectAndMap(Arrays.asList(units),
-				null, un -> {
-					return createInstallableUnitMTO(un);
-				});
-		return results.toArray(new InstallableUnitMTO[results.size()]);
-	}
-
-	private InstallableUnitMTO createInstallableUnitMTO(IInstallableUnit iu) {
-		Version v = iu.getVersion();
-		ICopyright copyRight = iu.getCopyright();
-		Collection<ILicense> licenses = iu.getLicenses();
-		return new InstallableUnitMTO(new VersionedId(iu.getId(),
-				(v == null) ? null : v.toString()), iu.getProperties(),
-				iu.isSingleton(), iu.isResolved(),
-			    licenses==null?null:createLicenses(iu.getLicenses()),
-				copyRight==null?null:new CopyrightMTO(copyRight.getLocation(), copyRight.getBody()));
-	}
-
-	private LicenseMTO[] createLicenses(Collection<ILicense> ls) {
-		List<LicenseMTO> results = selectAndMap(
-				new ArrayList<ILicense>(ls),
-				null,
-				l -> {
-					return new LicenseMTO(l.getLocation(), l.getBody(), l
-							.getUUID());
-				});
-		return results.toArray(new LicenseMTO[results.size()]);
+				IInstallableUnit.class));
 	}
 
 }
