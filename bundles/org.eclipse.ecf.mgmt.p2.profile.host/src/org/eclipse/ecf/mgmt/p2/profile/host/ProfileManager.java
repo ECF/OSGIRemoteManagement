@@ -32,11 +32,6 @@ public class ProfileManager extends AbstractP2Manager implements IProfileManager
 		this.environmentInfo = null;
 	}
 
-	protected IProfileRegistry getProfileRegistry() {
-		return (IProfileRegistry) agent
-				.getService(IProfileRegistry.SERVICE_NAME);
-	}
-
 	@Override
 	public IStatus addProfile(String profileId, Map<String, String> properties) {
 		if (profileId == null)

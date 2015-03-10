@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: ECF P2 Management Host Support
-Bundle-SymbolicName: org.eclipse.ecf.mgmt.p2.host
+Bundle-Name: ECF P2 Management Host Impl
+Bundle-SymbolicName: org.eclipse.ecf.mgmt.p2.install.host
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Eclipse.org - ECF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
@@ -10,10 +10,13 @@ Require-Bundle: org.eclipse.equinox.common
 Import-Package: org.eclipse.ecf.core.status;version="1.1.0",
  org.eclipse.ecf.mgmt.framework.host;version="1.0.0",
  org.eclipse.ecf.mgmt.p2;version="1.0.0",
+ org.eclipse.ecf.mgmt.p2.host;version="1.0.0",
+ org.eclipse.ecf.mgmt.p2.install;version="1.0.0",
+ org.eclipse.equinox.internal.provisional.configurator,
  org.eclipse.equinox.p2.core;version="2.0.0",
  org.eclipse.equinox.p2.engine;version="2.2.0",
  org.eclipse.equinox.p2.metadata;version="2.1.0",
- org.eclipse.equinox.p2.repository.artifact;version="2.3.0",
+ org.eclipse.equinox.p2.planner;version="2.0.0",
+ org.eclipse.equinox.p2.query;version="2.0.0",
  org.eclipse.equinox.p2.repository.metadata;version="2.0.0",
  org.osgi.framework;version="1.8.0"
-Export-Package: org.eclipse.ecf.mgmt.p2.host;version="1.0.0"

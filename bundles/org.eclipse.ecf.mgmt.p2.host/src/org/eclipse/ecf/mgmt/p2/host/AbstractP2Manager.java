@@ -5,16 +5,23 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.ecf.core.status.SerializableMultiStatus;
+import org.eclipse.ecf.core.status.SerializableStatus;
 import org.eclipse.ecf.mgmt.framework.host.AbstractManager;
 import org.eclipse.ecf.mgmt.p2.CopyrightMTO;
 import org.eclipse.ecf.mgmt.p2.InstallableUnitMTO;
 import org.eclipse.ecf.mgmt.p2.LicenseMTO;
 import org.eclipse.ecf.mgmt.p2.VersionedId;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
+import org.eclipse.equinox.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.p2.metadata.ICopyright;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.ILicense;
 import org.eclipse.equinox.p2.metadata.Version;
+import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
+import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 
 public class AbstractP2Manager extends AbstractManager {
 
@@ -59,4 +66,31 @@ public class AbstractP2Manager extends AbstractManager {
 		return results.toArray(new InstallableUnitMTO[results.size()]);
 	}
 	
+	protected IStatus serializeStatus(IStatus status) {
+		if (status == null)
+			return null;
+		if (status.isMultiStatus())
+			return new SerializableMultiStatus(new MultiStatus(
+					status.getPlugin(), status.getCode(), status.getChildren(),
+					status.getMessage(), status.getException()));
+		else
+			return new SerializableStatus(status);
+	}
+
+	protected IProfileRegistry getProfileRegistry() {
+		return (IProfileRegistry) agent
+				.getService(IProfileRegistry.SERVICE_NAME);
+	}
+
+	protected IMetadataRepositoryManager getMetadataRepositoryManager() {
+		return (IMetadataRepositoryManager) agent
+				.getService(IMetadataRepositoryManager.SERVICE_NAME);
+	}
+
+	protected IArtifactRepositoryManager getArtifactRepositoryManager() {
+		return (IArtifactRepositoryManager) agent
+				.getService(IArtifactRepositoryManager.SERVICE_NAME);
+	}
+
+
 }

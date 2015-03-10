@@ -25,16 +25,6 @@ import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 public class RepositoryManager extends AbstractP2Manager implements
 		IRepositoryManager {
 
-	protected IMetadataRepositoryManager getMetadataRepositoryManager() {
-		return (IMetadataRepositoryManager) agent
-				.getService(IMetadataRepositoryManager.SERVICE_NAME);
-	}
-
-	protected IArtifactRepositoryManager getArtifactRepositoryManager() {
-		return (IArtifactRepositoryManager) agent
-				.getService(IArtifactRepositoryManager.SERVICE_NAME);
-	}
-
 	@Override
 	public URI[] getKnownMetadataRepositories(int flags) {
 		return getMetadataRepositoryManager().getKnownRepositories(flags);

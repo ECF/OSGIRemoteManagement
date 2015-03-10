@@ -14,7 +14,7 @@ import org.eclipse.ecf.mgmt.p2.VersionedId;
  * @noimplement This interface is not intended to be implemented by clients.
  * 
  */
-interface IFeatureInstallManager {
+public interface IFeatureInstallManager {
 
 	/**
 	 * Install a given feature, via the given p2 repository locations, into the
