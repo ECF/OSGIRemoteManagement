@@ -13,19 +13,19 @@ import org.eclipse.ecf.mgmt.p2.InstallableUnitMTO;
  */
 public interface IRepositoryManager {
 
-	URI[] getKnownMetadataRepositories(Integer flags);
+	URI[] getKnownMetadataRepositories(int flags);
 
 	URI[] getKnownMetadataRepositories();
 
-	URI[] getKnownArtifactRepositories(Integer flags);
+	URI[] getKnownArtifactRepositories(int flags);
 
 	URI[] getKnownArtifactRepositories();
 
-	IStatus addArtifactRepository(URI location, Integer flags);
+	IStatus addArtifactRepository(URI location, int flags);
 
 	IStatus addArtifactRepository(URI location);
 
-	IStatus addMetadataRepository(URI location, Integer flags);
+	IStatus addMetadataRepository(URI location, int flags);
 
 	IStatus addMetadataRepository(URI location);
 
@@ -33,7 +33,7 @@ public interface IRepositoryManager {
 
 	IStatus removeMetadataRepository(URI location);
 
-	IStatus addRepository(URI location, Integer flags);
+	IStatus addRepository(URI location, int flags);
 
 	IStatus addRepository(URI location);
 
@@ -45,19 +45,19 @@ public interface IRepositoryManager {
 
 	IStatus refreshRepository(URI location);
 
-	RepositoryMTO[] getArtifactRepository(Integer flags);
+	RepositoryMTO[] getArtifactRepositories(int flags);
 
-	RepositoryMTO[] getArtifactRepository();
+	RepositoryMTO[] getArtifactRepositories();
 
-	RepositoryMTO getArtifactRepository(URI location, Integer flags);
+	RepositoryMTO getArtifactRepository(URI location, int flags);
 
 	RepositoryMTO getArtifactRepository(URI location);
 
-	RepositoryMTO[] getMetadataRepository(Integer flags);
+	RepositoryMTO[] getMetadataRepositories(int flags);
 
-	RepositoryMTO[] getMetadataRepository();
+	RepositoryMTO[] getMetadataRepositories();
 
-	RepositoryMTO getMetadataRepository(URI location, Integer flags);
+	RepositoryMTO getMetadataRepository(URI location, int flags);
 
 	RepositoryMTO getMetadataRepository(URI location);
 

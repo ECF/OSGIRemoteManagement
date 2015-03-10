@@ -19,17 +19,17 @@ public interface IRepositoryManagerAsync {
 
 	CompletableFuture<URI[]> getKnownMetadataRepositoriesAsync();
 
-	CompletableFuture<URI[]> getKnownArtifactRepositoriesAsync(Integer flags);
+	CompletableFuture<URI[]> getKnownArtifactRepositoriesAsync(int flags);
 
 	CompletableFuture<URI[]> getKnownArtifactRepositoriesAsync();
 
 	CompletableFuture<IStatus> addArtifactRepositoryAsync(URI location,
-			Integer flags);
+			int flags);
 
 	CompletableFuture<IStatus> addArtifactRepositoryAsync(URI location);
 
 	CompletableFuture<IStatus> addMetadataRepositoryAsync(URI location,
-			Integer flags);
+			int flags);
 
 	CompletableFuture<IStatus> addMetadataRepositoryAsync(URI location);
 
@@ -37,7 +37,7 @@ public interface IRepositoryManagerAsync {
 
 	CompletableFuture<IStatus> removeMetadataRepositoryAsync(URI location);
 
-	CompletableFuture<IStatus> addRepositoryAsync(URI location, Integer flags);
+	CompletableFuture<IStatus> addRepositoryAsync(URI location, int flags);
 
 	CompletableFuture<IStatus> addRepositoryAsync(URI location);
 
@@ -49,21 +49,21 @@ public interface IRepositoryManagerAsync {
 
 	CompletableFuture<IStatus> refreshRepositoryAsync(URI location);
 
-	CompletableFuture<RepositoryMTO[]> getArtifactRepositoryAsync(Integer flags);
+	CompletableFuture<RepositoryMTO[]> getArtifactRepositoriesAsync(int flags);
 
-	CompletableFuture<RepositoryMTO[]> getArtifactRepositoryAsync();
+	CompletableFuture<RepositoryMTO[]> getArtifactRepositoriesAsync();
 
 	CompletableFuture<RepositoryMTO> getArtifactRepositoryAsync(URI location,
-			Integer flags);
+			int flags);
 
 	CompletableFuture<RepositoryMTO> getArtifactRepositoryAsync(URI location);
 
-	CompletableFuture<RepositoryMTO[]> getMetadataRepositoryAsync(Integer flags);
+	CompletableFuture<RepositoryMTO[]> getMetadataRepositoriesAsync(int flags);
 
-	CompletableFuture<RepositoryMTO[]> getMetadataRepositoryAsync();
+	CompletableFuture<RepositoryMTO[]> getMetadataRepositoriesAsync();
 
 	CompletableFuture<RepositoryMTO> getMetadataRepositoryAsync(URI location,
-			Integer flags);
+			int flags);
 
 	CompletableFuture<RepositoryMTO> getMetadataRepositoryAsync(URI location);
 
