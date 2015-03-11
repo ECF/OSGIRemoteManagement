@@ -7,4 +7,3 @@ Bundle-Vendor: Eclipse.org - ECF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.ecf.mgmt;version="1.0.0"
-Import-Package: org.osgi.framework;version="1.8.0"
