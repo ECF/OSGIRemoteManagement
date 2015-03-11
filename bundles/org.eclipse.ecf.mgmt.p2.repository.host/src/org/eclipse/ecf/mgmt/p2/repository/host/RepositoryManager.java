@@ -35,30 +35,21 @@ public class RepositoryManager extends AbstractP2Manager implements
 		IRepositoryManager {
 
 	@Override
-	public URI[] getKnownMetadataRepositories(int flags) {
-		return getMetadataRepositoryManager().getKnownRepositories(flags);
-	}
-
-	@Override
 	public URI[] getKnownMetadataRepositories() {
-		return getKnownMetadataRepositories(0);
-	}
-
-	@Override
-	public URI[] getKnownArtifactRepositories(int flags) {
-		return getArtifactRepositoryManager().getKnownRepositories(flags);
+		return getMetadataRepositoryManager().getKnownRepositories(
+				IMetadataRepositoryManager.REPOSITORIES_ALL);
 	}
 
 	@Override
 	public URI[] getKnownArtifactRepositories() {
-		return getKnownArtifactRepositories(0);
+		return getArtifactRepositoryManager().getKnownRepositories(
+				IMetadataRepositoryManager.REPOSITORIES_ALL);
 	}
 
 	@Override
-	public IStatus addArtifactRepository(URI location, int flags) {
+	public IStatus addArtifactRepository(URI location) {
 		try {
-			getArtifactRepositoryManager()
-					.loadRepository(location, flags, null);
+			getArtifactRepositoryManager().loadRepository(location, null);
 			return new SerializableStatus(Status.OK_STATUS);
 		} catch (ProvisionException e) {
 			// fall through and create a new repository
@@ -77,15 +68,9 @@ public class RepositoryManager extends AbstractP2Manager implements
 	}
 
 	@Override
-	public IStatus addArtifactRepository(URI location) {
-		return addArtifactRepository(location, 0);
-	}
-
-	@Override
-	public IStatus addMetadataRepository(URI location, int flags) {
+	public IStatus addMetadataRepository(URI location) {
 		try {
-			getArtifactRepositoryManager()
-					.loadRepository(location, flags, null);
+			getMetadataRepositoryManager().loadRepository(location, null);
 			return new SerializableStatus(Status.OK_STATUS);
 		} catch (ProvisionException e) {
 			// fall through and create a new repository
@@ -93,7 +78,7 @@ public class RepositoryManager extends AbstractP2Manager implements
 		// for convenience create and add a repository here
 		String repositoryName = location + " - metadata";
 		try {
-			getArtifactRepositoryManager().createRepository(location,
+			getMetadataRepositoryManager().createRepository(location,
 					repositoryName,
 					IMetadataRepositoryManager.TYPE_SIMPLE_REPOSITORY, null);
 			return new SerializableStatus(Status.OK_STATUS);
@@ -103,42 +88,38 @@ public class RepositoryManager extends AbstractP2Manager implements
 	}
 
 	@Override
-	public IStatus addMetadataRepository(URI location) {
-		return addMetadataRepository(location, 0);
-	}
-
-	@Override
 	public IStatus removeArtifactRepository(URI location) {
-		getArtifactRepositoryManager().removeRepository(location);
-		return new SerializableStatus(Status.OK_STATUS);
+		boolean result = getArtifactRepositoryManager().removeRepository(
+				location);
+		return (result) ? SerializableStatus.OK_STATUS
+				: createErrorStatus("Could not remove artifact repository location="
+						+ location);
 	}
 
 	@Override
 	public IStatus removeMetadataRepository(URI location) {
-		getArtifactRepositoryManager().removeRepository(location);
-		return new SerializableStatus(Status.OK_STATUS);
+		boolean result = getArtifactRepositoryManager().removeRepository(
+				location);
+		return (result) ? SerializableStatus.OK_STATUS
+				: createErrorStatus("Could not remove metadata repository location="
+						+ location);
 	}
 
 	@Override
-	public IStatus addRepository(URI location, int flags) {
+	public IStatus addRepository(URI location) {
 		// add metadata repository
-		IStatus metadataStatus = addMetadataRepository(location, flags);
+		IStatus metadataStatus = addMetadataRepository(location);
 		// If it failed, we're done
 		if (!metadataStatus.isOK())
 			return metadataStatus;
 		// If everything's ok with metadata repo
-		IStatus artifactStatus = addArtifactRepository(location, flags);
+		IStatus artifactStatus = addArtifactRepository(location);
 		if (artifactStatus.isOK())
 			return new SerializableStatus(Status.OK_STATUS);
 		return new SerializableStatus(new SerializableMultiStatus(getContext()
 				.getBundle().getSymbolicName(), IStatus.ERROR, new IStatus[] {
 				metadataStatus, artifactStatus }, "addRepository for location="
 				+ location + " failed", null));
-	}
-
-	@Override
-	public IStatus addRepository(URI location) {
-		return addRepository(location, 0);
 	}
 
 	@Override
@@ -189,19 +170,18 @@ public class RepositoryManager extends AbstractP2Manager implements
 				"refresh failed for location=" + location, null));
 	}
 
-	protected RepositoryMTO[] getArtifactRepositories(URI location,
-			int loadFlags) {
+	protected RepositoryMTO[] getArtifactRepositories(URI location) {
 		IArtifactRepositoryManager manager = getArtifactRepositoryManager();
 		if (manager == null)
 			return null;
 		List<URI> locations = Arrays
 				.asList((location != null) ? new URI[] { location }
-						: getKnownArtifactRepositories(0));
+						: getKnownArtifactRepositories());
 		List<RepositoryMTO> results = new ArrayList<RepositoryMTO>();
 		for (URI l : locations) {
 			IArtifactRepository repo;
 			try {
-				repo = manager.loadRepository(l, loadFlags, null);
+				repo = manager.loadRepository(l, null);
 				results.add(new RepositoryMTO(repo.getLocation(), repo
 						.getName(), repo.getDescription(), repo.getType(), repo
 						.getProvider(), repo.getVersion().toString(), repo
@@ -216,39 +196,28 @@ public class RepositoryManager extends AbstractP2Manager implements
 	}
 
 	@Override
-	public RepositoryMTO[] getArtifactRepositories(int flags) {
-		return getArtifactRepositories(null, flags);
-	}
-
-	@Override
 	public RepositoryMTO[] getArtifactRepositories() {
-		return getArtifactRepositories(0);
-	}
-
-	@Override
-	public RepositoryMTO getArtifactRepository(URI location, int loadFlags) {
-		RepositoryMTO[] results = getArtifactRepositories(location, loadFlags);
-		return (results.length == 0) ? null : results[0];
+		return getArtifactRepositories(null);
 	}
 
 	@Override
 	public RepositoryMTO getArtifactRepository(URI location) {
-		return getArtifactRepository(location, 0);
+		RepositoryMTO[] results = getArtifactRepositories(location);
+		return (results.length == 0) ? null : results[0];
 	}
 
-	protected RepositoryMTO[] getMetadataRepositories(URI location,
-			int loadFlags) {
+	protected RepositoryMTO[] getMetadataRepositories(URI location) {
 		IMetadataRepositoryManager manager = getMetadataRepositoryManager();
 		if (manager == null)
 			return null;
 		List<URI> locations = Arrays
 				.asList((location != null) ? new URI[] { location }
-						: getKnownMetadataRepositories(0));
+						: getKnownMetadataRepositories());
 		List<RepositoryMTO> results = new ArrayList<RepositoryMTO>();
 		for (URI l : locations) {
 			IMetadataRepository repo;
 			try {
-				repo = manager.loadRepository(l, loadFlags, null);
+				repo = manager.loadRepository(l, null);
 				results.add(new RepositoryMTO(repo.getLocation(), repo
 						.getName(), repo.getDescription(), repo.getType(), repo
 						.getProvider(), repo.getVersion().toString(), repo
@@ -263,24 +232,14 @@ public class RepositoryManager extends AbstractP2Manager implements
 	}
 
 	@Override
-	public RepositoryMTO[] getMetadataRepositories(int flags) {
-		return getMetadataRepositories(null, 0);
-	}
-
-	@Override
 	public RepositoryMTO[] getMetadataRepositories() {
-		return getMetadataRepositories(null, 0);
-	}
-
-	@Override
-	public RepositoryMTO getMetadataRepository(URI location, int flags) {
-		RepositoryMTO[] repos = getMetadataRepositories(location, flags);
-		return repos.length == 0 ? null : repos[0];
+		return getMetadataRepositories(null);
 	}
 
 	@Override
 	public RepositoryMTO getMetadataRepository(URI location) {
-		return getMetadataRepository(location, 0);
+		RepositoryMTO[] repos = getMetadataRepositories(location);
+		return repos.length == 0 ? null : repos[0];
 	}
 
 	@Override
