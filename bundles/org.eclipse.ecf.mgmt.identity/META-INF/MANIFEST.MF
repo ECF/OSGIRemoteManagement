@@ -4,7 +4,7 @@ Bundle-Name: ECF Identity Management API
 Bundle-SymbolicName: org.eclipse.ecf.mgmt.identity
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Eclipse.org - ECF
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.ecf.mgmt
 Export-Package: org.eclipse.ecf.mgmt.identity;version="1.0.0"

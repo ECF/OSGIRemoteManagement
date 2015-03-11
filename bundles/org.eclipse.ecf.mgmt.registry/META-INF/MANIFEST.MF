@@ -4,5 +4,5 @@ Bundle-Name: ECF Extension Registry Management
 Bundle-SymbolicName: org.eclipse.ecf.mgmt.registry
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Eclipse.org - ECF
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.eclipse.ecf.mgmt.registry;version="1.0.0"
