@@ -26,8 +26,10 @@ public class ConfigurationElementMTO implements Serializable {
 	private ConfigurationElementMTO parent;
 	private final ConfigurationElementMTO children[];
 
-	public ConfigurationElementMTO(String name, String value, String namespaceIdentifier, String extensionId,
-			long contributorId, boolean valid, Map<String, String> attributes, ConfigurationElementMTO[] children) {
+	public ConfigurationElementMTO(String name, String value,
+			String namespaceIdentifier, String extensionId, long contributorId,
+			boolean valid, Map<String, String> attributes,
+			ConfigurationElementMTO[] children) {
 		this.name = name;
 		this.value = value;
 		this.namespaceIdentifier = namespaceIdentifier;
@@ -79,9 +81,11 @@ public class ConfigurationElementMTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ConfigurationElementMTO [name=" + name + ", value=" + value + ", namespaceIdentifier="
-				+ namespaceIdentifier + ", extensionId=" + extensionId + ", contributorId=" + contributorId
-				+ ", valid=" + valid + ", attributes=" + attributes + ", parent=" + parent + ", children="
+		return "ConfigurationElementMTO [name=" + name + ", value=" + value
+				+ ", namespaceIdentifier=" + namespaceIdentifier
+				+ ", extensionId=" + extensionId + ", contributorId="
+				+ contributorId + ", valid=" + valid + ", attributes="
+				+ attributes + ", parent=" + parent + ", children="
 				+ Arrays.toString(children) + "]";
 	}
 

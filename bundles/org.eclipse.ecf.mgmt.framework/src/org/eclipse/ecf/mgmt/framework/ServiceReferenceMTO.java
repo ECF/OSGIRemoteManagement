@@ -75,8 +75,9 @@ public class ServiceReferenceMTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ServiceReferenceMTO [id=" + id + ", bundle=" + bundle + ", properties=" + properties
-				+ ", usingBundles=" + Arrays.toString(usingBundles) + "]";
+		return "ServiceReferenceMTO [id=" + id + ", bundle=" + bundle
+				+ ", properties=" + properties + ", usingBundles="
+				+ Arrays.toString(usingBundles) + "]";
 	}
 
 }

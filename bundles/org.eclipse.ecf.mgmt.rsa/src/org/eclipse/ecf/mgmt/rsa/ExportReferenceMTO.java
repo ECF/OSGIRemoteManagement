@@ -23,8 +23,8 @@ public class ExportReferenceMTO implements Serializable {
 	private final long exportedService;
 	private final EndpointDescriptionMTO endpoint;
 
-	public ExportReferenceMTO(ID containerID, long remoteServiceId, long exportedServiceId,
-			Map<String, ?> endpointProperties) {
+	public ExportReferenceMTO(ID containerID, long remoteServiceId,
+			long exportedServiceId, Map<String, ?> endpointProperties) {
 		super();
 		this.containerID = containerID;
 		this.remoteServiceId = remoteServiceId;
@@ -50,8 +50,9 @@ public class ExportReferenceMTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ExportReferenceMTO [containerID=" + containerID + ", remoteServiceId=" + remoteServiceId
-				+ ", exportedService=" + exportedService + ", endpoint=" + endpoint + "]";
+		return "ExportReferenceMTO [containerID=" + containerID
+				+ ", remoteServiceId=" + remoteServiceId + ", exportedService="
+				+ exportedService + ", endpoint=" + endpoint + "]";
 	}
 
 }

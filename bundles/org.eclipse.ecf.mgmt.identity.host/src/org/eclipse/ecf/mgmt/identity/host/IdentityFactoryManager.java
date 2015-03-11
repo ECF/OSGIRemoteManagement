@@ -22,7 +22,8 @@ import org.eclipse.ecf.mgmt.identity.IDMTO;
 import org.eclipse.ecf.mgmt.identity.IIdentityFactoryManager;
 import org.eclipse.ecf.mgmt.identity.NamespaceMTO;
 
-public class IdentityFactoryManager extends AbstractManager implements IIdentityFactoryManager {
+public class IdentityFactoryManager extends AbstractManager implements
+		IIdentityFactoryManager {
 
 	private IIDFactory idFactory;
 
@@ -38,12 +39,14 @@ public class IdentityFactoryManager extends AbstractManager implements IIdentity
 		try {
 			return createIDMTO(id);
 		} catch (org.eclipse.ecf.core.identity.IDCreateException e) {
-			throw new org.eclipse.ecf.mgmt.identity.IDCreateException(e.getMessage(), e.getCause());
+			throw new org.eclipse.ecf.mgmt.identity.IDCreateException(
+					e.getMessage(), e.getCause());
 		}
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static final String[][] convertClassArrayToNameArray(Class[][] clazzes) {
+	public static final String[][] convertClassArrayToNameArray(
+			Class[][] clazzes) {
 		String[][] results = new String[clazzes.length][];
 		for (int i = 0; i < clazzes.length; i++) {
 			results[i] = new String[clazzes[i].length];
@@ -54,27 +57,32 @@ public class IdentityFactoryManager extends AbstractManager implements IIdentity
 	}
 
 	public static NamespaceMTO createNamespaceMTO(Namespace ns) {
-		return ns == null ? null : new NamespaceMTO(ns.getName(), ns.getDescription(), ns.getScheme(),
-				ns.getSupportedSchemes(), convertClassArrayToNameArray(ns.getSupportedParameterTypes()));
+		return ns == null ? null : new NamespaceMTO(ns.getName(),
+				ns.getDescription(), ns.getScheme(), ns.getSupportedSchemes(),
+				convertClassArrayToNameArray(ns.getSupportedParameterTypes()));
 	}
 
 	public static IDMTO createIDMTO(ID id) {
-		return id == null ? null : new IDMTO(createNamespaceMTO(id.getNamespace()), id.getName(), id.toExternalForm());
+		return id == null ? null : new IDMTO(
+				createNamespaceMTO(id.getNamespace()), id.getName(),
+				id.toExternalForm());
 	}
 
 	public static ID createID(IDMTO mto) {
-		if (mto == null) return null;
+		if (mto == null)
+			return null;
 		IIDFactory f = IDFactory.getDefault();
 		Namespace ns = f.getNamespaceByName(mto.getNamespace().getName());
-		return (ns == null)?null:f.createID(ns, mto.getName());
+		return (ns == null) ? null : f.createID(ns, mto.getName());
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public NamespaceMTO[] getNamespaces() {
-		List<NamespaceMTO> results = selectAndMap(idFactory.getNamespaces(),null,n -> {
-			return createNamespaceMTO((Namespace) n);
-		});
+		List<NamespaceMTO> results = selectAndMap(idFactory.getNamespaces(),
+				null, n -> {
+					return createNamespaceMTO((Namespace) n);
+				});
 		return results.toArray(new NamespaceMTO[results.size()]);
 	}
 
@@ -114,7 +122,8 @@ public class IdentityFactoryManager extends AbstractManager implements IIdentity
 
 	@Override
 	public IDMTO createURIID(URI uri) {
-		return create0(idFactory.createID(URIID.class.getName(), new Object[] { uri }));
+		return create0(idFactory.createID(URIID.class.getName(),
+				new Object[] { uri }));
 	}
 
 }

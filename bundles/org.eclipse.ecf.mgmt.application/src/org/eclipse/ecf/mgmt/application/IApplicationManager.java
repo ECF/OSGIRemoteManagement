@@ -15,14 +15,15 @@ import org.eclipse.core.runtime.IStatus;
 
 public interface IApplicationManager {
 	ApplicationMTO[] getApplications();
-	
+
 	ApplicationMTO getApplication(String applicationId);
 
 	ApplicationInstanceMTO[] getRunningApplications();
-	
+
 	ApplicationInstanceMTO getRunningApplication(String applicationInstanceId);
-	
-	IStatus startApplication(String applicationId, @SuppressWarnings("rawtypes") Map args);
+
+	IStatus startApplication(String applicationId,
+			@SuppressWarnings("rawtypes") Map args);
 
 	IStatus stopApplication(String appInstanceId);
 

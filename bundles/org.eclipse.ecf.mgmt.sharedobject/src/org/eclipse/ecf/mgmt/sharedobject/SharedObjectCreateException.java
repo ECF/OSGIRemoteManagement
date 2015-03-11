@@ -20,17 +20,21 @@ public class SharedObjectCreateException extends Exception {
 	}
 
 	public SharedObjectCreateException(Throwable cause) {
-		super(cause == null ? null : SerializationUtil.isSerializable(cause) ? cause : new Throwable(cause.getMessage()));
+		super(cause == null ? null
+				: SerializationUtil.isSerializable(cause) ? cause
+						: new Throwable(cause.getMessage()));
 	}
 
 	public SharedObjectCreateException(String message, Throwable cause) {
-		super(message, cause == null ? null : SerializationUtil.isSerializable(cause) ? cause : new Throwable(
+		super(message, cause == null ? null : SerializationUtil
+				.isSerializable(cause) ? cause : new Throwable(
 				cause.getMessage()));
 	}
 
-	public SharedObjectCreateException(String message, Throwable cause, boolean enableSuppression,
-			boolean writableStackTrace) {
-		super(message, cause == null ? null : SerializationUtil.isSerializable(cause) ? cause : new Throwable(
+	public SharedObjectCreateException(String message, Throwable cause,
+			boolean enableSuppression, boolean writableStackTrace) {
+		super(message, cause == null ? null : SerializationUtil
+				.isSerializable(cause) ? cause : new Throwable(
 				cause.getMessage()), enableSuppression, writableStackTrace);
 	}
 

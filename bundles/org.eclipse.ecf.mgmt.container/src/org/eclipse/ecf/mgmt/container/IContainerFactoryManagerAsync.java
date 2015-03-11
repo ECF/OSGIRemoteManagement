@@ -21,13 +21,20 @@ public interface IContainerFactoryManagerAsync {
 	CompletableFuture<ContainerMTO> getContainerAsync(IDMTO containerID);
 
 	CompletableFuture<ContainerTypeDescriptionMTO[]> getContainerTypeDescriptionsAsync();
-	
-	CompletableFuture<ContainerTypeDescriptionMTO> getContainerTypeDescriptionAsync(String descriptionName);
-	
-	CompletableFuture<ContainerMTO> createContainerAsync(ContainerTypeDescriptionMTO desc, Object[] args) throws ContainerCreateException;
-	
-	CompletableFuture<ContainerMTO> createContainerAsync(ContainerTypeDescriptionMTO desc, IDMTO id) throws ContainerCreateException;
 
-	CompletableFuture<ContainerMTO> createContainerAsync(ContainerTypeDescriptionMTO desc, Map<String,?> args) throws ContainerCreateException;
+	CompletableFuture<ContainerTypeDescriptionMTO> getContainerTypeDescriptionAsync(
+			String descriptionName);
+
+	CompletableFuture<ContainerMTO> createContainerAsync(
+			ContainerTypeDescriptionMTO desc, Object[] args)
+			throws ContainerCreateException;
+
+	CompletableFuture<ContainerMTO> createContainerAsync(
+			ContainerTypeDescriptionMTO desc, IDMTO id)
+			throws ContainerCreateException;
+
+	CompletableFuture<ContainerMTO> createContainerAsync(
+			ContainerTypeDescriptionMTO desc, Map<String, ?> args)
+			throws ContainerCreateException;
 
 }

@@ -21,6 +21,7 @@ public interface IWiringManagerAsync {
 
 	CompletableFuture<BundleRevisionMTO[]> getBundleRevisionsAsync(int bundleId);
 
-	CompletableFuture<BundleRevisionMTO[]> getBundleRevisionsAsync(String symbolicName);
+	CompletableFuture<BundleRevisionMTO[]> getBundleRevisionsAsync(
+			String symbolicName);
 
 }

@@ -21,7 +21,7 @@ public class PropertiesUtil {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static Map convertMapToSerializableMap(Map map) {
 		Map result = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
-		for(Iterator i = map.keySet().iterator(); i.hasNext(); ) {
+		for (Iterator i = map.keySet().iterator(); i.hasNext();) {
 			Object key = i.next();
 			Object value = map.get(key);
 			if (SerializationUtil.isSerializable(value))
@@ -31,7 +31,7 @@ public class PropertiesUtil {
 		}
 		return result;
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Map convertDictionaryToMap(Dictionary dict) {
 		Map result = new HashMap();
@@ -47,7 +47,8 @@ public class PropertiesUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static Map<String, String> convertHeadersToMap(Dictionary<String,String> headers) {
+	public static Map<String, String> convertHeadersToMap(
+			Dictionary<String, String> headers) {
 		return (Map<String, String>) convertDictionaryToMap(headers);
 	}
 

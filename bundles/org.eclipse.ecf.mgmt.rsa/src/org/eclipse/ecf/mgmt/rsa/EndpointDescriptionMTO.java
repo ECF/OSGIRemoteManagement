@@ -21,7 +21,8 @@ public class EndpointDescriptionMTO implements Serializable {
 
 	@SuppressWarnings("unchecked")
 	public EndpointDescriptionMTO(Map<String, ?> properties) {
-		this.properties = PropertiesUtil.convertMapToSerializableMap(properties);
+		this.properties = PropertiesUtil
+				.convertMapToSerializableMap(properties);
 	}
 
 	public Map<String, Object> getProperties() {

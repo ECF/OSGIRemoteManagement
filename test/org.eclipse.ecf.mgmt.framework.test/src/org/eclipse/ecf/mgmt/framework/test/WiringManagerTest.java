@@ -22,13 +22,13 @@ public class WiringManagerTest extends TestCase {
 	}
 
 	public void testBundleWiring() throws Exception {
-		System.out.println("bundle wiring for id=0: "+wm.getBundleWiring(0));
+		System.out.println("bundle wiring for id=0: " + wm.getBundleWiring(0));
 	}
-	
+
 	public void testAllBundleWiring() throws Exception {
 		BundleWiringMTO[] allWirings = wm.getInUseBundleWirings(0);
-		for(BundleWiringMTO mto: allWirings)
-			System.out.println("bundle wiring: "+mto);
+		for (BundleWiringMTO mto : allWirings)
+			System.out.println("bundle wiring: " + mto);
 	}
 
 }

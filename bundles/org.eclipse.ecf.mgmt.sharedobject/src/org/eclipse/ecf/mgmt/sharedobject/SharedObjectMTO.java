@@ -18,7 +18,7 @@ public class SharedObjectMTO implements Serializable {
 	private static final long serialVersionUID = -4363277618074727072L;
 	private final IDMTO id;
 	private final String className;
-	
+
 	public SharedObjectMTO(IDMTO id, String className) {
 		this.id = id;
 		this.className = className;
@@ -36,5 +36,5 @@ public class SharedObjectMTO implements Serializable {
 	public String toString() {
 		return "SharedObjectMTO [id=" + id + ", className=" + className + "]";
 	}
-	
+
 }

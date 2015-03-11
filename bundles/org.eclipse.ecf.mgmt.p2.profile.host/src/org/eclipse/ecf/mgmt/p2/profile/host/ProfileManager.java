@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * Copyright (c) 2015 Composent, Inc. and others. All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Composent, Inc. - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.ecf.mgmt.p2.profile.host;
 
 import java.util.Arrays;
@@ -19,7 +28,8 @@ import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.query.QueryUtil;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
 
-public class ProfileManager extends AbstractP2Manager implements IProfileManager {
+public class ProfileManager extends AbstractP2Manager implements
+		IProfileManager {
 
 	private static final String P2_ENVIRONMENTS = "org.eclipse.equinox.p2.environments";
 	protected EnvironmentInfo environmentInfo;

@@ -29,7 +29,8 @@ import org.eclipse.ecf.mgmt.identity.host.IdentityFactoryManager;
 import org.eclipse.ecf.mgmt.sharedobject.ISharedObjectManager;
 import org.eclipse.ecf.mgmt.sharedobject.SharedObjectMTO;
 
-public class SharedObjectManager extends AbstractManager implements ISharedObjectManager {
+public class SharedObjectManager extends AbstractManager implements
+		ISharedObjectManager {
 
 	private IContainerManager containerManager;
 
@@ -38,7 +39,7 @@ public class SharedObjectManager extends AbstractManager implements ISharedObjec
 		private static final long serialVersionUID = -2416436445621199485L;
 
 		public DynamicSharedObjectDescription(String className, ID id,
-				Map<String,?> props) {
+				Map<String, ?> props) {
 			super(new SharedObjectTypeDescription(className, null), id, props);
 		}
 
@@ -55,8 +56,10 @@ public class SharedObjectManager extends AbstractManager implements ISharedObjec
 	private ISharedObjectContainer getSharedObjectContainer(IDMTO containerID) {
 		if (containerID == null)
 			return null;
-		IContainer c = containerManager.getContainer(IdentityFactoryManager.createID(containerID));
-		return (c == null) ? null : (ISharedObjectContainer) c.getAdapter(ISharedObjectContainer.class);
+		IContainer c = containerManager.getContainer(IdentityFactoryManager
+				.createID(containerID));
+		return (c == null) ? null : (ISharedObjectContainer) c
+				.getAdapter(ISharedObjectContainer.class);
 	}
 
 	@Override
@@ -64,7 +67,8 @@ public class SharedObjectManager extends AbstractManager implements ISharedObjec
 		List<SharedObjectMTO> results = null;
 		ISharedObjectContainer soc = getSharedObjectContainer(containerID);
 		if (soc != null) {
-			org.eclipse.ecf.core.sharedobject.ISharedObjectManager som = soc.getSharedObjectManager();
+			org.eclipse.ecf.core.sharedobject.ISharedObjectManager som = soc
+					.getSharedObjectManager();
 			ID[] soids = som.getSharedObjectIDs();
 			if (soids != null) {
 				for (ID id : soids) {
@@ -78,7 +82,8 @@ public class SharedObjectManager extends AbstractManager implements ISharedObjec
 				}
 			}
 		}
-		return results == null ? null : results.toArray(new SharedObjectMTO[results.size()]);
+		return results == null ? null : results
+				.toArray(new SharedObjectMTO[results.size()]);
 	}
 
 	public static SharedObjectMTO createMTO(IDMTO id, ISharedObject so) {
@@ -86,19 +91,22 @@ public class SharedObjectManager extends AbstractManager implements ISharedObjec
 	}
 
 	@Override
-	public IStatus createSharedObject(IDMTO containerID, IDMTO sharedObjectID, String sharedObjectClassName,
-			Map<String, ?> properties) {
+	public IStatus createSharedObject(IDMTO containerID, IDMTO sharedObjectID,
+			String sharedObjectClassName, Map<String, ?> properties) {
 		ISharedObjectContainer c = getSharedObjectContainer(containerID);
 		if (c == null)
-			return createErrorStatus("socontainer with ID=" + containerID + " not found");
+			return createErrorStatus("socontainer with ID=" + containerID
+					+ " not found");
 		ID soid = IdentityFactoryManager.createID(sharedObjectID);
 		if (soid == null)
 			return createErrorStatus("cannot create soID for=" + sharedObjectID);
 		try {
 			c.getSharedObjectManager().createSharedObject(
-					new DynamicSharedObjectDescription(sharedObjectClassName, soid, properties));
+					new DynamicSharedObjectDescription(sharedObjectClassName,
+							soid, properties));
 		} catch (SharedObjectCreateException e) {
-			return createErrorStatus("Could not create shared object with id=" + sharedObjectID);
+			return createErrorStatus("Could not create shared object with id="
+					+ sharedObjectID);
 		}
 		return SerializableStatus.OK_STATUS;
 	}
@@ -107,13 +115,15 @@ public class SharedObjectManager extends AbstractManager implements ISharedObjec
 	public IStatus destroySharedObject(IDMTO containerID, IDMTO sharedObjectID) {
 		ISharedObjectContainer c = getSharedObjectContainer(containerID);
 		if (c == null)
-			return createErrorStatus("socontainer with ID=" + containerID + " not found");
+			return createErrorStatus("socontainer with ID=" + containerID
+					+ " not found");
 		ID soid = IdentityFactoryManager.createID(sharedObjectID);
 		if (soid == null)
 			return createErrorStatus("cannot create soID for=" + sharedObjectID);
 
 		ISharedObject so = c.getSharedObjectManager().removeSharedObject(soid);
-		return (so == null) ? createErrorStatus("SharedObject with id=" + sharedObjectID + " not found to remove")
+		return (so == null) ? createErrorStatus("SharedObject with id="
+				+ sharedObjectID + " not found to remove")
 				: SerializableStatus.OK_STATUS;
 	}
 

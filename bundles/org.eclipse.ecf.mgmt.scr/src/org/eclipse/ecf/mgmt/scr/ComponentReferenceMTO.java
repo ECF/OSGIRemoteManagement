@@ -28,18 +28,22 @@ public class ComponentReferenceMTO implements Serializable {
 			return null;
 		long[] serviceReferenceIds = new long[srefs.length];
 		for (int i = 0; i < srefs.length; i++)
-			serviceReferenceIds[i] = ((Long) srefs[i].getProperty(Constants.SERVICE_ID)).longValue();
+			serviceReferenceIds[i] = ((Long) srefs[i]
+					.getProperty(Constants.SERVICE_ID)).longValue();
 
-		return new ComponentReferenceMTO(reference.getName(), reference.getServiceName(), serviceReferenceIds,
-				reference.isSatisfied(), reference.isOptional(), reference.isMultiple(), reference.isStatic(),
-				reference.getTarget(), reference.getBindMethodName(), reference.getUnbindMethodName());
+		return new ComponentReferenceMTO(reference.getName(),
+				reference.getServiceName(), serviceReferenceIds,
+				reference.isSatisfied(), reference.isOptional(),
+				reference.isMultiple(), reference.isStatic(),
+				reference.getTarget(), reference.getBindMethodName(),
+				reference.getUnbindMethodName());
 	}
 
 	public static ComponentReferenceMTO[] createMTOs(Reference[] references) {
 		List<ComponentReferenceMTO> results = new ArrayList<ComponentReferenceMTO>();
 		if (references != null)
 			for (Reference r : references)
-			results.add(createMTO(r));
+				results.add(createMTO(r));
 		return results.toArray(new ComponentReferenceMTO[results.size()]);
 	}
 
@@ -54,9 +58,10 @@ public class ComponentReferenceMTO implements Serializable {
 	private final String bindMethodName;
 	private final String unbindMethodName;
 
-	ComponentReferenceMTO(String name, String serviceName, long[] serviceReferenceIds, boolean satisfied,
-			boolean optional, boolean multiple, boolean isstatic, String target, String bindMethodName,
-			String unbindMethodName) {
+	ComponentReferenceMTO(String name, String serviceName,
+			long[] serviceReferenceIds, boolean satisfied, boolean optional,
+			boolean multiple, boolean isstatic, String target,
+			String bindMethodName, String unbindMethodName) {
 		this.name = name;
 		this.serviceName = serviceName;
 		this.serviceReferenceIds = serviceReferenceIds;
@@ -111,10 +116,13 @@ public class ComponentReferenceMTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ComponentReferenceMTO [name=" + name + ", serviceName=" + serviceName + ", serviceReferenceIds="
-				+ Arrays.toString(serviceReferenceIds) + ", satisfied=" + satisfied + ", optional=" + optional
-				+ ", multiple=" + multiple + ", isStatic=" + isStatic + ", target=" + target + ", bindMethodName="
-				+ bindMethodName + ", unbindMethodName=" + unbindMethodName + "]";
+		return "ComponentReferenceMTO [name=" + name + ", serviceName="
+				+ serviceName + ", serviceReferenceIds="
+				+ Arrays.toString(serviceReferenceIds) + ", satisfied="
+				+ satisfied + ", optional=" + optional + ", multiple="
+				+ multiple + ", isStatic=" + isStatic + ", target=" + target
+				+ ", bindMethodName=" + bindMethodName + ", unbindMethodName="
+				+ unbindMethodName + "]";
 	}
 
 	public ComponentReferenceMTO[] getComponentReferences() {

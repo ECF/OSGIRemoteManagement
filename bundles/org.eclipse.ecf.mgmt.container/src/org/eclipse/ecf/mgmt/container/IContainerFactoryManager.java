@@ -20,13 +20,17 @@ public interface IContainerFactoryManager {
 	ContainerMTO getContainer(IDMTO containerID);
 
 	ContainerTypeDescriptionMTO[] getContainerTypeDescriptions();
-	
-	ContainerTypeDescriptionMTO getContainerTypeDescription(String descriptionName);
-	
-	ContainerMTO createContainer(ContainerTypeDescriptionMTO desc, Object[] args) throws ContainerCreateException;
-	
-	ContainerMTO createContainer(ContainerTypeDescriptionMTO desc, IDMTO id) throws ContainerCreateException;
 
-	ContainerMTO createContainer(ContainerTypeDescriptionMTO desc, Map<String,?> args) throws ContainerCreateException;
+	ContainerTypeDescriptionMTO getContainerTypeDescription(
+			String descriptionName);
+
+	ContainerMTO createContainer(ContainerTypeDescriptionMTO desc, Object[] args)
+			throws ContainerCreateException;
+
+	ContainerMTO createContainer(ContainerTypeDescriptionMTO desc, IDMTO id)
+			throws ContainerCreateException;
+
+	ContainerMTO createContainer(ContainerTypeDescriptionMTO desc,
+			Map<String, ?> args) throws ContainerCreateException;
 
 }

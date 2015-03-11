@@ -20,11 +20,13 @@ public class IDCreateException extends RuntimeException {
 	}
 
 	public IDCreateException(Throwable cause) {
-		super(SerializationUtil.isSerializable(cause) ? cause : new Throwable(cause.getMessage()));
+		super(SerializationUtil.isSerializable(cause) ? cause : new Throwable(
+				cause.getMessage()));
 	}
 
 	public IDCreateException(String message, Throwable cause) {
-		super(message, SerializationUtil.isSerializable(cause) ? cause : new Throwable(cause.getMessage()));
+		super(message, SerializationUtil.isSerializable(cause) ? cause
+				: new Throwable(cause.getMessage()));
 	}
 
 }

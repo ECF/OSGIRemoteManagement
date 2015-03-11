@@ -19,15 +19,16 @@ public class ImportRegistrationMTO {
 	private final ImportReferenceMTO importReference;
 	private final Throwable exception;
 
-	public ImportRegistrationMTO(ID containerID, long remoteServiceId, long exportedServiceId,
-			Map<String, ?> endpointProperties) {
-		this.importReference = new ImportReferenceMTO(containerID, remoteServiceId, exportedServiceId,
-				endpointProperties);
+	public ImportRegistrationMTO(ID containerID, long remoteServiceId,
+			long exportedServiceId, Map<String, ?> endpointProperties) {
+		this.importReference = new ImportReferenceMTO(containerID,
+				remoteServiceId, exportedServiceId, endpointProperties);
 		this.exception = null;
 	}
 
 	public ImportRegistrationMTO(Throwable exception) {
-		this.exception = SerializationUtil.isSerializable(exception) ? exception : new Throwable(exception.toString());
+		this.exception = SerializationUtil.isSerializable(exception) ? exception
+				: new Throwable(exception.toString());
 		this.importReference = null;
 	}
 
@@ -41,7 +42,8 @@ public class ImportRegistrationMTO {
 
 	@Override
 	public String toString() {
-		return "ImportRegistrationMTO [importReference=" + importReference + ", exception=" + exception + "]";
+		return "ImportRegistrationMTO [importReference=" + importReference
+				+ ", exception=" + exception + "]";
 	}
 
 }

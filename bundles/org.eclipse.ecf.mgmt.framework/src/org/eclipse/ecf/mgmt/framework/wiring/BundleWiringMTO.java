@@ -33,7 +33,8 @@ public class BundleWiringMTO implements Serializable {
 
 	public static BundleWiringMTO[] createMTOs(Bundle b) {
 		BundleWiringDTO[] dtos = b.adapt(BundleWiringDTO[].class);
-		List<BundleWiringMTO> results = new ArrayList<BundleWiringMTO>(dtos.length);
+		List<BundleWiringMTO> results = new ArrayList<BundleWiringMTO>(
+				dtos.length);
 		for (BundleWiringDTO dto : dtos)
 			results.add(new BundleWiringMTO(dto));
 		return results.toArray(new BundleWiringMTO[results.size()]);
@@ -68,8 +69,9 @@ public class BundleWiringMTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "BundleWiringMTO [bundle=" + bundle + ", root=" + root + ", nodes=" + Arrays.toString(nodes)
-				+ ", resources=" + Arrays.toString(resources) + "]";
+		return "BundleWiringMTO [bundle=" + bundle + ", root=" + root
+				+ ", nodes=" + Arrays.toString(nodes) + ", resources="
+				+ Arrays.toString(resources) + "]";
 	}
 
 	public static NodeMTO[] createNodeMTOs(Set<NodeDTO> dtos) {
@@ -100,15 +102,19 @@ public class BundleWiringMTO implements Serializable {
 
 		@Override
 		public String toString() {
-			return "NodeMTO [inUse=" + inUse + ", current=" + current + ", id=" + getId() + ", capabilities="
-					+ Arrays.toString(getCapabilities()) + ", requirements=" + Arrays.toString(getRequirements())
-					+ ", providedWires=" + Arrays.toString(getProvidedWires()) + ", requiredWires="
-					+ Arrays.toString(getRequiredWires()) + ", resource=" + getResource() + "]";
+			return "NodeMTO [inUse=" + inUse + ", current=" + current + ", id="
+					+ getId() + ", capabilities="
+					+ Arrays.toString(getCapabilities()) + ", requirements="
+					+ Arrays.toString(getRequirements()) + ", providedWires="
+					+ Arrays.toString(getProvidedWires()) + ", requiredWires="
+					+ Arrays.toString(getRequiredWires()) + ", resource="
+					+ getResource() + "]";
 		}
 
 		@Override
 		protected WireMTO[] createMTOs(List<WireDTO> dtos) {
-			List<BundleWireMTO> results = new ArrayList<BundleWireMTO>(dtos.size());
+			List<BundleWireMTO> results = new ArrayList<BundleWireMTO>(
+					dtos.size());
 			for (WireDTO dto : dtos)
 				results.add(new BundleWireMTO((BundleWireDTO) dto));
 			return results.toArray(new BundleWireMTO[results.size()]);

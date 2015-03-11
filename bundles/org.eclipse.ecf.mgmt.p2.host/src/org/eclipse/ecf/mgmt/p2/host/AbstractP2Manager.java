@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * Copyright (c) 2015 Composent, Inc. and others. All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Composent, Inc. - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.ecf.mgmt.p2.host;
 
 import java.util.ArrayList;
@@ -41,9 +50,10 @@ public class AbstractP2Manager extends AbstractManager {
 		Collection<ILicense> licenses = iu.getLicenses();
 		return new InstallableUnitMTO(new VersionedId(iu.getId(),
 				(v == null) ? null : v.toString()), iu.getProperties(),
-				iu.isSingleton(), iu.isResolved(),
-			    licenses==null?null:createLicenses(iu.getLicenses()),
-				copyright==null?null:new CopyrightMTO(copyright.getLocation(), copyright.getBody()));
+				iu.isSingleton(), iu.isResolved(), licenses == null ? null
+						: createLicenses(iu.getLicenses()),
+				copyright == null ? null : new CopyrightMTO(copyright
+						.getLocation(), copyright.getBody()));
 	}
 
 	protected LicenseMTO[] createLicenses(Collection<ILicense> ls) {
@@ -57,15 +67,17 @@ public class AbstractP2Manager extends AbstractManager {
 		return results.toArray(new LicenseMTO[results.size()]);
 	}
 
-	protected InstallableUnitMTO[] getInstallableUnitsMTO(IInstallableUnit[] units) {
-		if (units == null) return null;
+	protected InstallableUnitMTO[] getInstallableUnitsMTO(
+			IInstallableUnit[] units) {
+		if (units == null)
+			return null;
 		List<InstallableUnitMTO> results = selectAndMap(Arrays.asList(units),
 				null, un -> {
 					return createInstallableUnitMTO(un);
 				});
 		return results.toArray(new InstallableUnitMTO[results.size()]);
 	}
-	
+
 	protected IStatus serializeStatus(IStatus status) {
 		if (status == null)
 			return null;
@@ -91,6 +103,5 @@ public class AbstractP2Manager extends AbstractManager {
 		return (IArtifactRepositoryManager) agent
 				.getService(IArtifactRepositoryManager.SERVICE_NAME);
 	}
-
 
 }

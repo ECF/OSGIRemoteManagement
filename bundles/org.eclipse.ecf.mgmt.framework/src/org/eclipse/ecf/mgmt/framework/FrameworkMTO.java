@@ -21,7 +21,8 @@ public class FrameworkMTO implements Serializable {
 	private final Map<String, Object> properties;
 	private final ServiceReferenceMTO[] services;
 
-	public FrameworkMTO(BundleMTO[] bundles, Map<String, Object> properties, ServiceReferenceMTO[] services) {
+	public FrameworkMTO(BundleMTO[] bundles, Map<String, Object> properties,
+			ServiceReferenceMTO[] services) {
 		this.bundles = bundles;
 		this.properties = properties;
 		this.services = services;
@@ -41,7 +42,8 @@ public class FrameworkMTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "FrameworkMTO [bundles=" + Arrays.toString(bundles) + ", properties=" + properties + ", services="
+		return "FrameworkMTO [bundles=" + Arrays.toString(bundles)
+				+ ", properties=" + properties + ", services="
 				+ Arrays.toString(services) + "]";
 	}
 

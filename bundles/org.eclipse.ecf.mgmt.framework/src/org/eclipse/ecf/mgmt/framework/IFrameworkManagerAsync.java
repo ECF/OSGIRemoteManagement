@@ -22,6 +22,7 @@ public interface IFrameworkManagerAsync {
 
 	CompletableFuture<IStatus> setStartLevelAsync(int startLevel);
 
-	CompletableFuture<Void> setInitialBundleStartLevelAsync(int initialBundleStartLevel);
+	CompletableFuture<Void> setInitialBundleStartLevelAsync(
+			int initialBundleStartLevel);
 
 }

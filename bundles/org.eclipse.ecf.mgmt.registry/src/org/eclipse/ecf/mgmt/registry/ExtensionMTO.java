@@ -24,7 +24,8 @@ public class ExtensionMTO implements Serializable {
 	private long contributorId;
 	private ConfigurationElementMTO configurationElements[];
 
-	public ExtensionMTO(String label, String extensionPointUniqueIdentifier, String namespaceIdentifier, String simpleIdentifier,
+	public ExtensionMTO(String label, String extensionPointUniqueIdentifier,
+			String namespaceIdentifier, String simpleIdentifier,
 			String uniqueIdentifier, boolean valid, long contributorId,
 			ConfigurationElementMTO[] configurationElementInfos) {
 		this.label = label;
@@ -71,10 +72,14 @@ public class ExtensionMTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ExtensionMTO [label=" + label + ", extensionPointUniqueIdentifier=" + extensionPointUniqueIdentifier + ", namespaceIdentifier="
-				+ namespaceIdentifier + ", simpleIdentifier=" + simpleIdentifier + ", uniqueIdentifier="
-				+ uniqueIdentifier + ", valid=" + valid + ", contributorId=" + contributorId
-				+ ", configurationElements=" + Arrays.toString(configurationElements) + "]";
+		return "ExtensionMTO [label=" + label
+				+ ", extensionPointUniqueIdentifier="
+				+ extensionPointUniqueIdentifier + ", namespaceIdentifier="
+				+ namespaceIdentifier + ", simpleIdentifier="
+				+ simpleIdentifier + ", uniqueIdentifier=" + uniqueIdentifier
+				+ ", valid=" + valid + ", contributorId=" + contributorId
+				+ ", configurationElements="
+				+ Arrays.toString(configurationElements) + "]";
 	}
 
 }

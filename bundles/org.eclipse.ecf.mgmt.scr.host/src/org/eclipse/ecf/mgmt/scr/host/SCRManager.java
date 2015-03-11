@@ -38,11 +38,14 @@ public class SCRManager extends AbstractManager implements ISCRManager {
 		this.scrService = null;
 	}
 
-	private Hashtable<CompRef, CompRef> compRefs = new Hashtable<CompRef, CompRef>(101);
+	private Hashtable<CompRef, CompRef> compRefs = new Hashtable<CompRef, CompRef>(
+			101);
 
 	protected ComponentMTO createMTO(Component comp) {
 		CompRef ref = null;
-		CompRef cRef = new CompRef(comp.getBundle().getBundleId(), comp.getName(), (Long) comp.getProperties().get(ComponentConstants.COMPONENT_ID));
+		CompRef cRef = new CompRef(comp.getBundle().getBundleId(),
+				comp.getName(), (Long) comp.getProperties().get(
+						ComponentConstants.COMPONENT_ID));
 		synchronized (compRefs) {
 			ref = (CompRef) compRefs.get(cRef);
 			if (ref == null) {
@@ -55,11 +58,14 @@ public class SCRManager extends AbstractManager implements ISCRManager {
 	}
 
 	protected ComponentMTO[] getComponentMTOsForBundle(Bundle bundle) {
-		Component[] comps = (bundle == null) ? scrService.getComponents() : scrService.getComponents(bundle);
-		if (comps == null) return new ComponentMTO[0];
-		List<ComponentMTO> results = selectAndMap(Arrays.asList(comps),null,c -> {
-			return createMTO(c);
-		});
+		Component[] comps = (bundle == null) ? scrService.getComponents()
+				: scrService.getComponents(bundle);
+		if (comps == null)
+			return new ComponentMTO[0];
+		List<ComponentMTO> results = selectAndMap(Arrays.asList(comps), null,
+				c -> {
+					return createMTO(c);
+				});
 		return results.toArray(new ComponentMTO[results.size()]);
 	}
 
@@ -77,13 +83,14 @@ public class SCRManager extends AbstractManager implements ISCRManager {
 				comp.disable();
 			return new SerializableStatus(Status.OK_STATUS);
 		} catch (IllegalStateException e) {
-			return createErrorStatus("Component with id=" + id + " cannot be " + ((enable) ? "enabled" : "disabled"), e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			return createErrorStatus(
+					"Component with id=" + id + " cannot be " + ((enable) ? "enabled" : "disabled"), e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 	}
 
 	public ComponentMTO getComponent(long componentId) {
 		Component c = scrService.getComponent(componentId);
-		return (c == null)?null:createMTO(c);
+		return (c == null) ? null : createMTO(c);
 	}
 
 	public ComponentMTO[] getComponents() {
@@ -101,7 +108,8 @@ public class SCRManager extends AbstractManager implements ISCRManager {
 			if (bundleComponents != null) {
 				for (int i = 0; i < bundleComponents.length; i++) {
 					String cRefName = cRef.getName();
-					if (cRefName != null && cRefName.equals(bundleComponents[i].getName()))
+					if (cRefName != null
+							&& cRefName.equals(bundleComponents[i].getName()))
 						return bundleComponents[i];
 				}
 			}
@@ -111,7 +119,8 @@ public class SCRManager extends AbstractManager implements ISCRManager {
 
 	protected CompRef findCRefForId(long id) {
 		synchronized (compRefs) {
-			for (Iterator<CompRef> i = compRefs.keySet().iterator(); i.hasNext();) {
+			for (Iterator<CompRef> i = compRefs.keySet().iterator(); i
+					.hasNext();) {
 				CompRef cr = (CompRef) i.next();
 				if (cr.getId() == id)
 					return cr;
@@ -126,7 +135,7 @@ public class SCRManager extends AbstractManager implements ISCRManager {
 
 	public ComponentMTO[] getComponents(long bundleId) {
 		Bundle bundle = getBundle0(bundleId);
-		return (bundle == null)?null:getComponentMTOsForBundle(bundle);
+		return (bundle == null) ? null : getComponentMTOsForBundle(bundle);
 	}
 
 }

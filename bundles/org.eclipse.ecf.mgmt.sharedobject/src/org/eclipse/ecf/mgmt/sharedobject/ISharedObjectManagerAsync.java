@@ -21,10 +21,9 @@ public interface ISharedObjectManagerAsync {
 
 	CompletableFuture<IStatus> createSharedObjectAsync(IDMTO containerID,
 			IDMTO sharedObjectID, String sharedObjectClassName,
-			Map<String,?> properties);
+			Map<String, ?> properties);
 
 	CompletableFuture<IStatus> destroySharedObjectAsync(IDMTO containerID,
 			IDMTO sharedObject);
-
 
 }

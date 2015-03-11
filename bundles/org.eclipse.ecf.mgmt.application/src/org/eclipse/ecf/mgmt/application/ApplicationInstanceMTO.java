@@ -38,7 +38,8 @@ public class ApplicationInstanceMTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ApplicationInstanceMTO [id=" + id + ", state=" + state + ", app=" + app + "]";
+		return "ApplicationInstanceMTO [id=" + id + ", state=" + state
+				+ ", app=" + app + "]";
 	}
 
 }

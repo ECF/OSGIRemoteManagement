@@ -15,14 +15,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ecf.mgmt.identity.IDMTO;
 
 public interface ISharedObjectManager {
-	
+
 	SharedObjectMTO[] getSharedObjects(IDMTO containerID);
 
-	IStatus createSharedObject(IDMTO containerID,
-			IDMTO sharedObjectID, String sharedObjectClassName,
-			Map<String,?> properties);
+	IStatus createSharedObject(IDMTO containerID, IDMTO sharedObjectID,
+			String sharedObjectClassName, Map<String, ?> properties);
 
-	IStatus destroySharedObject(IDMTO containerID,
-			IDMTO sharedObject);
+	IStatus destroySharedObject(IDMTO containerID, IDMTO sharedObject);
 
 }

@@ -54,7 +54,8 @@ public class BundleManager extends AbstractManager implements IBundleManager {
 	private IStatus startstop(final long bundleId, int options, boolean start) {
 		Bundle bundle = getBundle0(bundleId);
 		if (bundle == null)
-			return createErrorStatus("Cannot find bundle with bundleId=" + bundleId, new NullPointerException());
+			return createErrorStatus("Cannot find bundle with bundleId="
+					+ bundleId, new NullPointerException());
 		try {
 			if (start)
 				bundle.start(options);
@@ -90,7 +91,8 @@ public class BundleManager extends AbstractManager implements IBundleManager {
 	@Override
 	public BundleStartLevelMTO getBundleStartLevel(long bundleId) {
 		Bundle b = getBundle0(bundleId);
-		return (b == null) ? null : new BundleStartLevelMTO(b.adapt(BundleStartLevelDTO.class));
+		return (b == null) ? null : new BundleStartLevelMTO(
+				b.adapt(BundleStartLevelDTO.class));
 	}
 
 	@Override
@@ -107,7 +109,8 @@ public class BundleManager extends AbstractManager implements IBundleManager {
 			return BundleMTO.createMTO(getContext().installBundle(url));
 		} catch (BundleException e) {
 			logError("Cannot install bundle with url=" + url, e);
-			throw new BundleInstallException("Cannot install bundle with url=" + url);
+			throw new BundleInstallException("Cannot install bundle with url="
+					+ url);
 		}
 	}
 
@@ -115,20 +118,22 @@ public class BundleManager extends AbstractManager implements IBundleManager {
 	public IStatus uninstallBundle(long bundleId) {
 		Bundle b = getBundle0(bundleId);
 		if (b == null)
-			return createErrorStatus("Bundle with id=" + bundleId + " not found to uninstall",
-					new NullPointerException());
+			return createErrorStatus("Bundle with id=" + bundleId
+					+ " not found to uninstall", new NullPointerException());
 		try {
 			b.uninstall();
 			return SerializableStatus.OK_STATUS;
 		} catch (BundleException e) {
-			return createErrorStatus("Could not uninstall bundle=" + bundleId, e);
+			return createErrorStatus("Could not uninstall bundle=" + bundleId,
+					e);
 		}
 	}
 
 	public IStatus updateBundle(long bundleId) {
 		Bundle b = getBundle0(bundleId);
 		if (b == null)
-			return createErrorStatus("Bundle with id=" + bundleId + " not found to update", new NullPointerException());
+			return createErrorStatus("Bundle with id=" + bundleId
+					+ " not found to update", new NullPointerException());
 		try {
 			b.update();
 			return SerializableStatus.OK_STATUS;
@@ -140,15 +145,18 @@ public class BundleManager extends AbstractManager implements IBundleManager {
 	public IStatus updateBundle(long bundleId, String urlString) {
 		Bundle b = getBundle0(bundleId);
 		if (b == null)
-			return createErrorStatus("Bundle with id=" + bundleId + " and urlString=" + urlString
-					+ " not found to update", new NullPointerException());
+			return createErrorStatus("Bundle with id=" + bundleId
+					+ " and urlString=" + urlString + " not found to update",
+					new NullPointerException());
 		try {
 			b.update(new URL(urlString).openStream());
 			return SerializableStatus.OK_STATUS;
 		} catch (BundleException e) {
-			return createErrorStatus("Cannot update bundle with id=" + bundleId, e);
+			return createErrorStatus(
+					"Cannot update bundle with id=" + bundleId, e);
 		} catch (IOException e) {
-			return createErrorStatus("Cannot read from url=" + urlString + " to load bundleId=" + bundleId, e);
+			return createErrorStatus("Cannot read from url=" + urlString
+					+ " to load bundleId=" + bundleId, e);
 		}
 	}
 

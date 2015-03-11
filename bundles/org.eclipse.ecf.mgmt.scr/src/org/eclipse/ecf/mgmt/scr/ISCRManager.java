@@ -26,5 +26,5 @@ public interface ISCRManager {
 	IStatus enable(long id);
 
 	IStatus disable(long id);
-	
+
 }

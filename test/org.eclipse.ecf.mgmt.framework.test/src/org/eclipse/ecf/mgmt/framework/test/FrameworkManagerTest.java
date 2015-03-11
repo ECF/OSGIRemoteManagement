@@ -25,9 +25,12 @@ public class FrameworkManagerTest extends TestCase {
 
 	public void testFrameworkMTO() throws Exception {
 		FrameworkMTO frameworkMTO = fm.getFramework();
-		System.out.println("frameworkMTO.bundles="+Arrays.asList(frameworkMTO.getBundles()));
-		System.out.println("frameworkMTO.services="+Arrays.asList(frameworkMTO.getServiceReferences()));
-		System.out.println("frameworkMTO.properties="+frameworkMTO.getProperties());
+		System.out.println("frameworkMTO.bundles="
+				+ Arrays.asList(frameworkMTO.getBundles()));
+		System.out.println("frameworkMTO.services="
+				+ Arrays.asList(frameworkMTO.getServiceReferences()));
+		System.out.println("frameworkMTO.properties="
+				+ frameworkMTO.getProperties());
 	}
 
 }

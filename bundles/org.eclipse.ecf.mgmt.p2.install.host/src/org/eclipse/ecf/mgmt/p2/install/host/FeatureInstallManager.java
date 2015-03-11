@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * Copyright (c) 2015 Composent, Inc. and others. All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Composent, Inc. - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.ecf.mgmt.p2.install.host;
 
 import java.io.IOException;
@@ -42,15 +51,15 @@ public class FeatureInstallManager extends AbstractP2Manager implements
 		IFeatureInstallManager {
 
 	protected Configurator configurator;
-	
+
 	protected void bindConfigurator(Configurator configurator) {
 		this.configurator = configurator;
 	}
-	
+
 	protected void unbindConfigurator(Configurator configurator) {
 		this.configurator = null;
 	}
-	
+
 	protected IProgressMonitor getMonitorForInstall() {
 		return new NullProgressMonitor();
 	}
@@ -71,9 +80,10 @@ public class FeatureInstallManager extends AbstractP2Manager implements
 		IQueryable<IInstallableUnit>[] queryables = (IQueryable<IInstallableUnit>[]) ((locations == null) ? new IQueryable<?>[] { getMetadataRepositoryManager() }
 				: getMetadataRepositories(agent, locations, monitor));
 		if (queryables != null) {
-			List<IQueryResult<IInstallableUnit>> queryResults = selectAndMap(Arrays.asList(queryables),null,qa -> {
-				return qa.query(query, monitor);
-			});
+			List<IQueryResult<IInstallableUnit>> queryResults = selectAndMap(
+					Arrays.asList(queryables), null, qa -> {
+						return qa.query(query, monitor);
+					});
 			return (IQueryResult<IInstallableUnit>[]) queryResults
 					.toArray(new IQueryResult<?>[queryResults.size()]);
 		}
@@ -81,8 +91,9 @@ public class FeatureInstallManager extends AbstractP2Manager implements
 				.emptyCollector() };
 	}
 
-	protected IMetadataRepository getMetadataRepository(IProvisioningAgent agent,
-			URI location, IProgressMonitor monitor) throws ProvisionException {
+	protected IMetadataRepository getMetadataRepository(
+			IProvisioningAgent agent, URI location, IProgressMonitor monitor)
+			throws ProvisionException {
 		IMetadataRepositoryManager manager = (IMetadataRepositoryManager) agent
 				.getService(IMetadataRepositoryManager.SERVICE_NAME);
 		if (manager == null)
@@ -148,7 +159,6 @@ public class FeatureInstallManager extends AbstractP2Manager implements
 		return engine.perform((newPlan != null) ? newPlan : plan, phaseSet,
 				progress);
 	}
-
 
 	protected IProvisioningPlan doPlan(IPlanner planner,
 			IProfileChangeRequest profileChangeRequest,
@@ -434,7 +444,7 @@ public class FeatureInstallManager extends AbstractP2Manager implements
 			configurator.applyConfiguration();
 			return SerializableStatus.OK_STATUS;
 		} catch (IOException e) {
-			return createErrorStatus("Could not apply configuration",e);
+			return createErrorStatus("Could not apply configuration", e);
 		}
 	}
 
@@ -457,17 +467,18 @@ public class FeatureInstallManager extends AbstractP2Manager implements
 			return null;
 		IInstallableUnit[] ius = profile.query(QueryUtil.createIUGroupQuery(),
 				null).toArray(IInstallableUnit.class);
-		return (ius == null)?new VersionedId[0]:getVersionIds(ius);
+		return (ius == null) ? new VersionedId[0] : getVersionIds(ius);
 	}
 
 	protected VersionedId[] getVersionIds(IInstallableUnit[] ius) {
-		List<VersionedId> results = selectAndMap(Arrays.asList(ius),null,iu -> {
-			return new VersionedId(iu.getId(), iu.getVersion()
-					.toString());
-		});
+		List<VersionedId> results = selectAndMap(Arrays.asList(ius), null,
+				iu -> {
+					return new VersionedId(iu.getId(), iu.getVersion()
+							.toString());
+				});
 		return results.toArray(new VersionedId[results.size()]);
 	}
-	
+
 	@Override
 	public VersionedId[] getInstallableFeatures(URI location) {
 		IMetadataRepositoryManager manager = (IMetadataRepositoryManager) agent
@@ -475,7 +486,7 @@ public class FeatureInstallManager extends AbstractP2Manager implements
 		if (manager == null)
 			return null;
 		IQueryable<IInstallableUnit> queryable = null;
-		if (location == null) 
+		if (location == null)
 			queryable = manager;
 		else {
 			try {
@@ -489,7 +500,7 @@ public class FeatureInstallManager extends AbstractP2Manager implements
 		IInstallableUnit[] units = queryable.query(
 				QueryUtil.createIUGroupQuery(), null).toArray(
 				IInstallableUnit.class);
-		return (units == null)?new VersionedId[0]:getVersionIds(units);
+		return (units == null) ? new VersionedId[0] : getVersionIds(units);
 	}
 
 	@Override

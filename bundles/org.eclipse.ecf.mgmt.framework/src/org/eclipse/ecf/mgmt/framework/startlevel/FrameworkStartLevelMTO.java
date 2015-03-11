@@ -39,8 +39,8 @@ public class FrameworkStartLevelMTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "FrameworkStartLevelMTO [startLevel=" + startLevel + ", initialBundleStartLevel="
-				+ initialBundleStartLevel + "]";
+		return "FrameworkStartLevelMTO [startLevel=" + startLevel
+				+ ", initialBundleStartLevel=" + initialBundleStartLevel + "]";
 	}
 
 }

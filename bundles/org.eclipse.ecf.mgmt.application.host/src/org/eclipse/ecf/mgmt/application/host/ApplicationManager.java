@@ -28,7 +28,8 @@ import org.osgi.service.application.ApplicationDescriptor;
 import org.osgi.service.application.ApplicationHandle;
 import org.osgi.util.tracker.ServiceTracker;
 
-public class ApplicationManager extends AbstractManager implements IApplicationManager {
+public class ApplicationManager extends AbstractManager implements
+		IApplicationManager {
 
 	private ServiceTracker<ApplicationDescriptor, ApplicationDescriptor> appDescTracker;
 	private ServiceTracker<ApplicationHandle, ApplicationHandle> appInstTracker;
@@ -36,11 +37,11 @@ public class ApplicationManager extends AbstractManager implements IApplicationM
 	@Override
 	protected void activate(BundleContext context) throws Exception {
 		super.activate(context);
-		appDescTracker = new ServiceTracker<ApplicationDescriptor, ApplicationDescriptor>(context,
-				ApplicationDescriptor.class, null);
+		appDescTracker = new ServiceTracker<ApplicationDescriptor, ApplicationDescriptor>(
+				context, ApplicationDescriptor.class, null);
 		appDescTracker.open();
-		appInstTracker = new ServiceTracker<ApplicationHandle, ApplicationHandle>(context, ApplicationHandle.class,
-				null);
+		appInstTracker = new ServiceTracker<ApplicationHandle, ApplicationHandle>(
+				context, ApplicationHandle.class, null);
 		appInstTracker.open();
 	}
 
@@ -59,36 +60,57 @@ public class ApplicationManager extends AbstractManager implements IApplicationM
 
 	@SuppressWarnings("unchecked")
 	protected ApplicationMTO createAppMTO(ApplicationDescriptor appDescriptor) {
-		return new ApplicationMTO(appDescriptor.getApplicationId(), (Map<String, ?>) appDescriptor.getProperties(null));
+		return new ApplicationMTO(appDescriptor.getApplicationId(),
+				(Map<String, ?>) appDescriptor.getProperties(null));
 	}
 
-	protected ApplicationMTO createAppMTO(ServiceReference<ApplicationDescriptor> appDescSR) {
-		ApplicationDescriptor appDescriptor = getContext().getService(appDescSR);
-		ApplicationMTO result = (appDescriptor != null) ? createAppMTO(appDescriptor) : null;
+	protected ApplicationMTO createAppMTO(
+			ServiceReference<ApplicationDescriptor> appDescSR) {
+		ApplicationDescriptor appDescriptor = getContext()
+				.getService(appDescSR);
+		ApplicationMTO result = (appDescriptor != null) ? createAppMTO(appDescriptor)
+				: null;
 		getContext().ungetService(appDescSR);
 		return result;
 	}
 
-	protected ApplicationInstanceMTO createAppInstanceMTO(ServiceReference<ApplicationHandle> appInstSR) {
-		ApplicationHandle appInstanceHandle = getContext().getService(appInstSR);
-		ApplicationInstanceMTO result = (appInstanceHandle != null) ? new ApplicationInstanceMTO(appInstanceHandle.getInstanceId(),
-				appInstanceHandle.getState(), createAppMTO(appInstanceHandle.getApplicationDescriptor())) : null;
+	protected ApplicationInstanceMTO createAppInstanceMTO(
+			ServiceReference<ApplicationHandle> appInstSR) {
+		ApplicationHandle appInstanceHandle = getContext()
+				.getService(appInstSR);
+		ApplicationInstanceMTO result = (appInstanceHandle != null) ? new ApplicationInstanceMTO(
+				appInstanceHandle.getInstanceId(),
+				appInstanceHandle.getState(),
+				createAppMTO(appInstanceHandle.getApplicationDescriptor()))
+				: null;
 		getContext().ungetService(appInstSR);
 		return result;
 	}
 
-	protected List<ServiceReference<ApplicationDescriptor>> getAppSRs(String appId) {
-		ServiceReference<ApplicationDescriptor>[] appSRs = appDescTracker.getServiceReferences();
-		return (appSRs == null) ? Collections.emptyList() : select(Arrays.asList(appSRs),p -> {
-			return appId == null || appId.equals(p.getProperty(Constants.SERVICE_PID));
-		});
+	protected List<ServiceReference<ApplicationDescriptor>> getAppSRs(
+			String appId) {
+		ServiceReference<ApplicationDescriptor>[] appSRs = appDescTracker
+				.getServiceReferences();
+		return (appSRs == null) ? Collections.emptyList() : select(
+				Arrays.asList(appSRs),
+				p -> {
+					return appId == null
+							|| appId.equals(p
+									.getProperty(Constants.SERVICE_PID));
+				});
 	}
 
-	protected List<ServiceReference<ApplicationHandle>> getAppInstSRs(String appInstId) {
-		ServiceReference<ApplicationHandle>[] appSRs = appInstTracker.getServiceReferences();
-		return (appSRs == null) ? Collections.emptyList() : select(Arrays.asList(appSRs),p -> {
-			return appInstId == null || appInstId.equals(p.getProperty(Constants.SERVICE_PID));
-		});
+	protected List<ServiceReference<ApplicationHandle>> getAppInstSRs(
+			String appInstId) {
+		ServiceReference<ApplicationHandle>[] appSRs = appInstTracker
+				.getServiceReferences();
+		return (appSRs == null) ? Collections.emptyList() : select(
+				Arrays.asList(appSRs),
+				p -> {
+					return appInstId == null
+							|| appInstId.equals(p
+									.getProperty(Constants.SERVICE_PID));
+				});
 	}
 
 	@Override
@@ -107,9 +129,10 @@ public class ApplicationManager extends AbstractManager implements IApplicationM
 
 	@Override
 	public ApplicationInstanceMTO[] getRunningApplications() {
-		List<ApplicationInstanceMTO> results = getAppInstSRs(null).stream().map(sr -> {
-			return createAppInstanceMTO(sr);
-		}).collect(Collectors.toList());
+		List<ApplicationInstanceMTO> results = getAppInstSRs(null).stream()
+				.map(sr -> {
+					return createAppInstanceMTO(sr);
+				}).collect(Collectors.toList());
 		return results.toArray(new ApplicationInstanceMTO[results.size()]);
 	}
 
@@ -120,14 +143,17 @@ public class ApplicationManager extends AbstractManager implements IApplicationM
 	}
 
 	@Override
-	public IStatus startApplication(String appId, @SuppressWarnings("rawtypes") Map appArgs) {
+	public IStatus startApplication(String appId,
+			@SuppressWarnings("rawtypes") Map appArgs) {
 		List<ServiceReference<ApplicationDescriptor>> results = getAppSRs(appId);
 		if (results.size() == 0)
-			return createErrorStatus("Could not find appId=" + appId + " to start");
+			return createErrorStatus("Could not find appId=" + appId
+					+ " to start");
 		ServiceReference<ApplicationDescriptor> sr = results.get(0);
 		ApplicationDescriptor ad = getContext().getService(sr);
 		if (ad == null)
-			return createErrorStatus("Could not get application descriptor for appId=" + appId);
+			return createErrorStatus("Could not get application descriptor for appId="
+					+ appId);
 		try {
 			ad.launch(appArgs);
 			return SerializableStatus.OK_STATUS;
@@ -142,16 +168,19 @@ public class ApplicationManager extends AbstractManager implements IApplicationM
 	public IStatus stopApplication(String appInstanceId) {
 		List<ServiceReference<ApplicationHandle>> results = getAppInstSRs(appInstanceId);
 		if (results.size() == 0)
-			return createErrorStatus("Could not find appInstanceId=" + appInstanceId + " to stop");
+			return createErrorStatus("Could not find appInstanceId="
+					+ appInstanceId + " to stop");
 		ServiceReference<ApplicationHandle> sr = results.get(0);
 		ApplicationHandle ah = getContext().getService(sr);
 		if (ah == null)
-			return createErrorStatus("Could not get application handle for appInstanceId=" + appInstanceId);
+			return createErrorStatus("Could not get application handle for appInstanceId="
+					+ appInstanceId);
 		try {
 			ah.destroy();
 			return SerializableStatus.OK_STATUS;
 		} catch (Exception e) {
-			return createErrorStatus("Could not launch appInstanceId=" + appInstanceId);
+			return createErrorStatus("Could not launch appInstanceId="
+					+ appInstanceId);
 		} finally {
 			getContext().ungetService(sr);
 		}
@@ -161,11 +190,13 @@ public class ApplicationManager extends AbstractManager implements IApplicationM
 	public IStatus lockApplication(String appId) {
 		List<ServiceReference<ApplicationDescriptor>> results = getAppSRs(appId);
 		if (results.size() == 0)
-			return createErrorStatus("Could not find appId=" + appId + " to start");
+			return createErrorStatus("Could not find appId=" + appId
+					+ " to start");
 		ServiceReference<ApplicationDescriptor> sr = results.get(0);
 		ApplicationDescriptor ad = getContext().getService(sr);
 		if (ad == null)
-			return createErrorStatus("Could not get application descriptor for appId=" + appId);
+			return createErrorStatus("Could not get application descriptor for appId="
+					+ appId);
 		try {
 			ad.lock();
 			return SerializableStatus.OK_STATUS;
@@ -180,11 +211,13 @@ public class ApplicationManager extends AbstractManager implements IApplicationM
 	public IStatus unlockApplication(String appId) {
 		List<ServiceReference<ApplicationDescriptor>> results = getAppSRs(appId);
 		if (results.size() == 0)
-			return createErrorStatus("Could not find appId=" + appId + " to start");
+			return createErrorStatus("Could not find appId=" + appId
+					+ " to start");
 		ServiceReference<ApplicationDescriptor> sr = results.get(0);
 		ApplicationDescriptor ad = getContext().getService(sr);
 		if (ad == null)
-			return createErrorStatus("Could not get application descriptor for appId=" + appId);
+			return createErrorStatus("Could not get application descriptor for appId="
+					+ appId);
 		try {
 			ad.unlock();
 			return SerializableStatus.OK_STATUS;

@@ -32,13 +32,16 @@ public class SerializationUtil {
 			}
 		}
 	}
-	
+
 	public static Throwable checkForSerializable(Throwable t) {
-		if (isSerializable(t)) return t;
+		if (isSerializable(t))
+			return t;
 		else {
 			String message = t.getMessage();
-			if (t instanceof RuntimeException) return new RuntimeException(message);
-			else if (t instanceof Exception) return new Exception(message);
+			if (t instanceof RuntimeException)
+				return new RuntimeException(message);
+			else if (t instanceof Exception)
+				return new Exception(message);
 			return new Throwable(message);
 		}
 	}

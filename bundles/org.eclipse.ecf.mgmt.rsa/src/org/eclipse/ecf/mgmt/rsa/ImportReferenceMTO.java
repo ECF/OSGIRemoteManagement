@@ -22,8 +22,8 @@ public class ImportReferenceMTO implements Serializable {
 	private final long importedService;
 	private final EndpointDescriptionMTO endpoint;
 
-	public ImportReferenceMTO(ID containerID, long remoteServiceId, long exportedServiceId,
-			Map<String, ?> endpointProperties) {
+	public ImportReferenceMTO(ID containerID, long remoteServiceId,
+			long exportedServiceId, Map<String, ?> endpointProperties) {
 		super();
 		this.containerID = containerID;
 		this.remoteServiceId = remoteServiceId;
@@ -49,8 +49,9 @@ public class ImportReferenceMTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ImportReferenceMTO [containerID=" + containerID + ", remoteServiceId=" + remoteServiceId
-				+ ", importedService=" + importedService + ", endpoint=" + endpoint + "]";
+		return "ImportReferenceMTO [containerID=" + containerID
+				+ ", remoteServiceId=" + remoteServiceId + ", importedService="
+				+ importedService + ", endpoint=" + endpoint + "]";
 	}
 
 }

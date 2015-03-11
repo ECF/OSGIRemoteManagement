@@ -71,7 +71,8 @@ public abstract class AbstractManager implements IAdaptable {
 
 	protected IStatus createErrorStatus(String message, Throwable t) {
 		logError(message, t);
-		return new SerializableStatus(IStatus.ERROR, getContext().getBundle().getSymbolicName(), message, t);
+		return new SerializableStatus(IStatus.ERROR, getContext().getBundle()
+				.getSymbolicName(), message, t);
 	}
 
 	protected IStatus createErrorStatus(String message) {
@@ -94,13 +95,15 @@ public abstract class AbstractManager implements IAdaptable {
 	protected <T> List<T> select(List<T> source, final Predicate<T> filter) {
 		return source.stream().filter(new Predicate<T>() {
 			public boolean test(T ins) {
-				return filter == null?true:filter.test(ins);
+				return filter == null ? true : filter.test(ins);
 			}
 		}).collect(Collectors.toList());
 	}
 
-	protected <T, R> List<R> selectAndMap(List<T> source, final Predicate<T> filter, Function<T, R> map) {
-		return select(source, filter).stream().map(map).collect(Collectors.toList());
+	protected <T, R> List<R> selectAndMap(List<T> source,
+			final Predicate<T> filter, Function<T, R> map) {
+		return select(source, filter).stream().map(map)
+				.collect(Collectors.toList());
 	}
 
 	protected Bundle getBundle0(long bundleId) {
@@ -108,12 +111,12 @@ public abstract class AbstractManager implements IAdaptable {
 	}
 
 	protected Bundle getBundle0(String symbolicName) {
-		List<Bundle> results = select(getAllBundles(),b -> {
+		List<Bundle> results = select(getAllBundles(), b -> {
 			return b.getSymbolicName().equals(symbolicName);
 		});
-		return results.size()==0?null:results.get(0);
+		return results.size() == 0 ? null : results.get(0);
 	}
-	
+
 	protected Bundle getFrameworkBundle() {
 		return getBundle0(0);
 	}
@@ -127,10 +130,12 @@ public abstract class AbstractManager implements IAdaptable {
 			return BundleMTO.createMTO(b);
 		});
 		FrameworkDTO frameworkDTO = getFrameworkDTO();
-		List<ServiceReferenceMTO> srMTOs = selectAndMap(frameworkDTO.services, null, srDTO -> {
-			return ServiceReferenceMTO.createMTO(srDTO);
-		});
-		return new FrameworkMTO(bundleMTOs.toArray(new BundleMTO[bundleMTOs.size()]), frameworkDTO.properties,
+		List<ServiceReferenceMTO> srMTOs = selectAndMap(frameworkDTO.services,
+				null, srDTO -> {
+					return ServiceReferenceMTO.createMTO(srDTO);
+				});
+		return new FrameworkMTO(bundleMTOs.toArray(new BundleMTO[bundleMTOs
+				.size()]), frameworkDTO.properties,
 				srMTOs.toArray(new ServiceReferenceMTO[srMTOs.size()]));
 	}
 

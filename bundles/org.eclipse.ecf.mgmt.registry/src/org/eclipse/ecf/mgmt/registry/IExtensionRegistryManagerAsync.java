@@ -14,18 +14,23 @@ import java.util.concurrent.CompletableFuture;
 public interface IExtensionRegistryManagerAsync {
 	public String[] getExtensionPointIds();
 
-	CompletableFuture<ExtensionPointMTO> getExtensionPointAsync(String extensionPointId);
+	CompletableFuture<ExtensionPointMTO> getExtensionPointAsync(
+			String extensionPointId);
 
-	CompletableFuture<ExtensionPointMTO[]> getExtensionPointsForContributorAsync(String contributorId);
+	CompletableFuture<ExtensionPointMTO[]> getExtensionPointsForContributorAsync(
+			String contributorId);
 
 	CompletableFuture<ExtensionPointMTO[]> getExtensionPointsAsync();
 
-	CompletableFuture<ExtensionMTO> getExtensionAsync(String extensionPointId, String extensionId);
+	CompletableFuture<ExtensionMTO> getExtensionAsync(String extensionPointId,
+			String extensionId);
 
-	CompletableFuture<ExtensionMTO[]> getExtensionsForContributorAsync(String contributorId);
+	CompletableFuture<ExtensionMTO[]> getExtensionsForContributorAsync(
+			String contributorId);
 
 	CompletableFuture<ExtensionMTO[]> getExtensionsAsync(String extensionPointId);
 
-	CompletableFuture<ConfigurationElementMTO[]> getConfigurationElementsAsync(String extensionPointId);
+	CompletableFuture<ConfigurationElementMTO[]> getConfigurationElementsAsync(
+			String extensionPointId);
 
 }

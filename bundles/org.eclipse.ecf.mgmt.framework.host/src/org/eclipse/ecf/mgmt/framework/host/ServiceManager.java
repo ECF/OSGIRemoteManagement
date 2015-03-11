@@ -24,23 +24,26 @@ public class ServiceManager extends AbstractManager implements IServiceManager {
 
 	@Override
 	public ServiceReferenceMTO[] getServiceReferences() {
-		List<ServiceReferenceMTO> results = selectAndMap(getFrameworkDTO().services, null, srmapper);
+		List<ServiceReferenceMTO> results = selectAndMap(
+				getFrameworkDTO().services, null, srmapper);
 		return results.toArray(new ServiceReferenceMTO[results.size()]);
 	}
 
 	@Override
 	public ServiceReferenceMTO getServiceReference(final long serviceId) {
-		List<ServiceReferenceMTO> results = selectAndMap(getFrameworkDTO().services, srd -> {
-			return srd.id == serviceId;
-		}, srmapper);
+		List<ServiceReferenceMTO> results = selectAndMap(
+				getFrameworkDTO().services, srd -> {
+					return srd.id == serviceId;
+				}, srmapper);
 		return results.size() > 0 ? results.get(0) : null;
 	}
 
 	@Override
 	public ServiceReferenceMTO[] getServiceReferences(final long bundleId) {
-		List<ServiceReferenceMTO> results = selectAndMap(getFrameworkDTO().services, srd -> {
-			return srd.bundle == bundleId;
-		}, srmapper);
+		List<ServiceReferenceMTO> results = selectAndMap(
+				getFrameworkDTO().services, srd -> {
+					return srd.bundle == bundleId;
+				}, srmapper);
 		return results.toArray(new ServiceReferenceMTO[results.size()]);
 	}
 

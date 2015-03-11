@@ -34,7 +34,8 @@ public class IDMTO implements Serializable {
 	}
 
 	public IDMTO(String stringIDName) {
-		this(new NamespaceMTO("org.eclipse.ecf.core.identity.StringID"), stringIDName);
+		this(new NamespaceMTO("org.eclipse.ecf.core.identity.StringID"),
+				stringIDName);
 	}
 
 	public String getName() {
@@ -51,7 +52,8 @@ public class IDMTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "IDMTO [name=" + name + ", namespace=" + namespace + ", externalForm=" + externalForm + "]";
+		return "IDMTO [name=" + name + ", namespace=" + namespace
+				+ ", externalForm=" + externalForm + "]";
 	}
 
 }

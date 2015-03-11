@@ -33,6 +33,7 @@ public class EndpointEventMTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "EndpointEventMTO [type=" + type + ", endpoint=" + endpoint + "]";
+		return "EndpointEventMTO [type=" + type + ", endpoint=" + endpoint
+				+ "]";
 	}
 }

@@ -23,8 +23,7 @@ public class ContainerMTO implements Serializable {
 	private final ContainerTypeDescriptionMTO containerTypeDescription;
 	private final String className;
 
-	public ContainerMTO(IDMTO id, IDMTO connectedID,
-			NamespaceMTO namespace,
+	public ContainerMTO(IDMTO id, IDMTO connectedID, NamespaceMTO namespace,
 			ContainerTypeDescriptionMTO containerTypeDescription,
 			String className) {
 		this.id = id;

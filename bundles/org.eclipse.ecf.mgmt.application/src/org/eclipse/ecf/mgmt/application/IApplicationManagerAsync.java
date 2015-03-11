@@ -16,14 +16,16 @@ import org.eclipse.core.runtime.IStatus;
 
 public interface IApplicationManagerAsync {
 	CompletableFuture<ApplicationMTO[]> getApplicationsAsync();
-	
+
 	CompletableFuture<ApplicationMTO> getApplicationAsync(String applicationId);
 
 	CompletableFuture<ApplicationInstanceMTO[]> getRunningApplicationsAsync();
-	
-	CompletableFuture<ApplicationInstanceMTO> getRunningApplicationAsync(String applicationInstanceId);
-	
-	CompletableFuture<IStatus> startApplicationAsync(String applicationId, @SuppressWarnings("rawtypes") Map appArgs);
+
+	CompletableFuture<ApplicationInstanceMTO> getRunningApplicationAsync(
+			String applicationInstanceId);
+
+	CompletableFuture<IStatus> startApplicationAsync(String applicationId,
+			@SuppressWarnings("rawtypes") Map appArgs);
 
 	CompletableFuture<IStatus> stopApplicationAsync(String applicationInstanceId);
 

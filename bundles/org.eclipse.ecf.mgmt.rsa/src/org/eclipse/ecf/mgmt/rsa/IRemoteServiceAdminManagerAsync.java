@@ -18,23 +18,29 @@ public interface IRemoteServiceAdminManagerAsync {
 
 	CompletableFuture<RemoteServiceAdminEventMTO[]> getRemoteServiceAdminEventsAsync();
 
-	CompletableFuture<RemoteServiceAdminEventMTO[]> getRemoteServiceAdminEventsAsync(int[] typeFilter);
+	CompletableFuture<RemoteServiceAdminEventMTO[]> getRemoteServiceAdminEventsAsync(
+			int[] typeFilter);
 
 	CompletableFuture<ExportReferenceMTO[]> getExportedServicesAsync();
 
 	CompletableFuture<ImportReferenceMTO[]> getImportedEndpointsAsync();
 
-	CompletableFuture<ExportRegistrationMTO[]> exportServiceAsync(ServiceReferenceMTO serviceReference,
+	CompletableFuture<ExportRegistrationMTO[]> exportServiceAsync(
+			ServiceReferenceMTO serviceReference,
 			Map<String, ?> overridingProperties);
 
-	CompletableFuture<EndpointDescriptionMTO> updateExportAsync(ExportReferenceMTO exportReference, Map<String, ?> properties);
+	CompletableFuture<EndpointDescriptionMTO> updateExportAsync(
+			ExportReferenceMTO exportReference, Map<String, ?> properties);
 
-	CompletableFuture<Boolean> closeExportAsync(ExportReferenceMTO exportReference);
+	CompletableFuture<Boolean> closeExportAsync(
+			ExportReferenceMTO exportReference);
 
-	CompletableFuture<ImportRegistrationMTO> importServiceAsync(EndpointDescriptionMTO endpointDescription);
+	CompletableFuture<ImportRegistrationMTO> importServiceAsync(
+			EndpointDescriptionMTO endpointDescription);
 
 	CompletableFuture<Boolean> updateImportAsync(EndpointDescriptionMTO endpoint);
 
-	CompletableFuture<Boolean> closeImportAsync(ImportReferenceMTO importReference);
+	CompletableFuture<Boolean> closeImportAsync(
+			ImportReferenceMTO importReference);
 
 }

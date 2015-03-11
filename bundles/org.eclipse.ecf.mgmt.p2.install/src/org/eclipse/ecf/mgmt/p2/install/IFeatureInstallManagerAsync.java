@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * Copyright (c) 2015 Composent, Inc. and others. All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Composent, Inc. - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.ecf.mgmt.p2.install;
 
 import java.net.URI;
@@ -17,30 +26,36 @@ import org.eclipse.ecf.mgmt.p2.VersionedId;
  */
 interface IFeatureInstallManagerAsync {
 
-	CompletableFuture<IStatus> installFeatureAsync(VersionedId featureId, URI[] repoLocations,
+	CompletableFuture<IStatus> installFeatureAsync(VersionedId featureId,
+			URI[] repoLocations, String profileId);
+
+	CompletableFuture<IStatus> installFeatureAsync(VersionedId featureId,
+			URI[] repoLocations);
+
+	CompletableFuture<IStatus> installFeatureAsync(VersionedId featureId,
 			String profileId);
-
-	CompletableFuture<IStatus> installFeatureAsync(VersionedId featureId, URI[] repoLocations);
-
-	CompletableFuture<IStatus> installFeatureAsync(VersionedId featureId, String profileId);
 
 	CompletableFuture<IStatus> installFeatureAsync(VersionedId featureId);
 
-	CompletableFuture<IStatus> updateFeatureAsync(VersionedId featureId, URI[] repoLocations,
+	CompletableFuture<IStatus> updateFeatureAsync(VersionedId featureId,
+			URI[] repoLocations, String profileId);
+
+	CompletableFuture<IStatus> updateFeatureAsync(VersionedId featureId,
+			URI[] repoLocations);
+
+	CompletableFuture<IStatus> updateFeatureAsync(VersionedId featureId,
 			String profileId);
-
-	CompletableFuture<IStatus> updateFeatureAsync(VersionedId featureId, URI[] repoLocations);
-
-	CompletableFuture<IStatus> updateFeatureAsync(VersionedId featureId, String profileId);
 
 	CompletableFuture<IStatus> updateFeatureAsync(VersionedId featureId);
 
-	CompletableFuture<IStatus> uninstallFeatureAsync(VersionedId featureId, URI[] repoLocations,
+	CompletableFuture<IStatus> uninstallFeatureAsync(VersionedId featureId,
+			URI[] repoLocations, String profileId);
+
+	CompletableFuture<IStatus> uninstallFeatureAsync(VersionedId featureId,
+			URI[] repoLocations);
+
+	CompletableFuture<IStatus> uninstallFeatureAsync(VersionedId featureId,
 			String profileId);
-
-	CompletableFuture<IStatus> uninstallFeatureAsync(VersionedId featureId, URI[] repoLocations);
-
-	CompletableFuture<IStatus> uninstallFeatureAsync(VersionedId featureId, String profileId);
 
 	CompletableFuture<IStatus> uninstallFeatureAsync(VersionedId featureId);
 

@@ -23,8 +23,10 @@ public class BundleMTO implements Serializable {
 	private static final long serialVersionUID = -8261289274590963132L;
 
 	public static BundleMTO createMTO(Bundle bundle) {
-		if (bundle == null) return null;
-		return new BundleMTO(bundle.adapt(BundleDTO.class), PropertiesUtil.convertHeadersToMap(bundle.getHeaders()),
+		if (bundle == null)
+			return null;
+		return new BundleMTO(bundle.adapt(BundleDTO.class),
+				PropertiesUtil.convertHeadersToMap(bundle.getHeaders()),
 				bundle.getLocation());
 	}
 
@@ -92,8 +94,10 @@ public class BundleMTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "BundleMTO [id=" + id + ", lastModified=" + lastModified + ", state=" + state + ", symbolicName="
-				+ symbolicName + ", version=" + version + ", manifest=" + manifest + ", location=" + location + "]";
+		return "BundleMTO [id=" + id + ", lastModified=" + lastModified
+				+ ", state=" + state + ", symbolicName=" + symbolicName
+				+ ", version=" + version + ", manifest=" + manifest
+				+ ", location=" + location + "]";
 	}
 
 }

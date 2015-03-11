@@ -64,7 +64,8 @@ public class ComponentMTO implements Serializable {
 		public boolean equals(Object other) {
 			if (other instanceof CompRef) {
 				CompRef oRef = (CompRef) other;
-				return (oRef.bid == bid && name.equals(oRef.name) && componentId.equals(oRef.componentId));
+				return (oRef.bid == bid && name.equals(oRef.name) && componentId
+						.equals(oRef.componentId));
 			}
 			return false;
 		}
@@ -112,12 +113,17 @@ public class ComponentMTO implements Serializable {
 	}
 
 	public static ComponentMTO createMTO(CompRef cRef, Component comp) {
-		return new ComponentMTO(cRef.id, comp.getName(), comp.getState(), comp.getBundle().getBundleId(),
-				comp.getFactory(), comp.isServiceFactory(), comp.getClassName(), comp.isDefaultEnabled(),
-				comp.isImmediate(), comp.getServices(), PropertiesUtil.convertDictionaryToMap(comp.getProperties()),
-				ComponentReferenceMTO.createMTOs(comp.getReferences()), (comp.getComponentInstance() == null) ? false
-						: true, comp.getActivate(), comp.isActivateDeclared(), comp.getDeactivate(),
-				comp.isDeactivateDeclared(), comp.getModified(), comp.getConfigurationPolicy(),
+		return new ComponentMTO(cRef.id, comp.getName(), comp.getState(), comp
+				.getBundle().getBundleId(), comp.getFactory(),
+				comp.isServiceFactory(), comp.getClassName(),
+				comp.isDefaultEnabled(), comp.isImmediate(),
+				comp.getServices(), PropertiesUtil.convertDictionaryToMap(comp
+						.getProperties()),
+				ComponentReferenceMTO.createMTOs(comp.getReferences()),
+				(comp.getComponentInstance() == null) ? false : true,
+				comp.getActivate(), comp.isActivateDeclared(),
+				comp.getDeactivate(), comp.isDeactivateDeclared(),
+				comp.getModified(), comp.getConfigurationPolicy(),
 				findServiceForComponent(comp));
 	}
 
@@ -144,10 +150,13 @@ public class ComponentMTO implements Serializable {
 	private String configurationPolicy;
 	private ServiceReferenceMTO serviceInstance;
 
-	ComponentMTO(long id, String name, int state, long bundleId, String factory, boolean serviceFactory,
-			String className, boolean defaultEnabled, boolean immediate, String[] services,
-			@SuppressWarnings("rawtypes") Map properties, ComponentReferenceMTO[] referenceInfo, boolean activated,
-			String activate, boolean activateDeclared, String deactivate, boolean deactivateDeclared, String modified,
+	ComponentMTO(long id, String name, int state, long bundleId,
+			String factory, boolean serviceFactory, String className,
+			boolean defaultEnabled, boolean immediate, String[] services,
+			@SuppressWarnings("rawtypes") Map properties,
+			ComponentReferenceMTO[] referenceInfo, boolean activated,
+			String activate, boolean activateDeclared, String deactivate,
+			boolean deactivateDeclared, String modified,
 			String configurationPolicy, ServiceReferenceMTO serviceInstance) {
 		this.id = id;
 		Long cId = (Long) properties.get("component.id");
@@ -261,14 +270,19 @@ public class ComponentMTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ComponentMTO [id=" + id + ", componentId=" + componentId + ", name=" + name + ", state=" + state
-				+ ", bundleId=" + bundleId + ", factory=" + factory + ", serviceFactory=" + serviceFactory
-				+ ", className=" + className + ", defaultEnabled=" + defaultEnabled + ", immediate=" + immediate
-				+ ", services=" + Arrays.toString(services) + ", properties=" + properties
-				+ ", componentReferenceMTOs=" + Arrays.toString(componentReferenceMTOs) + ", activated=" + activated
-				+ ", activate=" + activate + ", activateDeclared=" + activateDeclared + ", deactivate=" + deactivate
-				+ ", deactivateDeclared=" + deactivateDeclared + ", modified=" + modified + ", configurationPolicy="
-				+ configurationPolicy + ", serviceInstance=" + serviceInstance + "]";
+		return "ComponentMTO [id=" + id + ", componentId=" + componentId
+				+ ", name=" + name + ", state=" + state + ", bundleId="
+				+ bundleId + ", factory=" + factory + ", serviceFactory="
+				+ serviceFactory + ", className=" + className
+				+ ", defaultEnabled=" + defaultEnabled + ", immediate="
+				+ immediate + ", services=" + Arrays.toString(services)
+				+ ", properties=" + properties + ", componentReferenceMTOs="
+				+ Arrays.toString(componentReferenceMTOs) + ", activated="
+				+ activated + ", activate=" + activate + ", activateDeclared="
+				+ activateDeclared + ", deactivate=" + deactivate
+				+ ", deactivateDeclared=" + deactivateDeclared + ", modified="
+				+ modified + ", configurationPolicy=" + configurationPolicy
+				+ ", serviceInstance=" + serviceInstance + "]";
 	}
 
 }

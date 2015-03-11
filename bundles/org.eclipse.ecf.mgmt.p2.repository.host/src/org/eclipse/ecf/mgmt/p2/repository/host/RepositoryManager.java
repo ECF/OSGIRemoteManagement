@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * Copyright (c) 2015 Composent, Inc. and others. All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Composent, Inc. - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.ecf.mgmt.p2.repository.host;
 
 import java.net.URI;
@@ -281,7 +290,8 @@ public class RepositoryManager extends AbstractP2Manager implements
 			queryable = getMetadataRepositoryManager();
 		} else
 			try {
-				queryable = getMetadataRepositoryManager().loadRepository(location, null);
+				queryable = getMetadataRepositoryManager().loadRepository(
+						location, null);
 			} catch (Exception e) {
 				return null;
 			}

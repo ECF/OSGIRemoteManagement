@@ -29,7 +29,8 @@ import org.eclipse.ecf.mgmt.identity.IDMTO;
 import org.eclipse.ecf.mgmt.identity.NamespaceMTO;
 import org.eclipse.ecf.mgmt.identity.host.IdentityFactoryManager;
 
-public class ContainerFactoryManager extends AbstractManager implements IContainerFactoryManager {
+public class ContainerFactoryManager extends AbstractManager implements
+		IContainerFactoryManager {
 
 	private IContainerManager containerManager;
 	private IIDFactory idFactory;
@@ -38,7 +39,8 @@ public class ContainerFactoryManager extends AbstractManager implements IContain
 		this.containerManager = containerManager;
 	}
 
-	protected void unbindContainerManager(IContainerManager unbindContainerManager) {
+	protected void unbindContainerManager(
+			IContainerManager unbindContainerManager) {
 		this.containerManager = null;
 	}
 
@@ -51,9 +53,11 @@ public class ContainerFactoryManager extends AbstractManager implements IContain
 	}
 
 	protected ContainerTypeDescriptionMTO createMTO(ContainerTypeDescription ctd) {
-		return ctd == null ? null : new ContainerTypeDescriptionMTO(ctd.getName(), ctd.getDescription(),
-				ctd.isHidden(), ctd.isServer(), ctd.getSupportedAdapterTypes(),
-				IdentityFactoryManager.convertClassArrayToNameArray(ctd.getSupportedParameterTypes()),
+		return ctd == null ? null : new ContainerTypeDescriptionMTO(
+				ctd.getName(), ctd.getDescription(), ctd.isHidden(),
+				ctd.isServer(), ctd.getSupportedAdapterTypes(),
+				IdentityFactoryManager.convertClassArrayToNameArray(ctd
+						.getSupportedParameterTypes()),
 				ctd.getSupportedIntents(), ctd.getSupportedConfigs());
 	}
 
@@ -61,15 +65,20 @@ public class ContainerFactoryManager extends AbstractManager implements IContain
 		if (container == null)
 			return null;
 		ID containerID = container.getID();
-		ContainerTypeDescription ctd = containerManager.getContainerTypeDescription(containerID);
+		ContainerTypeDescription ctd = containerManager
+				.getContainerTypeDescription(containerID);
 		IDMTO containerIDMTO = IdentityFactoryManager.createIDMTO(containerID);
-		IDMTO connectedIDMTO = IdentityFactoryManager.createIDMTO(container.getConnectedID());
-		NamespaceMTO nsMTO = IdentityFactoryManager.createNamespaceMTO(container.getConnectNamespace());
-		return new ContainerMTO(containerIDMTO, connectedIDMTO, nsMTO, createMTO(ctd), container.getClass().getName());
+		IDMTO connectedIDMTO = IdentityFactoryManager.createIDMTO(container
+				.getConnectedID());
+		NamespaceMTO nsMTO = IdentityFactoryManager
+				.createNamespaceMTO(container.getConnectNamespace());
+		return new ContainerMTO(containerIDMTO, connectedIDMTO, nsMTO,
+				createMTO(ctd), container.getClass().getName());
 	}
 
 	protected ContainerMTO[] createMTOs(IContainer[] containers) {
-		List<ContainerMTO> results = new ArrayList<ContainerMTO>(containers.length);
+		List<ContainerMTO> results = new ArrayList<ContainerMTO>(
+				containers.length);
 		for (int i = 0; i < containers.length; i++)
 			results.add(createMTO(containers[i]));
 		return results.toArray(new ContainerMTO[results.size()]);
@@ -77,14 +86,16 @@ public class ContainerFactoryManager extends AbstractManager implements IContain
 
 	protected ID createID(IDMTO mto) {
 		try {
-			return idFactory.createID(mto.getNamespace().getName(), mto.getName());
+			return idFactory.createID(mto.getNamespace().getName(),
+					mto.getName());
 		} catch (IDCreateException e) {
 			return null;
 		}
 	}
 
 	protected ContainerTypeDescription getDescription(String descriptionName) {
-		return containerManager.getContainerFactory().getDescriptionByName(descriptionName);
+		return containerManager.getContainerFactory().getDescriptionByName(
+				descriptionName);
 	}
 
 	@Override
@@ -102,38 +113,45 @@ public class ContainerFactoryManager extends AbstractManager implements IContain
 	@Override
 	public ContainerTypeDescriptionMTO[] getContainerTypeDescriptions() {
 		List ctds = containerManager.getContainerFactory().getDescriptions();
-		List<ContainerTypeDescriptionMTO> results = new ArrayList<ContainerTypeDescriptionMTO>(ctds.size());
+		List<ContainerTypeDescriptionMTO> results = new ArrayList<ContainerTypeDescriptionMTO>(
+				ctds.size());
 		for (Iterator i = ctds.iterator(); i.hasNext();)
 			results.add(createMTO((ContainerTypeDescription) i.next()));
 		return results.toArray(new ContainerTypeDescriptionMTO[results.size()]);
 	}
 
 	@Override
-	public ContainerTypeDescriptionMTO getContainerTypeDescription(String descriptionName) {
+	public ContainerTypeDescriptionMTO getContainerTypeDescription(
+			String descriptionName) {
 		return createMTO(getDescription(descriptionName));
 	}
 
 	@Override
-	public ContainerMTO createContainer(ContainerTypeDescriptionMTO desc, Object[] args)
-			throws ContainerCreateException {
+	public ContainerMTO createContainer(ContainerTypeDescriptionMTO desc,
+			Object[] args) throws ContainerCreateException {
 		ContainerTypeDescription d = getDescription(desc.getName());
 		if (d == null)
-			throw new ContainerCreateException("Container type description with name=" + desc.getName() + " not found");
+			throw new ContainerCreateException(
+					"Container type description with name=" + desc.getName()
+							+ " not found");
 		try {
-			return createMTO(containerManager.getContainerFactory().createContainer(d, args));
+			return createMTO(containerManager.getContainerFactory()
+					.createContainer(d, args));
 		} catch (org.eclipse.ecf.core.ContainerCreateException e) {
-			throw new ContainerCreateException("Could not create container with name=" + desc.getName(), e);
+			throw new ContainerCreateException(
+					"Could not create container with name=" + desc.getName(), e);
 		}
 	}
 
 	@Override
-	public ContainerMTO createContainer(ContainerTypeDescriptionMTO desc, IDMTO id) throws ContainerCreateException {
+	public ContainerMTO createContainer(ContainerTypeDescriptionMTO desc,
+			IDMTO id) throws ContainerCreateException {
 		return createContainer(desc, new Object[] { createID(id) });
 	}
 
 	@Override
-	public ContainerMTO createContainer(ContainerTypeDescriptionMTO desc, Map<String, ?> args)
-			throws ContainerCreateException {
+	public ContainerMTO createContainer(ContainerTypeDescriptionMTO desc,
+			Map<String, ?> args) throws ContainerCreateException {
 		return createContainer(desc, new Object[] { args });
 	}
 

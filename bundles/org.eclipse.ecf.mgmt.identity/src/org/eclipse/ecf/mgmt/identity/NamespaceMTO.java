@@ -21,8 +21,8 @@ public class NamespaceMTO implements Serializable {
 	private final String[] supportedSchemes;
 	private final String[][] supportedParameterTypes;
 
-	public NamespaceMTO(String name, String description, String scheme, String[] supportedSchemes,
-			String[][] supportedParameterTypes) {
+	public NamespaceMTO(String name, String description, String scheme,
+			String[] supportedSchemes, String[][] supportedParameterTypes) {
 		this.name = name;
 		this.description = description;
 		this.scheme = scheme;
@@ -33,11 +33,11 @@ public class NamespaceMTO implements Serializable {
 	public NamespaceMTO(String name, String description, String scheme) {
 		this(name, description, scheme, null, null);
 	}
-	
+
 	public NamespaceMTO(String name) {
 		this(name, null, null);
 	}
-	
+
 	public String getName() {
 		return name;
 	}
@@ -60,8 +60,10 @@ public class NamespaceMTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "NamespaceMTO [name=" + name + ", description=" + description + ", scheme=" + scheme
-				+ ", supportedSchemes=" + Arrays.toString(supportedSchemes) + ", supportedParameterTypes="
+		return "NamespaceMTO [name=" + name + ", description=" + description
+				+ ", scheme=" + scheme + ", supportedSchemes="
+				+ Arrays.toString(supportedSchemes)
+				+ ", supportedParameterTypes="
 				+ Arrays.toString(supportedParameterTypes) + "]";
 	}
 
