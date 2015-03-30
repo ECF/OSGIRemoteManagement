@@ -23,38 +23,33 @@ public class DiscoveryComponent implements EndpointEventListener {
 	private static final String RSA_SYMBOLICNAME = "org.eclipse.ecf.osgi.services.remoteserviceadmin";
 
 	private static DiscoveryComponent instance;
-	
+
 	private BundleContext context;
 	private RemoteServiceAdmin rsa;
 	private EndpointDiscoveryView discoveryView;
-	
+
 	public static DiscoveryComponent getDefault() {
 		return instance;
 	}
-	
+
 	void bindRemoteServiceAdmin(RemoteServiceAdmin r) {
-		synchronized (this) {
-			rsa = r;
-			if (discoveryView != null)
-				discoveryView.setRSA(rsa);
-		}
+		rsa = r;
 	}
-	
+
 	void unbindRemoteServiceAdmin(RemoteServiceAdmin rsa) {
-		synchronized (this) {
-			rsa = null;
-			if (discoveryView != null)
-				discoveryView.setRSA(rsa);
-		}
+		rsa = null;
 	}
-	
-	RemoteServiceAdmin setView(EndpointDiscoveryView edv) {
+
+	void setView(EndpointDiscoveryView edv) {
 		synchronized (this) {
 			discoveryView = edv;
-			return rsa;
 		}
 	}
-	
+
+	RemoteServiceAdmin getRSA() {
+		return rsa;
+	}
+
 	void activate(BundleContext context) throws Exception {
 		history = new ArrayList<EndpointEvent>();
 		synchronized (this) {
@@ -62,7 +57,7 @@ public class DiscoveryComponent implements EndpointEventListener {
 			this.context = context;
 		}
 	}
-	
+
 	void deactivate() {
 		synchronized (this) {
 			instance = null;
@@ -75,28 +70,31 @@ public class DiscoveryComponent implements EndpointEventListener {
 			}
 		}
 	}
-	
+
 	void startRSA() throws BundleException {
 		Bundle rsaBundle = null;
 		BundleContext ctxt = null;
 		synchronized (this) {
 			ctxt = this.context;
-			if (ctxt == null) return;
+			if (ctxt == null)
+				return;
 		}
-		for(Bundle b: ctxt.getBundles())
-			if (b.getSymbolicName().equals(RSA_SYMBOLICNAME)) rsaBundle = b;
-		if (rsaBundle == null) throw new BundleException("Cannot find ECF RSA bundle to start");
+		for (Bundle b : ctxt.getBundles())
+			if (b.getSymbolicName().equals(RSA_SYMBOLICNAME))
+				rsaBundle = b;
+		if (rsaBundle == null)
+			throw new BundleException("Cannot find ECF RSA bundle to start");
 		rsaBundle.start();
 	}
-	
+
 	private List<EndpointEvent> history;
-	
+
 	List<EndpointEvent> getHistory() {
 		synchronized (this) {
 			return history;
 		}
 	}
-	
+
 	@Override
 	public void endpointChanged(EndpointEvent event, String filter) {
 		EndpointDiscoveryView view = null;
@@ -105,9 +103,10 @@ public class DiscoveryComponent implements EndpointEventListener {
 			h = history;
 			view = discoveryView;
 		}
-		if (view != null) 
+		if (view != null)
 			view.handleEndpointChanged(event);
-		else if (h != null) h.add(event);
+		else if (h != null)
+			h.add(event);
 	}
 
 }

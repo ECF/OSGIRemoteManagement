@@ -16,6 +16,8 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ecf.core.identity.Namespace;
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.EndpointDescription;
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin;
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin.ImportReference;
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin.ImportRegistration;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -43,7 +45,6 @@ import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
-import org.osgi.framework.Version;
 import org.osgi.service.remoteserviceadmin.EndpointEvent;
 
 public class EndpointDiscoveryView extends ViewPart {
@@ -53,10 +54,10 @@ public class EndpointDiscoveryView extends ViewPart {
 	private TreeViewer viewer;
 	private Action startRSAAction;
 	private Action copyValueAction;
+	private Action importAction;
 	private Clipboard clipboard;
 	
-	private RemoteServiceAdmin rsa;
-	private List<EndpointEvent> eventHistory;
+	private DiscoveryComponent discovery;
 	
 	class ENode implements IAdaptable {
 		private String name;
@@ -100,6 +101,11 @@ public class EndpointDiscoveryView extends ViewPart {
 			child.setParent(this);
 		}
 
+		public void addChildAtIndex(int index, ENode child) {
+			children.add(index, child);
+			child.setParent(this);
+		}
+		
 		public void removeChild(ENode child) {
 			children.remove(child);
 			child.setParent(null);
@@ -132,15 +138,47 @@ public class EndpointDiscoveryView extends ViewPart {
 		}
 	}
 	
+	class ImportRegistrationNode extends ParentENode {
+		
+		private final static String IMPORTED_NAME = "IMPORTED";
+		
+		private final ImportRegistration importReg;
+		
+		public ImportRegistrationNode(ImportRegistration importRegistration) {
+			super(IMPORTED_NAME);
+			this.importReg = importRegistration;
+		}
+		
+		public ImportRegistration getIR() {
+			return importReg;
+		}
+	}
+	
 	class EDNode extends ParentENode {
 
-		private EndpointDescription ed;
-
+		private final EndpointDescription ed;
+		private ImportRegistrationNode irn;
+		
 		public EDNode(EndpointDescription ed) {
-			super(ed.getContainerID().getName()+":"+ed.getRemoteServiceId());
-			this.ed = ed;
+			this(ed,null);
 		}
 
+		public EDNode(EndpointDescription ed, ImportRegistration irn) {
+			super(ed.getContainerID().getName()+":"+ed.getRemoteServiceId());
+			this.ed = ed;
+			setIRN(irn);
+		}
+		
+		public void setIRN(ImportRegistration ir) {
+			if (ir == null) {
+				if (this.irn != null) removeChild(this.irn);
+				this.irn = null;
+			} else {
+				this.irn = new ImportRegistrationNode(ir);
+				addChildAtIndex(0,irn);
+			}
+		}
+		
 		public boolean equals(Object other) {
 			if (other instanceof EDNode) {
 				EDNode o = (EDNode) other;
@@ -285,8 +323,9 @@ public class EndpointDiscoveryView extends ViewPart {
 			invisibleRoot = new ParentENode("");
 			root = new ParentENode("Discovered Endpoints");
 			invisibleRoot.addChild(root);
-			if (eventHistory != null) 
-				for(EndpointEvent e: eventHistory)
+			List<EndpointEvent> history = discovery.getHistory();
+			if (history != null) 
+				for(EndpointEvent e: history)
 					doEndpointChanged(e);
 		}
 	}
@@ -309,21 +348,10 @@ public class EndpointDiscoveryView extends ViewPart {
 	public EndpointDiscoveryView() {
 	}
 
-	void setRSA(RemoteServiceAdmin rsa) {
-		if (viewer == null) return;
-		this.rsa = rsa;
-		startRSAAction.setEnabled(rsa == null);
-	}
-	
 	public void createPartControl(Composite parent) {
+		this.discovery = DiscoveryComponent.getDefault();
+		this.discovery.setView(this);
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		DiscoveryComponent d = DiscoveryComponent.getDefault();
-		if (d != null) {
-			synchronized (d) {
-				this.rsa = d.setView(this);
-				this.eventHistory = d.getHistory();
-			}
-		}
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.setInput(getViewSite());
@@ -338,8 +366,9 @@ public class EndpointDiscoveryView extends ViewPart {
 	@Override
 	public void dispose() {
 		viewer = null;
-		this.rsa = null;
-		this.eventHistory = null;
+		if (discovery != null) {
+			discovery.setView(null);
+		}
 		DiscoveryComponent d = DiscoveryComponent.getDefault();
 		if (d != null) d.setView(null);
 		super.dispose();
@@ -370,6 +399,11 @@ public class EndpointDiscoveryView extends ViewPart {
 			Object e = selection.getFirstElement();
 			if (e instanceof NameValueENode || e instanceof NameValueParentNode)
 				manager.add(copyValueAction);
+			else if (e instanceof EDNode) {
+				EDNode edNode = (EDNode) e;
+				if (edNode.irn == null)
+					manager.add(importAction);
+			}
 		}
 	}
 
@@ -391,7 +425,7 @@ public class EndpointDiscoveryView extends ViewPart {
 		};
 		startRSAAction.setText("Start RSA");
 		startRSAAction.setToolTipText("Start RemoteServiceAdmin");
-		startRSAAction.setEnabled(rsa == null);
+		startRSAAction.setEnabled(discovery.getRSA() == null);
 		copyValueAction = new Action() {
 			public void run() {
 				Object o = ((ITreeSelection) viewer.getSelection())
@@ -410,6 +444,33 @@ public class EndpointDiscoveryView extends ViewPart {
 		copyValueAction.setToolTipText("Copy Value");
 		copyValueAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
 				.getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+		
+		importAction = new Action() {
+			public void run() {
+				EDNode edNode = ((EDNode) ((ITreeSelection) viewer.getSelection())
+						.getFirstElement());
+				RemoteServiceAdmin rsa = discovery.getRSA();
+				if (rsa == null)
+					showMessage("RSA is null, so cannot complete import");
+				else {
+					// Do import
+					ImportRegistration reg = (ImportRegistration) rsa
+							.importService(edNode.ed);
+					Throwable exception = reg.getException();
+					if (exception != null)
+						showMessage("RSA import failed with exception: "
+								+ exception.getMessage());
+					else {
+						// Success!  Set registration
+						// and refresh
+						edNode.setIRN(reg);
+						viewer.refresh();
+					}
+				}
+			}
+		};
+		importAction.setText("Import Remote Service");
+		importAction.setToolTipText("Import Remote Service into local framework");
 	}
 
 	void showMessage(String message) {
@@ -427,17 +488,19 @@ public class EndpointDiscoveryView extends ViewPart {
 	void doEndpointChanged(EndpointEvent event) {
 		ParentENode root = ((ViewContentProvider) viewer
 				.getContentProvider()).getRoot();
-		int type = event.getType();
 		EndpointDescription ed = (EndpointDescription) event.getEndpoint();
+		int type = event.getType();
 		switch (type) {
 		case EndpointEvent.ADDED:
-			addEndpointDescription(root, ed);
+			root.addChild(createEDNode(ed));
 			break;
 		case EndpointEvent.REMOVED:
-			removeEndpointDescription(root, ed);
+			root.removeChild(new EDNode(ed));
 			break;
 		}
+		viewer.refresh();
 	}
+	
 	void handleEndpointChanged(EndpointEvent event) {
 		if (viewer == null)
 			return;
@@ -449,13 +512,13 @@ public class EndpointDiscoveryView extends ViewPart {
 		});
 	}
 
-	protected void removeEndpointDescription(ParentENode root,
+	void removeEndpointDescription(ParentENode root,
 			EndpointDescription ed) {
 		root.removeChild(new EDNode(ed));
 		viewer.refresh();
 	}
 
-	protected List<String> getStringArrayProperty(EndpointDescription ed, String prop) {
+	List<String> getStringArrayProperty(EndpointDescription ed, String prop) {
 		Map<String,Object> props = ed.getProperties();
 		Object r = props.get(prop);
 		List<String> results = new ArrayList<String>();
@@ -470,15 +533,27 @@ public class EndpointDiscoveryView extends ViewPart {
 		return results;
 	}
 	
-	protected void addEndpointDescription(ParentENode root,
-			EndpointDescription ed) {
-		EDNode edo = new EDNode(ed);
+	ImportRegistration findImportRegistration(EndpointDescription ed) {
+		RemoteServiceAdmin rsa = discovery.getRSA();
+		if (rsa == null) return null;
+		List<ImportRegistration> iRegs = rsa.getImportedRegistrations();
+		for(ImportRegistration ir: iRegs) {
+			ImportReference importRef = (ImportReference) ir.getImportReference();
+			if (importRef != null && ed.equals(importRef.getImportedEndpoint())) 
+				return ir;
+		}
+		return null;
+	}
+	
+	EDNode createEDNode(EndpointDescription ed) {
+		EDNode edo = new EDNode(ed, findImportRegistration(ed));
 		// ID
 		edo.addChild(new NameValueENode("ID",ed.getId()));
 		// Interfaces
 		List<String> intfs = ed.getInterfaces();
 		String intfName = (intfs.size() > 1) ? intfs.toString() : intfs.get(0);
-		edo.addChild(new NameValueENode("Service", intfName));
+		String intfLabel = (intfs.size() > 1) ? "Service Types":"Service Type";
+		edo.addChild(new NameValueENode(intfLabel, intfName));
 		// Async Interfaces (if present)
 		List<String> aintfs = ed.getAsyncInterfaces();
 		if (aintfs.size() > 0)
@@ -491,24 +566,13 @@ public class EndpointDiscoveryView extends ViewPart {
 		idp.addChild(new NameValueENode("NS Name", ns.getName()));
 		idp.addChild(new NameValueENode("RS Id", ed
 				.getRemoteServiceId()));
-		edo.addChild(idp);
-		// Framework UUID
-		edo.addChild(new NameValueENode("UUID",ed.getFrameworkUUID()));
-		// Timestamp
-		edo.addChild(new NameValueENode("Timestamp", ed.getTimestamp()));
-		// Versions
-		ParentENode typeVersions = new ParentENode("Service Versions");
-		Map<String, Version> ifv = ed.getInterfaceVersions();
-		for (String p : ifv.keySet())
-			typeVersions.addChild(new NameValueENode(p, ifv.get(p)));
-		edo.addChild(typeVersions);
 		// Remote Intents Supported
 		List<String> edIntents = getStringArrayProperty(ed,Constants.REMOTE_INTENTS_SUPPORTED);
 		if (edIntents.size() > 0) {
 			ParentENode intents = new ParentENode("Intents");
 			for (String i : edIntents)
 				intents.addChild(new ENode(i));
-			edo.addChild(intents);
+			idp.addChild(intents);
 		}
 		// Remote Configs Supported
 		List<String> secs = getStringArrayProperty(ed,Constants.REMOTE_CONFIGS_SUPPORTED);
@@ -516,10 +580,13 @@ public class EndpointDiscoveryView extends ViewPart {
 			ParentENode scs = new ParentENode("Remote Configs");
 			for (String i : secs)
 				scs.addChild(new ENode(i));
-			edo.addChild(scs);
+			idp.addChild(scs);
 		}
-		// Add to root
-		root.addChild(edo);
-		viewer.refresh();
+		edo.addChild(idp);
+		// Framework UUID
+		edo.addChild(new NameValueENode("Framework UUID",ed.getFrameworkUUID()));
+		// Timestamp
+		edo.addChild(new NameValueENode("Timestamp", ed.getTimestamp()));
+		return edo;
 	}
 }
