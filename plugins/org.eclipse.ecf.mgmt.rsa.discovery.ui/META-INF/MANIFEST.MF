@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Eclipse RSA Management UI
+Bundle-Name: %plugin.name
 Bundle-SymbolicName: org.eclipse.ecf.mgmt.rsa.discovery.ui;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: Eclipse.org - ECF
+Bundle-Vendor: %plugin.provider
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
@@ -12,4 +12,6 @@ Import-Package: org.eclipse.ecf.core.identity;version="3.2.0",
  org.eclipse.ui.views.properties,
  org.osgi.service.remoteserviceadmin;version="1.1.0"
 Service-Component: OSGI-INF/discovery.xml
+Bundle-Localization: plugin
 Bundle-ActivationPolicy: lazy
+Bundle-Activator: org.eclipse.ecf.internal.mgmt.rsa.discovery.ui.RSAPlugin

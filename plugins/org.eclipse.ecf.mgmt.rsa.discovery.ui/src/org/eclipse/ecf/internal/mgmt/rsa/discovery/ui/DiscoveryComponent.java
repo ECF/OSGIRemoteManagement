@@ -6,7 +6,7 @@
  * 
  * Contributors: Scott Lewis - initial API and implementation
  ******************************************************************************/
-package org.eclipse.ecf.mgmt.rsa.discovery.ui.views;
+package org.eclipse.ecf.internal.mgmt.rsa.discovery.ui;
 
 import java.util.ArrayList;
 import java.util.List;

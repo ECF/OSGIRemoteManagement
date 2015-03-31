@@ -5,14 +5,14 @@
    <extension
          point="org.eclipse.ui.views">
       <category
-            name="Remote Services"
+            name="%remote.services.category.name"
             id="org.eclipse.ecf.mgmt.rsa.discovery.ui.endpointdiscovery.rsgroup">
       </category>
       <view
-            name="Remote Services Discovery"
+            name="%remote.services.discovery.view.name"
             icon="icons/sample.gif"
             category="org.eclipse.ecf.mgmt.rsa.discovery.ui.endpointdiscovery.rsgroup"
-            class="org.eclipse.ecf.mgmt.rsa.discovery.ui.views.EndpointDiscoveryView"
+            class="org.eclipse.ecf.internal.mgmt.rsa.discovery.ui.EndpointDiscoveryView"
             id="org.eclipse.ecf.mgmt.rsa.discovery.ui.views.EndpointDiscoveryView">
       </view>
    </extension>

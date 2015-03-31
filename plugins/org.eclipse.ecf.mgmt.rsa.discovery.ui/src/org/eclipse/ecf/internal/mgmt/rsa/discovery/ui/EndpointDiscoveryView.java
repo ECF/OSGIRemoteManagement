@@ -6,7 +6,7 @@
  * 
  * Contributors: Scott Lewis - initial API and implementation
  ******************************************************************************/
-package org.eclipse.ecf.mgmt.rsa.discovery.ui.views;
+package org.eclipse.ecf.internal.mgmt.rsa.discovery.ui;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +23,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ITreeSelection;
@@ -57,6 +58,13 @@ public class EndpointDiscoveryView extends ViewPart {
 	private Action importAction;
 	private Clipboard clipboard;
 	
+	private ImageDescriptor edImageDesc = PlatformUI.getWorkbench().getSharedImages()
+			.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
+	private Image edImage = edImageDesc.createImage();
+
+	private ImageDescriptor importedEndpointDesc = new OverlayIcon(edImageDesc, new ImageDescriptor[][] {{RSAImageRegistry.DESC_RSPROXY_CO}});
+	private Image importedEdImage = importedEndpointDesc.createImage();
+
 	private DiscoveryComponent discovery;
 	
 	class ENode implements IAdaptable {
@@ -85,6 +93,14 @@ public class EndpointDiscoveryView extends ViewPart {
 
 		public Object getAdapter(@SuppressWarnings("rawtypes") Class key) {
 			return null;
+		}
+		
+		public Image getImage() {
+			return null;
+		}
+		
+		public String getLabel() {
+			return toString();
 		}
 	}
 
@@ -118,6 +134,11 @@ public class EndpointDiscoveryView extends ViewPart {
 
 		public boolean hasChildren() {
 			return children.size() > 0;
+		}
+		
+		public Image getImage() {
+			return PlatformUI.getWorkbench().getSharedImages()
+			.getImage(ISharedImages.IMG_OBJ_FOLDER);		
 		}
 	}
 
@@ -200,6 +221,10 @@ public class EndpointDiscoveryView extends ViewPart {
 				return new EndpointDescriptionPropertySource(ed);
 			return null;
 		}
+		
+		public Image getImage() {
+			return (irn == null)?edImage:importedEdImage;
+		}
 	}
 
 	class EndpointDescriptionPropertySource implements IPropertySource {
@@ -272,8 +297,35 @@ public class EndpointDiscoveryView extends ViewPart {
 		public String toString() {
 			return getName() + ": " + ((value == null) ? "" : value.toString());
 		}
+		
+		public Image getImage() {
+			return RSAImageRegistry.get(RSAImageRegistry.IMG_PROPERTY_OBJ);
+		}
 	}
 
+	class ServiceTypesENode extends ENode {
+		
+		public ServiceTypesENode(List<String> intfs) {
+			super(intfs.toString());
+		}
+		
+		public Image getImage() {
+			return RSAImageRegistry.get(RSAImageRegistry.IMG_INTERFACE_OBJ);
+		}
+	}
+	
+	class AsyncServiceTypesENode extends ServiceTypesENode {
+
+		public AsyncServiceTypesENode(List<String> intfs) {
+			super(intfs);
+		}
+		
+		public Image getImage() {
+			// XXX this should return an IMG_INTERFACE_OBJ 'async' with overlay
+			return RSAImageRegistry.get(RSAImageRegistry.IMG_INTERFACE_OBJ);
+		}
+	}
+	
 	class ViewContentProvider implements IStructuredContentProvider,
 			ITreeContentProvider {
 		
@@ -333,15 +385,11 @@ public class EndpointDiscoveryView extends ViewPart {
 	class ViewLabelProvider extends LabelProvider {
 
 		public String getText(Object obj) {
-			return obj.toString();
+			return (obj instanceof ENode)?((ENode) obj).getLabel():null;
 		}
 
 		public Image getImage(Object obj) {
-			String imageKey = ISharedImages.IMG_OBJ_ELEMENT;
-			if (obj instanceof ParentENode)
-				imageKey = ISharedImages.IMG_OBJ_FOLDER;
-			return PlatformUI.getWorkbench().getSharedImages()
-					.getImage(imageKey);
+			return (obj instanceof ENode)?((ENode) obj).getImage():null;
 		}
 	}
 
@@ -550,21 +598,18 @@ public class EndpointDiscoveryView extends ViewPart {
 		// ID
 		edo.addChild(new NameValueENode("ID",ed.getId()));
 		// Interfaces
-		List<String> intfs = ed.getInterfaces();
-		String intfName = (intfs.size() > 1) ? intfs.toString() : intfs.get(0);
-		String intfLabel = (intfs.size() > 1) ? "Service Types":"Service Type";
-		edo.addChild(new NameValueENode(intfLabel, intfName));
+		edo.addChild(new ServiceTypesENode(ed.getInterfaces()));
 		// Async Interfaces (if present)
 		List<String> aintfs = ed.getAsyncInterfaces();
 		if (aintfs.size() > 0)
-			edo.addChild(new NameValueENode("Async Service", aintfs));
+			edo.addChild(new ServiceTypesENode(aintfs));
 		// Remote Service Host
 		org.eclipse.ecf.core.identity.ID cID = ed.getContainerID();
 		ParentENode idp = new NameValueParentNode("Host: ",cID.getName());
 		Namespace ns = cID.getNamespace();
 		// Host children
-		idp.addChild(new NameValueENode("NS Name", ns.getName()));
-		idp.addChild(new NameValueENode("RS Id", ed
+		idp.addChild(new NameValueENode("Namespace", ns.getName()));
+		idp.addChild(new NameValueENode("Remote Service Id", ed
 				.getRemoteServiceId()));
 		// Remote Intents Supported
 		List<String> edIntents = getStringArrayProperty(ed,Constants.REMOTE_INTENTS_SUPPORTED);
