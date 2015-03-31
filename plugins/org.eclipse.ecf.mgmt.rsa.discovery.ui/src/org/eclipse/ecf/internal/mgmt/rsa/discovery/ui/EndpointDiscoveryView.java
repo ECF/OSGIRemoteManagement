@@ -56,6 +56,7 @@ public class EndpointDiscoveryView extends ViewPart {
 	private Action startRSAAction;
 	private Action copyValueAction;
 	private Action importAction;
+	private Action unimportAction;
 	private Clipboard clipboard;
 	
 	private ImageDescriptor edImageDesc = PlatformUI.getWorkbench().getSharedImages()
@@ -198,6 +199,10 @@ public class EndpointDiscoveryView extends ViewPart {
 				this.irn = new ImportRegistrationNode(ir);
 				addChildAtIndex(0,irn);
 			}
+		}
+		
+		public ImportRegistration getImportRegistration() {
+			return (this.irn == null)?null:this.irn.getIR();
 		}
 		
 		public boolean equals(Object other) {
@@ -449,8 +454,11 @@ public class EndpointDiscoveryView extends ViewPart {
 				manager.add(copyValueAction);
 			else if (e instanceof EDNode) {
 				EDNode edNode = (EDNode) e;
-				if (edNode.irn == null)
+				ImportRegistration ir = edNode.getImportRegistration();
+				if (ir == null)
 					manager.add(importAction);
+				else
+					manager.add(unimportAction);
 			}
 		}
 	}
@@ -495,15 +503,15 @@ public class EndpointDiscoveryView extends ViewPart {
 		
 		importAction = new Action() {
 			public void run() {
-				EDNode edNode = ((EDNode) ((ITreeSelection) viewer.getSelection())
-						.getFirstElement());
+				EDNode edNode = getEDNodeSelected();
 				RemoteServiceAdmin rsa = discovery.getRSA();
 				if (rsa == null)
-					showMessage("RSA is null, so cannot complete import");
+					showMessage("RSA is null, so cannot import");
 				else {
 					// Do import
 					ImportRegistration reg = (ImportRegistration) rsa
 							.importService(edNode.ed);
+					// Check if import exception
 					Throwable exception = reg.getException();
 					if (exception != null)
 						showMessage("RSA import failed with exception: "
@@ -519,8 +527,30 @@ public class EndpointDiscoveryView extends ViewPart {
 		};
 		importAction.setText("Import Remote Service");
 		importAction.setToolTipText("Import Remote Service into local framework");
+		
+		unimportAction = new Action() {
+			public void run() {
+				EDNode edNode = getEDNodeSelected();
+				ImportRegistration ir = edNode.getImportRegistration();
+				if (ir == null) return;
+				try {
+					ir.close();
+					edNode.setIRN(null);
+					viewer.refresh();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		unimportAction.setText("Close Imported Remote Service");
+		unimportAction.setToolTipText("Close the Previously-Imported Remote Service");
 	}
 
+	EDNode getEDNodeSelected() {
+		return ((EDNode) ((ITreeSelection) viewer.getSelection())
+				.getFirstElement());
+	}
+	
 	void showMessage(String message) {
 		MessageDialog.openInformation(viewer.getControl().getShell(),
 				"Endpoint Discovery", message);
