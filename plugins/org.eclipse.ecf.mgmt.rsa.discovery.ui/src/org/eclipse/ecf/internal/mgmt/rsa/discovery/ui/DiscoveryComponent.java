@@ -11,6 +11,7 @@ package org.eclipse.ecf.internal.mgmt.rsa.discovery.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.IEndpointDescriptionLocator;
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -26,11 +27,6 @@ public class DiscoveryComponent implements EndpointEventListener {
 
 	private BundleContext context;
 	private RemoteServiceAdmin rsa;
-	private EndpointDiscoveryView discoveryView;
-
-	public static DiscoveryComponent getDefault() {
-		return instance;
-	}
 
 	void bindRemoteServiceAdmin(RemoteServiceAdmin r) {
 		rsa = r;
@@ -38,6 +34,26 @@ public class DiscoveryComponent implements EndpointEventListener {
 
 	void unbindRemoteServiceAdmin(RemoteServiceAdmin rsa) {
 		rsa = null;
+	}
+
+	private EndpointDiscoveryView discoveryView;
+
+	private IEndpointDescriptionLocator edLocator;
+
+	void bindEndpointDescriptionLocator(IEndpointDescriptionLocator locator) {
+		this.edLocator = locator;
+	}
+
+	void unbindEndpointDescriptionLocator(IEndpointDescriptionLocator locator) {
+		this.edLocator = null;
+	}
+
+	public IEndpointDescriptionLocator getEndpointDescriptionLocator() {
+		return this.edLocator;
+	}
+
+	public static DiscoveryComponent getDefault() {
+		return instance;
 	}
 
 	void setView(EndpointDiscoveryView edv) {

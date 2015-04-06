@@ -8,14 +8,18 @@
  ******************************************************************************/
 package org.eclipse.ecf.internal.mgmt.rsa.discovery.ui;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ecf.mgmt.rsa.discovery.ui.model.AbstractEndpointNode;
 import org.eclipse.ecf.mgmt.rsa.discovery.ui.model.EndpointAsyncInterfacesNode;
 import org.eclipse.ecf.mgmt.rsa.discovery.ui.model.EndpointConfigTypesNode;
 import org.eclipse.ecf.mgmt.rsa.discovery.ui.model.EndpointConnectTargetIDNode;
+import org.eclipse.ecf.mgmt.rsa.discovery.ui.model.EndpointContentProvider;
 import org.eclipse.ecf.mgmt.rsa.discovery.ui.model.EndpointFrameworkIDNode;
-import org.eclipse.ecf.mgmt.rsa.discovery.ui.model.EndpointGroupNode;
 import org.eclipse.ecf.mgmt.rsa.discovery.ui.model.EndpointIDNode;
 import org.eclipse.ecf.mgmt.rsa.discovery.ui.model.EndpointIntentsNode;
 import org.eclipse.ecf.mgmt.rsa.discovery.ui.model.EndpointInterfacesNode;
@@ -30,6 +34,8 @@ import org.eclipse.ecf.mgmt.rsa.discovery.ui.model.EndpointServiceIDNode;
 import org.eclipse.ecf.mgmt.rsa.discovery.ui.model.EndpointTimestampNode;
 import org.eclipse.ecf.mgmt.rsa.discovery.ui.model.ImportRegistrationNode;
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.EndpointDescription;
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.EndpointDescriptionReader;
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.IEndpointDescriptionLocator;
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin;
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin.ImportReference;
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin.ImportRegistration;
@@ -45,9 +51,12 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.model.BaseWorkbenchContentProvider;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.ViewPart;
 import org.osgi.framework.BundleException;
@@ -63,45 +72,31 @@ public class EndpointDiscoveryView extends ViewPart {
 	private Action copyNameAction;
 	private Action importAction;
 	private Action unimportAction;
+
+	private Action loadEDAction;
+
 	private Clipboard clipboard;
 
 	private DiscoveryComponent discovery;
 
+	private EndpointContentProvider contentProvider;
+
 	public EndpointDiscoveryView() {
-	}
-
-	class EndpointContentProvider extends BaseWorkbenchContentProvider {
-
-		EndpointGroupNode invisibleRoot;
-		EndpointGroupNode root;
-
-		public EndpointGroupNode getRoot() {
-			return root;
-		}
-
-		void initialize() {
-			invisibleRoot = new EndpointGroupNode("");
-			root = new EndpointGroupNode("Discovered Endpoints");
-			invisibleRoot.addChild(root);
-		}
-
-		public Object[] getElements(Object parent) {
-			if (parent.equals(getViewSite())) {
-				if (invisibleRoot == null)
-					initialize();
-				return getChildren(invisibleRoot);
-			}
-			return getChildren(parent);
-		}
 	}
 
 	public void createPartControl(Composite parent) {
 		this.discovery = DiscoveryComponent.getDefault();
 		this.discovery.setView(this);
+
+		IViewSite viewSite = getViewSite();
+		this.contentProvider = new EndpointContentProvider(viewSite,
+				"Discovered Endpoints");
+
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		viewer.setContentProvider(new EndpointContentProvider());
+		viewer.setContentProvider(this.contentProvider);
 		viewer.setLabelProvider(new WorkbenchLabelProvider());
-		viewer.setInput(getViewSite());
+		viewer.setInput(viewSite);
+
 		makeActions();
 		hookContextMenu();
 		contributeToActionBars();
@@ -112,14 +107,13 @@ public class EndpointDiscoveryView extends ViewPart {
 
 	@Override
 	public void dispose() {
+		super.dispose();
 		viewer = null;
+		contentProvider = null;
 		if (discovery != null) {
 			discovery.setView(null);
+			discovery = null;
 		}
-		DiscoveryComponent d = DiscoveryComponent.getDefault();
-		if (d != null)
-			d.setView(null);
-		super.dispose();
 	}
 
 	private void hookContextMenu() {
@@ -138,7 +132,9 @@ public class EndpointDiscoveryView extends ViewPart {
 	private void contributeToActionBars() {
 		IActionBars bars = getViewSite().getActionBars();
 		bars.getMenuManager().add(startRSAAction);
+		bars.getMenuManager().add(loadEDAction);
 		bars.getToolBarManager().add(startRSAAction);
+		bars.getToolBarManager().add(loadEDAction);
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
@@ -159,19 +155,25 @@ public class EndpointDiscoveryView extends ViewPart {
 		}
 	}
 
+	private void logError(String message, Throwable e) {
+		RSAPlugin
+				.getDefault()
+				.getLog()
+				.log(new Status(IStatus.ERROR, RSAPlugin.PLUGIN_ID, message, e));
+	}
+
 	private void makeActions() {
 		startRSAAction = new Action() {
 			public void run() {
-				DiscoveryComponent d = DiscoveryComponent.getDefault();
-				if (d != null)
+				if (discovery != null)
 					try {
-						d.startRSA();
+						discovery.startRSA();
 						startRSAAction.setEnabled(false);
 					} catch (BundleException e) {
-						// TODO Auto-generated catch block
-						// Need to show error message dialog (at least)
-						// if this fails
-						e.printStackTrace();
+						logError("RSA start failed", e);
+						showMessage("RSA Start failed with exception: "
+								+ e.getMessage()
+								+ ".  See Error Log for details.");
 					}
 			}
 		};
@@ -213,23 +215,29 @@ public class EndpointDiscoveryView extends ViewPart {
 		importAction = new Action() {
 			public void run() {
 				EndpointNode edNode = getEDNodeSelected();
-				RemoteServiceAdmin rsa = discovery.getRSA();
-				if (rsa == null)
-					showMessage("RSA is null, so cannot import");
-				else {
-					// Do import
-					ImportRegistration reg = (ImportRegistration) rsa
-							.importService(edNode.getEndpointDescription());
-					// Check if import exception
-					Throwable exception = reg.getException();
-					if (exception != null)
-						showMessage("RSA import failed with exception: "
-								+ exception.getMessage());
+				if (edNode != null) {
+					RemoteServiceAdmin rsa = discovery.getRSA();
+					if (rsa == null)
+						showMessage("RSA is null, so cannot import");
 					else {
-						// Success! Set registration
-						// and refresh
-						edNode.setImportReg(new ImportRegistrationNode(reg));
-						viewer.refresh();
+						// Do import
+						EndpointDescription ed = edNode
+								.getEndpointDescription();
+						ImportRegistration reg = (ImportRegistration) rsa
+								.importService(ed);
+						// Check if import exception
+						Throwable exception = reg.getException();
+						if (exception != null) {
+							logError("RSA importService failed", exception);
+							showMessage("RSA importService failed with exception: "
+									+ exception.getMessage()
+									+ ".  See Error Log for details.");
+						} else {
+							// Success! Set registration
+							// and refresh
+							edNode.setImportReg(new ImportRegistrationNode(reg));
+							viewer.refresh();
+						}
 					}
 				}
 			}
@@ -237,29 +245,79 @@ public class EndpointDiscoveryView extends ViewPart {
 		importAction.setText("Import Remote Service");
 		importAction
 				.setToolTipText("Import Remote Service into local framework");
+		importAction.setImageDescriptor(RSAImageRegistry.DESC_RSPROXY_CO);
 
 		unimportAction = new Action() {
 			public void run() {
 				EndpointNode edNode = getEDNodeSelected();
-				ImportRegistration ir = edNode.getImportRegistration();
-				if (ir == null)
-					return;
-				try {
-					ir.close();
-					edNode.setImportReg(null);
-					viewer.refresh();
-				} catch (Exception e) {
-					e.printStackTrace();
+				if (edNode != null) {
+					ImportRegistration ir = edNode.getImportRegistration();
+					if (ir == null)
+						return;
+					try {
+						ir.close();
+						edNode.setImportReg(null);
+						viewer.refresh();
+					} catch (Exception e) {
+						logError("Cannote close import registration", e);
+						showMessage("Cannot close import registration exception: "
+								+ e.getMessage()
+								+ ".  See Error Log for details.");
+					}
 				}
 			}
 		};
 		unimportAction.setText("Close Imported Remote Service");
 		unimportAction
 				.setToolTipText("Close the Previously-Imported Remote Service");
+
+		loadEDAction = new Action() {
+			public void run() {
+				IEndpointDescriptionLocator locator = discovery
+						.getEndpointDescriptionLocator();
+				if (locator != null) {
+					FileDialog dialog = new FileDialog(viewer.getControl()
+							.getShell(), SWT.OPEN);
+					dialog.setFilterExtensions(new String[] { "*.xml" });
+					dialog.setText("Open EDEF File");
+					dialog.setFilterPath(null);
+					String result = dialog.open();
+					if (result != null) 
+						try {
+							EndpointDescription[] eds = (EndpointDescription[]) new EndpointDescriptionReader()
+									.readEndpointDescriptions(new FileInputStream(
+											result));
+							if (eds != null) {
+								for (int i = 0; i < eds.length; i++)
+									locator.discoverEndpoint(eds[i]);
+							}
+						} catch (IOException e) {
+							logError("Endpoint description parsing failed", e);
+							showMessage("Endpoint description parsing failed with exception "
+									+ e.getMessage()
+									+ ".  See Error Log for details.");
+						}
+				}
+			}
+		};
+		loadEDAction.setText("Open EDEF File...");
+		loadEDAction.setToolTipText("Discover Endpoints by reading EDEF file");
+		loadEDAction.setEnabled(discovery.getRSA() != null);
+		loadEDAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+				.getImageDescriptor(ISharedImages.IMG_OBJ_FILE));
 	}
 
 	EndpointNode getEDNodeSelected() {
-		return ((EndpointNode) ((ITreeSelection) viewer.getSelection())
+		AbstractEndpointNode aen = getNodeSelected();
+		return (aen instanceof EndpointNode) ? (EndpointNode) aen : null;
+	}
+
+	boolean isRootSelected() {
+		return contentProvider.getRootNode().equals(getNodeSelected());
+	}
+
+	AbstractEndpointNode getNodeSelected() {
+		return ((AbstractEndpointNode) ((ITreeSelection) viewer.getSelection())
 				.getFirstElement());
 	}
 
@@ -281,8 +339,7 @@ public class EndpointDiscoveryView extends ViewPart {
 		viewer.getControl().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				AbstractEndpointNode root = ((EndpointContentProvider) viewer
-						.getContentProvider()).getRoot();
+				AbstractEndpointNode root = contentProvider.getRootNode();
 				EndpointDescription ed = (EndpointDescription) event
 						.getEndpoint();
 				int type = event.getType();
@@ -318,18 +375,20 @@ public class EndpointDiscoveryView extends ViewPart {
 				ed,
 				new org.eclipse.ecf.mgmt.rsa.discovery.ui.model.ImportRegistrationNode(
 						findImportRegistration(ed)));
-		
+
 		// Interfaces
 		EndpointInterfacesNode ein = new EndpointInterfacesNode();
-		for(String intf: ed.getInterfaces())
-			ein.addChild(new EndpointPackageVersionNode(EndpointNode.getPackageName(intf)));
+		for (String intf : ed.getInterfaces())
+			ein.addChild(new EndpointPackageVersionNode(EndpointNode
+					.getPackageName(intf)));
 		edo.addChild(ein);
 		// Async Interfaces (if present)
 		List<String> aintfs = ed.getAsyncInterfaces();
 		if (aintfs.size() > 0) {
 			EndpointAsyncInterfacesNode ain = new EndpointAsyncInterfacesNode();
-			for(String intf: ed.getAsyncInterfaces())
-				ain.addChild(new EndpointPackageVersionNode(EndpointNode.getPackageName(intf)));
+			for (String intf : ed.getAsyncInterfaces())
+				ain.addChild(new EndpointPackageVersionNode(EndpointNode
+						.getPackageName(intf)));
 			edo.addChild(ain);
 		}
 		// ID
