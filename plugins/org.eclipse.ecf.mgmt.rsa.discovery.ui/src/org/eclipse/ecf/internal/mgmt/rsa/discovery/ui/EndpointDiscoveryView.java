@@ -73,7 +73,9 @@ public class EndpointDiscoveryView extends ViewPart {
 	private Action importAction;
 	private Action unimportAction;
 
-	private Action loadEDAction;
+	private Action undiscoverAction;
+
+	private Action edefDiscoverAction;
 
 	private Clipboard clipboard;
 
@@ -132,9 +134,9 @@ public class EndpointDiscoveryView extends ViewPart {
 	private void contributeToActionBars() {
 		IActionBars bars = getViewSite().getActionBars();
 		bars.getMenuManager().add(startRSAAction);
-		bars.getMenuManager().add(loadEDAction);
+		bars.getMenuManager().add(edefDiscoverAction);
 		bars.getToolBarManager().add(startRSAAction);
-		bars.getToolBarManager().add(loadEDAction);
+		bars.getToolBarManager().add(edefDiscoverAction);
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
@@ -147,9 +149,10 @@ public class EndpointDiscoveryView extends ViewPart {
 			} else if (e instanceof EndpointNode) {
 				EndpointNode edNode = (EndpointNode) e;
 				ImportRegistration ir = edNode.getImportRegistration();
-				if (ir == null)
+				if (ir == null) {
 					manager.add(importAction);
-				else
+					manager.add(undiscoverAction);
+				} else
 					manager.add(unimportAction);
 			}
 		}
@@ -271,7 +274,7 @@ public class EndpointDiscoveryView extends ViewPart {
 		unimportAction
 				.setToolTipText("Close the Previously-Imported Remote Service");
 
-		loadEDAction = new Action() {
+		edefDiscoverAction = new Action() {
 			public void run() {
 				IEndpointDescriptionLocator locator = discovery
 						.getEndpointDescriptionLocator();
@@ -282,7 +285,7 @@ public class EndpointDiscoveryView extends ViewPart {
 					dialog.setText("Open EDEF File");
 					dialog.setFilterPath(null);
 					String result = dialog.open();
-					if (result != null) 
+					if (result != null)
 						try {
 							EndpointDescription[] eds = (EndpointDescription[]) new EndpointDescriptionReader()
 									.readEndpointDescriptions(new FileInputStream(
@@ -300,11 +303,33 @@ public class EndpointDiscoveryView extends ViewPart {
 				}
 			}
 		};
-		loadEDAction.setText("Open EDEF File...");
-		loadEDAction.setToolTipText("Discover Endpoints by reading EDEF file");
-		loadEDAction.setEnabled(discovery.getRSA() != null);
-		loadEDAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+		edefDiscoverAction.setText("Open EDEF File...");
+		edefDiscoverAction
+				.setToolTipText("Discover Endpoints by reading EDEF file");
+		edefDiscoverAction.setEnabled(discovery.getRSA() != null);
+		edefDiscoverAction.setImageDescriptor(PlatformUI.getWorkbench()
+				.getSharedImages()
 				.getImageDescriptor(ISharedImages.IMG_OBJ_FILE));
+
+		undiscoverAction = new Action() {
+			public void run() {
+				EndpointNode endpoint = getEDNodeSelected();
+				if (endpoint != null
+						&& endpoint.getImportRegistration() == null) {
+					IEndpointDescriptionLocator l = discovery
+							.getEndpointDescriptionLocator();
+					if (l != null
+							&& MessageDialog
+									.openQuestion(viewer.getControl()
+											.getShell(), "Remove Endpoint",
+											"Are you sure you want to remove this endpoint?"))
+						l.undiscoverEndpoint(endpoint.getEndpointDescription());
+
+				}
+			}
+		};
+		undiscoverAction.setText("Remove/Undiscover Endpoint");
+		undiscoverAction.setToolTipText("Remove this endpoint");
 	}
 
 	EndpointNode getEDNodeSelected() {
