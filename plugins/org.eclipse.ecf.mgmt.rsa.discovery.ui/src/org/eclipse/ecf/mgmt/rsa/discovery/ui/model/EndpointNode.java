@@ -63,8 +63,4 @@ public class EndpointNode extends AbstractEndpointNode {
 		this.importRegistrationNode = ir;
 	}
 
-	@Override
-	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
-		return super.getAdapter(adapter);
-	}
 }
