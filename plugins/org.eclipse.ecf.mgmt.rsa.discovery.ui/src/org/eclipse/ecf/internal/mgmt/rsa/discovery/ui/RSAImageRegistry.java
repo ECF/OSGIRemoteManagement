@@ -31,22 +31,38 @@ public class RSAImageRegistry {
 	public static final String IMG_INTERFACE_OBJ = "int_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_PROPERTY_OBJ = "property_obj.gif";
 	public static final String IMG_RSPROXY_OBJ = "rsvcproxy_obj.gif";
-	
-	public static final ImageDescriptor INTERFACE_OBJ = create(PATH_OBJ, IMG_INTERFACE_OBJ);
-	public static final ImageDescriptor RSPROXY_OBJ = create(PATH_OBJ, IMG_RSPROXY_OBJ);
-	
-	public static final ImageDescriptor DESC_ERROR_ST_OBJ = create(PATH_OBJ, "error_st_obj.gif"); //$NON-NLS-1$
-	
-	public static final ImageDescriptor DESC_WARNING_ST_OBJ = create(PATH_OBJ, "warning_st_obj.gif"); //$NON-NLS-1$
+	public static final String IMG_ENDPOINTDESCRIPTION_OBJ = "endpoint_obj.gif";
 
-	public static final ImageDescriptor DESC_LOCATION = create(PATH_OBJ, "location_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor INTERFACE_OBJ = create(PATH_OBJ,
+			IMG_INTERFACE_OBJ);
+	public static final ImageDescriptor RSPROXY_OBJ = create(PATH_OBJ,
+			IMG_RSPROXY_OBJ);
+	public static final ImageDescriptor ENDPOINTDESCRIPTION_OBJ = create(
+			PATH_OBJ, IMG_ENDPOINTDESCRIPTION_OBJ);
 
-	public static final ImageDescriptor DESC_SERVICE_OBJ = create(PATH_OBJ, "int_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_PROPERTY_OBJ = create(PATH_OBJ, "property_obj.gif"); //$NON-NLS-1$
-	
-	public static final ImageDescriptor DESC_PACKAGE_OBJ = create(PATH_OBJ, "package_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ERROR_ST_OBJ = create(PATH_OBJ,
+			"error_st_obj.gif"); //$NON-NLS-1$
 
-	public static final ImageDescriptor DESC_RSPROXY_CO = create(PATH_OVR, "rsvcproxy_co.gif");
+	public static final ImageDescriptor DESC_WARNING_ST_OBJ = create(PATH_OBJ,
+			"warning_st_obj.gif"); //$NON-NLS-1$
+
+	public static final ImageDescriptor DESC_LOCATION = create(PATH_OBJ,
+			"location_obj.gif"); //$NON-NLS-1$
+
+	public static final ImageDescriptor DESC_SERVICE_OBJ = create(PATH_OBJ,
+			"int_obj.gif"); //$NON-NLS-1$
+
+	public static final ImageDescriptor DESC_ASYNC_SERVICE_OBJ = create(
+			PATH_OBJ, "async_int_obj.gif"); //$NON-NLS-1$
+
+	public static final ImageDescriptor DESC_PROPERTY_OBJ = create(PATH_OBJ,
+			"property_obj.gif"); //$NON-NLS-1$
+
+	public static final ImageDescriptor DESC_PACKAGE_OBJ = create(PATH_OBJ,
+			"package_obj.gif"); //$NON-NLS-1$
+
+	public static final ImageDescriptor DESC_RSPROXY_CO = create(PATH_OVR,
+			"rsvcproxy_co_alpha.gif");
 
 	private static final void initialize() {
 		PLUGIN_REGISTRY = RSAPlugin.getDefault().getImageRegistry();
@@ -67,7 +83,8 @@ public class RSAImageRegistry {
 
 	private static URL makeIconURL(String prefix, String name) {
 		String path = "$nl$/" + prefix + name; //$NON-NLS-1$
-		return FileLocator.find(RSAPlugin.getDefault().getBundle(), new Path(path), null);
+		return FileLocator.find(RSAPlugin.getDefault().getBundle(), new Path(
+				path), null);
 	}
 
 	public static Image manage(String key, ImageDescriptor desc) {

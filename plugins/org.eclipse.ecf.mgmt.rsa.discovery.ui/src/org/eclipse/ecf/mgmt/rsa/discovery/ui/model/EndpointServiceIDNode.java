@@ -6,28 +6,19 @@
  * 
  * Contributors: Scott Lewis - initial API and implementation
  ******************************************************************************/
-package org.eclipse.ecf.internal.mgmt.rsa.discovery.ui;
+package org.eclipse.ecf.mgmt.rsa.discovery.ui.model;
 
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.osgi.framework.BundleContext;
+import org.osgi.service.remoteserviceadmin.RemoteConstants;
 
-public class RSAPlugin extends AbstractUIPlugin {
+public class EndpointServiceIDNode extends EndpointPropertyNode {
 
-	private static RSAPlugin instance;
-
-	public static RSAPlugin getDefault() {
-		return instance;
+	public EndpointServiceIDNode() {
+		super(RemoteConstants.ENDPOINT_SERVICE_ID);
+		setPropertyAlias("Service Id");
 	}
 
 	@Override
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-		instance = this;
-	}
-
-	@Override
-	public void stop(BundleContext context) throws Exception {
-		instance = null;
-		super.stop(context);
+	public Object getPropertyValue() {
+		return getEndpointDescription().getServiceId();
 	}
 }
