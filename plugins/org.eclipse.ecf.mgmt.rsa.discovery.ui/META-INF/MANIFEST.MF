@@ -16,3 +16,4 @@ Service-Component: OSGI-INF/discovery.xml
 Bundle-Localization: plugin
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.ecf.internal.mgmt.rsa.discovery.ui.RSAPlugin
+Export-Package: org.eclipse.ecf.mgmt.rsa.discovery.ui.model
