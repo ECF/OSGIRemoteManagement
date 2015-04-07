@@ -13,18 +13,20 @@ import org.osgi.framework.BundleContext;
 
 public class RSAPlugin extends AbstractUIPlugin {
 
+	public static final String PLUGIN_ID = "org.eclipse.ecf.mgmt.rsa.discovery.ui";
+
 	private static RSAPlugin instance;
-	
+
 	public static RSAPlugin getDefault() {
 		return instance;
 	}
-	
+
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		instance = this;
 	}
-	
+
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		instance = null;

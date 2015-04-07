@@ -10,7 +10,7 @@
       </category>
       <view
             name="%remote.services.discovery.view.name"
-            icon="icons/sample.gif"
+            icon="icons/obj16/endpoint_obj.gif"
             category="org.eclipse.ecf.mgmt.rsa.discovery.ui.endpointdiscovery.rsgroup"
             class="org.eclipse.ecf.internal.mgmt.rsa.discovery.ui.EndpointDiscoveryView"
             id="org.eclipse.ecf.mgmt.rsa.discovery.ui.views.EndpointDiscoveryView">
@@ -35,6 +35,100 @@
                relative="bottomRight">
          </view>
       </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.ecf.mgmt.rsa.discovery.ui.model.EndpointNode"
+            class="org.eclipse.ecf.mgmt.rsa.discovery.ui.model.EndpointAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter2">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter3">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.ecf.mgmt.rsa.discovery.ui.model.EndpointPropertyNode"
+            class="org.eclipse.ecf.mgmt.rsa.discovery.ui.model.EndpointAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter2">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter3">
+         </adapter>
+      </factory>
+            <factory
+            adaptableType="org.eclipse.ecf.mgmt.rsa.discovery.ui.model.EndpointPropertyGroupNode"
+            class="org.eclipse.ecf.mgmt.rsa.discovery.ui.model.EndpointAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter2">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter3">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.ecf.mgmt.rsa.discovery.ui.model.EndpointGroupNode"
+            class="org.eclipse.ecf.mgmt.rsa.discovery.ui.model.EndpointAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter2">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter3">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.ecf.mgmt.rsa.discovery.ui.model.EndpointInterfacesNode"
+            class="org.eclipse.ecf.mgmt.rsa.discovery.ui.model.EndpointAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter2">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter3">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.ecf.mgmt.rsa.discovery.ui.model.EndpointAsyncInterfacesNode"
+            class="org.eclipse.ecf.mgmt.rsa.discovery.ui.model.EndpointAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter2">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter3">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.ecf.mgmt.rsa.discovery.ui.model.EndpointPackageVersionNode"
+            class="org.eclipse.ecf.mgmt.rsa.discovery.ui.model.EndpointAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter2">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter3">
+         </adapter>
+      </factory>
    </extension>
 
 </plugin>
