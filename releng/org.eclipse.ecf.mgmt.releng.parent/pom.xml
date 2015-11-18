@@ -1,0 +1,127 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.eclipse.ecf.mgmt.releng.parent</groupId>
+	<artifactId>org.eclipse.ecf.mgmt.releng.parent</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<properties>
+		<tycho-version>0.22.0</tycho-version>
+	</properties>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>tycho-snapshots</id>
+			<url>https://oss.sonatype.org/content/groups/public/</url>
+		</pluginRepository>
+	</pluginRepositories>
+	<repositories>
+		<repository>
+			<id>4.5</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/eclipse/updates/4.5</url>
+		</repository>
+		<repository>
+			<id>mars</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/releases/mars</url>
+		</repository>
+		<repository>
+			<id>ecf-latest</id>
+			<url>http://download.ecf-project.org/repo/C-HEAD-sdk.feature/lastSuccessful/archive/site.p2/</url>
+			<layout>p2</layout>
+		</repository>
+	</repositories>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-packaging-plugin</artifactId>
+					<version>${tycho-version}</version>
+					<configuration>
+						<archive>
+							<addMavenDescriptor>false</addMavenDescriptor>
+						</archive>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-maven-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<extensions>true</extensions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>target-platform-configuration</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<resolver>p2</resolver>
+					<ignoreTychoRepositories>true</ignoreTychoRepositories>
+					<pomDependencies>consider</pomDependencies>
+					<!-- <allowConflictingDependencies>true</allowConflictingDependencies> -->
+					<environments>
+						<!-- <environment> <os>win32</os> <ws>win32</ws> <arch>x86_64</arch> 
+							</environment> <environment> <os>win32</os> <ws>win32</ws> <arch>x86</arch> 
+							</environment> -->
+						<environment>
+							<os>linux</os>
+							<ws>gtk</ws>
+							<arch>x86</arch>
+						</environment>
+						<!-- <environment> <os>macosx</os> <ws>cocoa</ws> <arch>x86_64</arch> 
+							</environment> <environment> <os>linux</os> <ws>gtk</ws> <arch>x86_64</arch> 
+							</environment> <environment> <os>win32</os> <ws>win32</ws> <arch>x86</arch> 
+							</environment> -->
+					</environments>
+					<filters>
+						<!-- example 1: restrict version of a bundle, alternative: <version> 
+							for selecting exactly one versions <filter> <type>eclipse-plugin</type> <id>org.eclipse.osgi</id> 
+							<restrictTo> <versionRange>[3.6,3.7)</versionRange> </restrictTo> </filter> -->
+						<!-- remove all providers of the package javax.persistence except the 
+							bundle javax.persistence <filter> <type>java-package</type> <id>javax.persistence</id> 
+							<restrictTo> <type>eclipse-plugin</type> <id>javax.persistence</id> </restrictTo> 
+							</filter> -->
+						<!-- work around Equinox bug 348045, indigo, early releases juno <filter> 
+							<type>p2-installable-unit</type> <id>org.eclipse.equinox.servletbridge.extensionbundle</id> 
+							<removeAll /> </filter> -->
+					</filters>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<modules>
+		<module>../../bundles/org.eclipse.ecf.mgmt</module>
+		<module>../../bundles/org.eclipse.ecf.mgmt.application</module>
+		<module>../../bundles/org.eclipse.ecf.mgmt.application.host</module>
+		<module>../../bundles/org.eclipse.ecf.mgmt.container</module>
+		<module>../../bundles/org.eclipse.ecf.mgmt.container.host</module>
+		<module>../../releng/org.eclipse.ecf.mgmt.feature</module>
+		<module>../../bundles/org.eclipse.ecf.mgmt.framework</module>
+		<module>../../bundles/org.eclipse.ecf.mgmt.framework.host</module>
+<!-- 	<module>../../test/org.eclipse.ecf.mgmt.framework.test</module>  -->	
+		<module>../../bundles/org.eclipse.ecf.mgmt.identity</module>
+		<module>../../bundles/org.eclipse.ecf.mgmt.identity.host</module>
+		<module>../../bundles/org.eclipse.ecf.mgmt.p2</module>
+		<module>../../bundles/org.eclipse.ecf.mgmt.p2.host</module>
+		<module>../../bundles/org.eclipse.ecf.mgmt.p2.install</module>
+		<module>../../bundles/org.eclipse.ecf.mgmt.p2.install.host</module>
+		<module>../../bundles/org.eclipse.ecf.mgmt.p2.profile</module>
+		<module>../../bundles/org.eclipse.ecf.mgmt.p2.profile.host</module>
+		<module>../../bundles/org.eclipse.ecf.mgmt.p2.repository</module>
+		<module>../../bundles/org.eclipse.ecf.mgmt.p2.repository.host</module>
+		<module>../../bundles/org.eclipse.ecf.mgmt.registry</module>
+		<module>../../bundles/org.eclipse.ecf.mgmt.registry.host</module>
+		<module>../../releng/org.eclipse.ecf.mgmt.releng.site</module>
+		<module>../../bundles/org.eclipse.ecf.mgmt.rsa</module>
+		<module>../../bundles/org.eclipse.ecf.mgmt.rsa.host</module>
+		<module>../../bundles/org.eclipse.ecf.mgmt.scr</module>
+		<module>../../bundles/org.eclipse.ecf.mgmt.scr.host</module>
+		<module>../../bundles/org.eclipse.ecf.mgmt.sharedobject</module>
+		<module>../../bundles/org.eclipse.ecf.mgmt.sharedobject.host</module>
+		<module>../../plugins/org.eclipse.ecf.mgmt.rsa.discovery.ui</module>
+	</modules>
+</project>
