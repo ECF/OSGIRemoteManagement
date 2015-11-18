@@ -19,9 +19,9 @@ public interface IRemoteServiceAdminManager {
 
 	RemoteServiceAdminEventMTO[] getRemoteServiceAdminEvents(int[] typeFilter);
 
-	ExportReferenceMTO[] getExportedServices();
+	ExportRegistrationMTO[] getExportedServices();
 
-	ImportReferenceMTO[] getImportedEndpoints();
+	ImportRegistrationMTO[] getImportedEndpoints();
 
 	ExportRegistrationMTO[] exportService(ServiceReferenceMTO serviceReference,
 			Map<String, ?> overridingProperties);

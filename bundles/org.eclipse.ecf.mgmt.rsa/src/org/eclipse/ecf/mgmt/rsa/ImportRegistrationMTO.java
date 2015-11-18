@@ -9,13 +9,15 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.rsa;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import org.eclipse.ecf.core.identity.ID;
 import org.eclipse.ecf.mgmt.SerializationUtil;
 
-public class ImportRegistrationMTO {
+public class ImportRegistrationMTO implements Serializable {
 
+	private static final long serialVersionUID = -4584586006915451951L;
 	private final ImportReferenceMTO importReference;
 	private final Throwable exception;
 

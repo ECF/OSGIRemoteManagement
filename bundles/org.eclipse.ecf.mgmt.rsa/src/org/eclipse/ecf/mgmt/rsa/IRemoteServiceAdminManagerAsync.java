@@ -21,9 +21,9 @@ public interface IRemoteServiceAdminManagerAsync {
 	CompletableFuture<RemoteServiceAdminEventMTO[]> getRemoteServiceAdminEventsAsync(
 			int[] typeFilter);
 
-	CompletableFuture<ExportReferenceMTO[]> getExportedServicesAsync();
+	CompletableFuture<ExportRegistrationMTO[]> getExportedServicesAsync();
 
-	CompletableFuture<ImportReferenceMTO[]> getImportedEndpointsAsync();
+	CompletableFuture<ImportRegistrationMTO[]> getImportedEndpointsAsync();
 
 	CompletableFuture<ExportRegistrationMTO[]> exportServiceAsync(
 			ServiceReferenceMTO serviceReference,
