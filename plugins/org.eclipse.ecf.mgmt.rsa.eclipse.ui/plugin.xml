@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            name="%remote.services.remote.rsa.view.name"
+            icon="platform:/plugin/org.eclipse.ecf.remoteservice.ui/icons/obj16/rsa_obj.gif"
+            category="org.eclipse.ecf.remoteservice.ui.rsgroup"
+            class="org.eclipse.ecf.mgmt.rsa.eclipse.ui.RemoteRSAView"
+            id="org.eclipse.ecf.mgmt.rsa.eclipse.ui.RemoteRSAView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.ecf.mgmt.rsa.eclipse.ui.model.RSAManagerNode"
+            class="org.eclipse.ecf.mgmt.rsa.eclipse.ui.model.RSAManagerAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter2">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter3">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.ecf.mgmt.rsa.eclipse.ui.model.ExportReferenceMTONode"
+            class="org.eclipse.ecf.mgmt.rsa.eclipse.ui.model.RSAManagerAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter2">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter3">
+         </adapter>
+      </factory>
+            <factory
+            adaptableType="org.eclipse.ecf.mgmt.rsa.eclipse.ui.model.ImportReferenceMTONode"
+            class="org.eclipse.ecf.mgmt.rsa.eclipse.ui.model.RSAManagerAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter2">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter3">
+         </adapter>
+      </factory>
+      
+   </extension>
+
+</plugin>
