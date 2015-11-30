@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" immediate="true" name="org.eclipse.ecf.remoteservice.ui.serviceview.rsa">
+   <implementation class="org.eclipse.ecf.remoteservice.ui.internal.serviceview.DiscoveryComponent"/>
+   <property name="endpoint.listener.scope" type="String" value="(ecf.endpoint.id.ns=*)"/>
+   <reference bind="bindRemoteServiceAdmin" cardinality="0..1" interface="org.osgi.service.remoteserviceadmin.RemoteServiceAdmin" name="RemoteServiceAdmin" policy="dynamic" unbind="unbindRemoteServiceAdmin"/>
+   <service>
+      <provide interface="org.osgi.service.remoteserviceadmin.RemoteServiceAdminListener"/>
+   </service>
+</scr:component>
