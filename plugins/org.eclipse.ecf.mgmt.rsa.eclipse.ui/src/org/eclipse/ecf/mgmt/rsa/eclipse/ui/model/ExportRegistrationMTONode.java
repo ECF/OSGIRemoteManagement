@@ -16,6 +16,7 @@ import org.eclipse.ecf.mgmt.rsa.ExportReferenceMTO;
 import org.eclipse.ecf.mgmt.rsa.ExportRegistrationMTO;
 import org.eclipse.ecf.remoteserviceadmin.ui.endpoint.model.EndpointPropertySource;
 import org.eclipse.ecf.remoteserviceadmin.ui.rsa.model.ExportRegistrationNode;
+import org.eclipse.ecf.remoteservices.ui.util.PropertyUtils;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.osgi.framework.Constants;
 
@@ -36,7 +37,8 @@ public class ExportRegistrationMTONode extends ExportRegistrationNode {
 	@Override
 	public String getValidName() {
 		Map<String, Object> props = getEndpointProperties();
-		return (props == null) ? null : convertStringArrayToString((String[]) props.get(Constants.OBJECTCLASS));
+		return (props == null) ? null
+				: PropertyUtils.convertStringArrayToString((String[]) props.get(Constants.OBJECTCLASS));
 	}
 
 	Map<String, Object> getEndpointProperties() {

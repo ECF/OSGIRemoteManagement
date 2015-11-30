@@ -45,10 +45,11 @@ public class RemoteRSAView extends AbstractRemoteServiceAdminView {
 			public void run() {
 				AbstractRSANode rsaNode = getSelectedNode();
 				RSAManagerNode managerNode = null;
-				if (rsaNode instanceof ExportedServicesRootNode) 
+				if (rsaNode instanceof ExportedServicesRootNode)
 					managerNode = (RSAManagerNode) rsaNode.getParent();
-				if (managerNode != null) 
-					refreshExports(managerNode.getRemoteServiceAdminManager(), managerNode.getRemoteServiceAdminManagerRef());
+				if (managerNode != null)
+					refreshExports(managerNode.getRemoteServiceAdminManager(),
+							managerNode.getRemoteServiceAdminManagerRef());
 			};
 		};
 		refreshExportedAction.setText("Refresh remote exported services");
@@ -56,18 +57,20 @@ public class RemoteRSAView extends AbstractRemoteServiceAdminView {
 			public void run() {
 				AbstractRSANode rsaNode = getSelectedNode();
 				RSAManagerNode managerNode = null;
-				if (rsaNode instanceof ImportedEndpointsRootNode) 
+				if (rsaNode instanceof ImportedEndpointsRootNode)
 					managerNode = (RSAManagerNode) rsaNode.getParent();
 				if (managerNode != null)
-					refreshImports(managerNode.getRemoteServiceAdminManager(), managerNode.getRemoteServiceAdminManagerRef());
+					refreshImports(managerNode.getRemoteServiceAdminManager(),
+							managerNode.getRemoteServiceAdminManagerRef());
 			};
 		};
 		refreshImportedAction.setText("Refresh remote imported endpoints");
 		refreshBothAction = new Action() {
 			public void run() {
 				RSAManagerNode managerNode = getSelectedManagerNode();
-				if (managerNode != null) 
-					refreshBoth(managerNode.getRemoteServiceAdminManager(), managerNode.getRemoteServiceAdminManagerRef());
+				if (managerNode != null)
+					refreshBoth(managerNode.getRemoteServiceAdminManager(),
+							managerNode.getRemoteServiceAdminManagerRef());
 			};
 		};
 		refreshBothAction.setText("Refresh remote exports and imports");
@@ -87,7 +90,6 @@ public class RemoteRSAView extends AbstractRemoteServiceAdminView {
 			}
 		}
 	}
-
 
 	private RSAManagerNode getSelectedManagerNode() {
 		AbstractRSANode aNode = getSelectedNode();

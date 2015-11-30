@@ -25,11 +25,11 @@ public class RSAManagerNode extends AbstractRSANode {
 	public IRemoteServiceAdminManagerAsync getRemoteServiceAdminManager() {
 		return this.rsaManager;
 	}
-	
+
 	public IRemoteServiceReference getRemoteServiceAdminManagerRef() {
 		return this.managerRef;
 	}
-	
+
 	public ExportedServicesRootNode getExportedServicesRootNode() {
 		return exportedServicesRoot;
 	}

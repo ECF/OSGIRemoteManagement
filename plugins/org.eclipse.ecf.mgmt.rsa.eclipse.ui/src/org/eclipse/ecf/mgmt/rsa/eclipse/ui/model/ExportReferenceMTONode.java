@@ -14,19 +14,19 @@ import org.eclipse.ecf.mgmt.rsa.ExportReferenceMTO;
 import org.eclipse.ecf.remoteserviceadmin.ui.rsa.model.AbstractRSANode;
 import org.eclipse.ecf.remoteserviceadmin.ui.rsa.model.EndpointDescriptionRSANode;
 import org.eclipse.ecf.remoteserviceadmin.ui.rsa.model.ServiceIdNode;
+import org.eclipse.ecf.remoteservices.ui.util.PropertyUtils;
 import org.osgi.framework.Constants;
 
 public class ExportReferenceMTONode extends AbstractRSANode {
 
 	private ExportReferenceMTO exportReference;
 	private String label;
-	
+
 	public ExportReferenceMTONode(ExportReferenceMTO er) {
 		this.exportReference = er;
 		addChild(new ServiceIdNode(exportReference.getExportedService(), "OSGi Service"));
-		Map<String,Object> props = exportReference.getExportedEndpoint().getProperties();
-		this.label = convertStringArrayToString(
-				(String[]) props.get(Constants.OBJECTCLASS));
+		Map<String, Object> props = exportReference.getExportedEndpoint().getProperties();
+		this.label = PropertyUtils.convertStringArrayToString((String[]) props.get(Constants.OBJECTCLASS));
 		addChild(new EndpointDescriptionRSANode(props));
 	}
 
