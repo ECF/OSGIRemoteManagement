@@ -32,6 +32,10 @@ public class ServiceNode extends AbstractServicesNode {
 		this.importRef = iRef;
 	}
 
+	public ServiceNode(long bundleId, long[] usingBundles, Map<String, Object> props) {
+		this(bundleId, usingBundles, props, null, null);
+	}
+	
 	public void setProperties(Map<String, Object> updatedProperties) {
 		this.properties = updatedProperties;
 	}

@@ -17,9 +17,9 @@ import org.eclipse.ui.dialogs.PatternFilter;
 
 public class ServicesFilteredTree extends FilteredTree {
 
-	private ServicesView servicesView;
+	private AbstractServicesView servicesView;
 	
-	public ServicesFilteredTree(ServicesView view, Composite parent, int treeStyle, PatternFilter filter) {
+	public ServicesFilteredTree(AbstractServicesView view, Composite parent, int treeStyle, PatternFilter filter) {
 		super(parent, treeStyle, filter, true);
 		this.servicesView = view;
 	}

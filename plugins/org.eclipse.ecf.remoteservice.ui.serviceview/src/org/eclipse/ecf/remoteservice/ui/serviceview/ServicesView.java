@@ -9,34 +9,15 @@
 package org.eclipse.ecf.remoteservice.ui.serviceview;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.ecf.remoteservice.ui.internal.serviceview.DiscoveryComponent;
-import org.eclipse.ecf.remoteservice.ui.services.IServicesView;
 import org.eclipse.ecf.remoteservice.ui.serviceview.model.AbstractServicesNode;
 import org.eclipse.ecf.remoteservice.ui.serviceview.model.RegisteringBundleIdNode;
 import org.eclipse.ecf.remoteservice.ui.serviceview.model.ServiceNode;
-import org.eclipse.ecf.remoteservice.ui.serviceview.model.ServicesContentProvider;
-import org.eclipse.ecf.remoteservice.ui.serviceview.model.ServicesRootNode;
 import org.eclipse.ecf.remoteservice.ui.serviceview.model.UsingBundleIdsNode;
-import org.eclipse.jface.viewers.ITreeSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerComparator;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.ui.dialogs.FilteredTree;
-import org.eclipse.ui.dialogs.PatternFilter;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.part.ViewPart;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceEvent;
@@ -51,13 +32,9 @@ import org.osgi.service.remoteserviceadmin.RemoteServiceAdminEvent;
 /**
  * @since 3.3
  */
-public class ServicesView extends ViewPart implements IServicesView {
+public class ServicesView extends AbstractServicesView {
 
 	public static final String ID_VIEW = "org.eclipse.ecf.remoteservice.ui.serviceview.ServiceView"; //$NON-NLS-1$
-
-	private FilteredTree fFilteredTree;
-	private TreeViewer viewer;
-	private ServicesContentProvider contentProvider;
 
 	public ServicesView() {
 	}
@@ -69,8 +46,7 @@ public class ServicesView extends ViewPart implements IServicesView {
 		if (ctxt != null)
 			ctxt.removeServiceListener(serviceListener);
 		discovery.setServicesView(null);
-		viewer = null;
-		contentProvider = null;
+		super.dispose();
 	}
 
 	private List<ServiceReferenceDTO> getServiceDTOs(BundleContext ctxt) {
@@ -88,13 +64,14 @@ public class ServicesView extends ViewPart implements IServicesView {
 	private ServiceListener serviceListener = new ServiceListener() {
 		@Override
 		public void serviceChanged(final ServiceEvent event) {
-			final TreeViewer v = viewer;
+			final TreeViewer v = getTreeViewer();
 			if (v == null)
 				return;
 			v.getControl().getDisplay().asyncExec(new Runnable() {
 				@Override
 				public void run() {
-					if (viewer == null)
+					TreeViewer tv = getTreeViewer();
+					if (tv == null)
 						return;
 					BundleContext ctxt = DiscoveryComponent.getDefault().getContext();
 					if (ctxt == null)
@@ -125,71 +102,14 @@ public class ServicesView extends ViewPart implements IServicesView {
 							getServicesRoot().removeChild(sn);
 						break;
 					}
-					viewer.setExpandedState(getServicesRoot(), true);
-					viewer.refresh();
+					tv.setExpandedState(getServicesRoot(), true);
+					tv.refresh();
 				}
 			});
 		}
 	};
 
-	@Override
-	public String getRemoteId() {
-		// We are interested in the local services view, which means the
-		// remote id is null
-		return null;
-	}
-
-	@Override
-	public void selectService(final String remoteId, final long serviceId) {
-		if (viewer == null)
-			return;
-		viewer.getControl().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (viewer == null)
-					return;
-				ServiceNode sn = findServiceNode(serviceId);
-				if (sn != null)
-					viewer.setSelection(new StructuredSelection(sn));
-			}
-		});
-	}
-
-	public void updateTitle() {
-		setContentDescription(getTitleSummary());
-	}
-
-	private Tree getUndisposedTree() {
-		if (viewer == null || viewer.getTree() == null || viewer.getTree().isDisposed())
-			return null;
-		return viewer.getTree();
-	}
-
-	private String getTitleSummary() {
-		Tree tree = getUndisposedTree();
-		String type = "services";
-		int total = getServicesRoot().getChildren().length;
-		if (tree == null)
-			return NLS.bind("Filter matched {0} of {1} {2}.", (new String[] { "0", "0", type })); //$NON-NLS-1$ //$NON-NLS-2$
-		return NLS.bind("Filter matched {0} of {1} {2}.",
-				(new String[] { Integer.toString(tree.getItemCount()), Integer.toString(total), type }));
-	}
-
-	AbstractServicesNode getSelectedNode() {
-		return ((AbstractServicesNode) ((ITreeSelection) viewer.getSelection()).getFirstElement());
-	}
-
-	@Override
-	public void createPartControl(Composite parent) {
-		// create the sash form that will contain the tree viewer & text viewer
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = layout.marginWidth = 0;
-		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		createTreeViewer(composite);
-
+	protected void initializeServices() {
 		DiscoveryComponent d = DiscoveryComponent.getDefault();
 		d.setServicesView(this);
 		final BundleContext ctxt = d.getContext();
@@ -205,49 +125,8 @@ public class ServicesView extends ViewPart implements IServicesView {
 			}
 		}).start();
 	}
-
-	private void createTreeViewer(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = layout.marginWidth = 0;
-		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		fFilteredTree = new ServicesFilteredTree(this, composite, SWT.H_SCROLL | SWT.V_SCROLL, new PatternFilter());
-		fFilteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		fFilteredTree.setLayoutData(gd);
-		viewer = fFilteredTree.getViewer();
-
-		contentProvider = new ServicesContentProvider(getViewSite());
-
-		viewer.setContentProvider(contentProvider);
-		viewer.setLabelProvider(new WorkbenchLabelProvider());
-		viewer.setUseHashlookup(true);
-
-		viewer.setInput(getViewSite());
-
-		viewer.setComparator(new ViewerComparator() {
-			@Override
-			public int compare(Viewer viewer, Object e1, Object e2) {
-				if (e1 instanceof ServiceNode && e2 instanceof ServiceNode) {
-					return new Long(((ServiceNode) e2).getServiceId() - ((ServiceNode) e1).getServiceId()).intValue();
-				}
-				return super.compare(viewer, e1, e2);
-			}
-		});
-
-		getViewSite().setSelectionProvider(viewer);
-	}
-
-	@Override
-	public void setFocus() {
-		Text filterText = fFilteredTree.getFilterControl();
-		if (filterText != null) 
-			filterText.setFocus();
-	}
-
-	private ServiceNode createServiceNode(long serviceId, long bundleId, long[] usingBundleIds,
+	
+	protected ServiceNode createServiceNode(long serviceId, long bundleId, long[] usingBundleIds,
 			Map<String, Object> properties) {
 		org.osgi.service.remoteserviceadmin.RemoteServiceAdmin rsa = DiscoveryComponent.getDefault().getRSA();
 		ExportReference eRef = null;
@@ -271,17 +150,6 @@ public class ServicesView extends ViewPart implements IServicesView {
 		return result;
 	}
 
-	private ServiceNode findServiceNode(long serviceId) {
-		AbstractServicesNode[] services = getServicesRoot().getChildren();
-		for (AbstractServicesNode asn : services) {
-			if (asn instanceof ServiceNode) {
-				ServiceNode sn = (ServiceNode) asn;
-				if (serviceId == sn.getServiceId())
-					return sn;
-			}
-		}
-		return null;
-	}
 
 	private ServiceNode findServiceNode(ExportReference eRef) {
 		AbstractServicesNode[] services = getServicesRoot().getChildren();
@@ -307,35 +175,20 @@ public class ServicesView extends ViewPart implements IServicesView {
 		return null;
 	}
 
-	private ServicesRootNode getServicesRoot() {
-		return ((ServicesContentProvider) contentProvider).getServicesRoot();
-	}
-
-	private void addServiceNodes(final Collection<ServiceNode> sns) {
-		if (viewer == null)
-			return;
-		viewer.getControl().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				ServicesRootNode srn = getServicesRoot();
-				for (ServiceNode sn : sns)
-					srn.addChild(sn);
-				viewer.setExpandedState(getServicesRoot(), true);
-				viewer.refresh();
-			}
-		});
-	}
 
 	private long getServiceId(ServiceReference<?> ref) {
 		return (Long) ref.getProperty(Constants.SERVICE_ID);
 	}
 
 	public void handleRSAEvent(final RemoteServiceAdminEvent event) {
+		TreeViewer viewer = getTreeViewer();
 		if (viewer == null)
 			return;
 		viewer.getControl().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
+				TreeViewer tv = getTreeViewer();
+				if (tv == null) return;
 				Throwable t = event.getException();
 				if (t == null) {
 					switch (event.getType()) {
@@ -368,8 +221,8 @@ public class ServicesView extends ViewPart implements IServicesView {
 							sn3.setImportRef(null);
 						break;
 					}
-					viewer.setExpandedState(getServicesRoot(), true);
-					viewer.refresh();
+					tv.setExpandedState(getServicesRoot(), true);
+					tv.refresh();
 				}
 			}
 		});
