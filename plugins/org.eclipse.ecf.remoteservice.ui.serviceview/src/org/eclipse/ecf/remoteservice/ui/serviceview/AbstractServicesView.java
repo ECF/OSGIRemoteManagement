@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.ecf.remoteservice.ui.services.IServicesView;
+import org.eclipse.ecf.remoteservice.ui.serviceview.model.AbstractServicesContentProvider;
 import org.eclipse.ecf.remoteservice.ui.serviceview.model.AbstractServicesNode;
 import org.eclipse.ecf.remoteservice.ui.serviceview.model.RegisteringBundleIdNode;
 import org.eclipse.ecf.remoteservice.ui.serviceview.model.ServiceNode;
@@ -39,7 +40,7 @@ import org.eclipse.ui.part.ViewPart;
 public abstract class AbstractServicesView extends ViewPart implements IServicesView {
 
 	private TreeViewer viewer;
-	private ServicesContentProvider contentProvider;
+	private AbstractServicesContentProvider contentProvider;
 	private ServicesFilteredTree filteredTree;
 
 	@Override
@@ -123,7 +124,7 @@ public abstract class AbstractServicesView extends ViewPart implements IServices
 		return result;
 	}
 	
-	protected ServicesContentProvider getContentProvider() {
+	protected AbstractServicesContentProvider getContentProvider() {
 		return contentProvider;
 	}
 	

@@ -39,4 +39,8 @@ public class AbstractServicesContentProvider extends BaseWorkbenchContentProvide
 		return getChildren(parent);
 	}
 
+	public ServicesRootNode getServicesRoot() {
+		return getInvisibleRoot();
+	}
+
 }

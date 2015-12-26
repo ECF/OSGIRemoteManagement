@@ -19,8 +19,4 @@ public class ServicesContentProvider extends AbstractServicesContentProvider {
 		super(viewSite);
 	}
 
-	public ServicesRootNode getServicesRoot() {
-		return getInvisibleRoot();
-	}
-
 }
