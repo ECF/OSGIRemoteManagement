@@ -8,52 +8,26 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.rsa.internal.eclipse.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.ecf.mgmt.rsa.IRemoteServiceAdminManagerAsync;
-import org.eclipse.ecf.mgmt.rsa.eclipse.ui.RemoteRSAView;
+import org.eclipse.ecf.remote.mgmt.util.RemoteServicesComponent;
 
-public class RSAManagerComponent {
-
-	private List<IRemoteServiceAdminManagerAsync> rsaManagers = new ArrayList<IRemoteServiceAdminManagerAsync>();
-	private RemoteRSAView rsaView;
+public class RSAManagerComponent extends RemoteServicesComponent {
 
 	private static RSAManagerComponent instance;
-
+	
 	public RSAManagerComponent() {
 		instance = this;
 	}
-
-	public static RSAManagerComponent getDefault() {
+	
+	public static RSAManagerComponent getInstance() {
 		return instance;
 	}
-
-	public synchronized void setRemoteRSAView(RemoteRSAView rsaView) {
-		this.rsaView = rsaView;
-		if (this.rsaView != null) {
-			for (IRemoteServiceAdminManagerAsync rsaManager : rsaManagers)
-				this.rsaView.addRSAManagerAsync(rsaManager);
-		}
-	}
-
+	
 	void bindRemoteServiceAdminManagerAsync(IRemoteServiceAdminManagerAsync rsaManagerAsync) {
-		synchronized (this) {
-			if (this.rsaView == null)
-				rsaManagers.add(rsaManagerAsync);
-			else
-				this.rsaView.addRSAManagerAsync(rsaManagerAsync);
-		}
+		addServiceHolder(IRemoteServiceAdminManagerAsync.class, rsaManagerAsync);
 	}
 
 	void unbindRemoteServiceAdminManagerAsync(IRemoteServiceAdminManagerAsync rsaManagerAsync) {
-		synchronized (this) {
-			if (this.rsaView == null)
-				rsaManagers.remove(rsaManagerAsync);
-			else {
-				rsaManagers.remove(rsaManagerAsync);
-				this.rsaView.removeRSAManagerAsync(rsaManagerAsync);
-			}
-		}
+		removeServiceHolder(IRemoteServiceAdminManagerAsync.class, rsaManagerAsync);
 	}
 }

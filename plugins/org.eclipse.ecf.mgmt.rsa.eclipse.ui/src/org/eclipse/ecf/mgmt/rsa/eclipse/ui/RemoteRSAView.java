@@ -13,14 +13,16 @@ import org.eclipse.ecf.mgmt.rsa.ExportRegistrationMTO;
 import org.eclipse.ecf.mgmt.rsa.IRemoteServiceAdminManagerAsync;
 import org.eclipse.ecf.mgmt.rsa.ImportReferenceMTO;
 import org.eclipse.ecf.mgmt.rsa.ImportRegistrationMTO;
-import org.eclipse.ecf.remoteservice.IRemoteServiceProxy;
-import org.eclipse.ecf.remoteservice.IRemoteServiceReference;
-import org.eclipse.ecf.mgmt.rsa.internal.eclipse.ui.RSAManagerComponent;
 import org.eclipse.ecf.mgmt.rsa.eclipse.ui.model.ExportReferenceMTONode;
 import org.eclipse.ecf.mgmt.rsa.eclipse.ui.model.ImportReferenceMTONode;
 import org.eclipse.ecf.mgmt.rsa.eclipse.ui.model.RSAManagerContentProvider;
 import org.eclipse.ecf.mgmt.rsa.eclipse.ui.model.RSAManagerNode;
 import org.eclipse.ecf.mgmt.rsa.eclipse.ui.model.RemoteRSAManagersRootNode;
+import org.eclipse.ecf.mgmt.rsa.internal.eclipse.ui.RSAManagerComponent;
+import org.eclipse.ecf.remote.mgmt.util.IRemoteServiceListener;
+import org.eclipse.ecf.remote.mgmt.util.RemoteServiceEvent;
+import org.eclipse.ecf.remote.mgmt.util.RemoteServiceHolder;
+import org.eclipse.ecf.remoteservice.IRemoteServiceReference;
 import org.eclipse.ecf.remoteserviceadmin.ui.rsa.AbstractRemoteServiceAdminView;
 import org.eclipse.ecf.remoteserviceadmin.ui.rsa.model.AbstractRSANode;
 import org.eclipse.ecf.remoteserviceadmin.ui.rsa.model.ExportedServicesRootNode;
@@ -101,15 +103,38 @@ public class RemoteRSAView extends AbstractRemoteServiceAdminView {
 		return new RSAManagerContentProvider(viewSite);
 	}
 
+	private IRemoteServiceListener rsListener = new IRemoteServiceListener() {
+		@Override
+		public void handleEvent(RemoteServiceEvent e) {
+			int type = e.getType();
+			RemoteServiceHolder h = e.getRemoteServiceHolder();
+			if (type == RemoteServiceEvent.ADDED) 
+				refreshBoth((IRemoteServiceAdminManagerAsync) h.getRemoteService(), h.getRemoteServiceReference());
+			else {
+				if (viewer == null)
+					return;
+				viewer.getControl().getDisplay().asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						if (viewer == null)
+							return;
+						getRootNode().removeRSAManagerNode(h.getRemoteServiceReference());
+						viewer.refresh();
+					}
+				});				
+			}
+		}
+	};
+	
 	@Override
 	public void dispose() {
-		RSAManagerComponent.getDefault().setRemoteRSAView(null);
+		RSAManagerComponent.getInstance().addListener(rsListener, IRemoteServiceAdminManagerAsync.class);
 		super.dispose();
 	}
 
 	@Override
 	protected void setupListeners() {
-		RSAManagerComponent.getDefault().setRemoteRSAView(this);
+		RSAManagerComponent.getInstance().removeListener(rsListener);
 	}
 
 	private void refreshExports(IRemoteServiceAdminManagerAsync rsaManagerAsync, IRemoteServiceReference rsRef) {
@@ -145,11 +170,6 @@ public class RemoteRSAView extends AbstractRemoteServiceAdminView {
 				});
 			});
 		}
-	}
-
-	IRemoteServiceReference getRemoteReference(IRemoteServiceAdminManagerAsync rsaManager) {
-		return (rsaManager instanceof IRemoteServiceProxy)
-				? ((IRemoteServiceProxy) rsaManager).getRemoteServiceReference() : null;
 	}
 
 	private void refreshImports(IRemoteServiceAdminManagerAsync rsaManagerAsync, IRemoteServiceReference rsRef) {
@@ -204,28 +224,6 @@ public class RemoteRSAView extends AbstractRemoteServiceAdminView {
 	private void refreshBoth(IRemoteServiceAdminManagerAsync rsaManager, IRemoteServiceReference rsRef) {
 		refreshImports(rsaManager, rsRef);
 		refreshExports(rsaManager, rsRef);
-	}
-
-	public void addRSAManagerAsync(IRemoteServiceAdminManagerAsync rsaManager) {
-		final IRemoteServiceReference rsRef = getRemoteReference(rsaManager);
-		if (rsRef != null)
-			refreshBoth(rsaManager, rsRef);
-	}
-
-	public void removeRSAManagerAsync(IRemoteServiceAdminManagerAsync rsaManagerAsync) {
-		if (viewer == null)
-			return;
-		viewer.getControl().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (viewer == null)
-					return;
-				final IRemoteServiceReference rsRef = getRemoteReference(rsaManagerAsync);
-				if (rsRef != null)
-					getRootNode().removeRSAManagerNode(rsRef);
-				viewer.refresh();
-			}
-		});
 	}
 
 }
