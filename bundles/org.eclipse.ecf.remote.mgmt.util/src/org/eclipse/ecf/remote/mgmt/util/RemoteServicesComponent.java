@@ -26,14 +26,7 @@ public class RemoteServicesComponent {
 	private Map<IRemoteServiceListener, Class<?>> listeners;
 	private Object lock = new Object();
 
-	private static RemoteServicesComponent instance;
-
-	public static RemoteServicesComponent getInstance() {
-		return instance;
-	}
-
 	public void activate() throws Exception {
-		instance = this;
 		this.map = new HashMap<ID, List<RemoteServiceHolder>>();
 		this.listeners = new HashMap<IRemoteServiceListener, Class<?>>();
 	}
@@ -47,7 +40,6 @@ public class RemoteServicesComponent {
 			listeners.clear();
 			listeners = null;
 		}
-		instance = null;
 	}
 
 	public void addServiceHolder(RemoteServiceHolder holder) {
