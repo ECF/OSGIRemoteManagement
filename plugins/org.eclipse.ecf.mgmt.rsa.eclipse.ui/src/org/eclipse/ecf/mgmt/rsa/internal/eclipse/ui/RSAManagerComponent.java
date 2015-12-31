@@ -9,7 +9,7 @@
 package org.eclipse.ecf.mgmt.rsa.internal.eclipse.ui;
 
 import org.eclipse.ecf.mgmt.rsa.IRemoteServiceAdminManagerAsync;
-import org.eclipse.ecf.remote.mgmt.util.RemoteServicesComponent;
+import org.eclipse.ecf.mgmt.consumer.util.RemoteServicesComponent;
 
 public class RSAManagerComponent extends RemoteServicesComponent {
 

@@ -8,6 +8,8 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.rsa.eclipse.ui;
 
+import java.util.Collection;
+
 import org.eclipse.ecf.mgmt.rsa.ExportReferenceMTO;
 import org.eclipse.ecf.mgmt.rsa.ExportRegistrationMTO;
 import org.eclipse.ecf.mgmt.rsa.IRemoteServiceAdminManagerAsync;
@@ -19,9 +21,9 @@ import org.eclipse.ecf.mgmt.rsa.eclipse.ui.model.RSAManagerContentProvider;
 import org.eclipse.ecf.mgmt.rsa.eclipse.ui.model.RSAManagerNode;
 import org.eclipse.ecf.mgmt.rsa.eclipse.ui.model.RemoteRSAManagersRootNode;
 import org.eclipse.ecf.mgmt.rsa.internal.eclipse.ui.RSAManagerComponent;
-import org.eclipse.ecf.remote.mgmt.util.IRemoteServiceListener;
-import org.eclipse.ecf.remote.mgmt.util.RemoteServiceEvent;
-import org.eclipse.ecf.remote.mgmt.util.RemoteServiceHolder;
+import org.eclipse.ecf.mgmt.consumer.util.IRemoteServiceListener;
+import org.eclipse.ecf.mgmt.consumer.util.RemoteServiceEvent;
+import org.eclipse.ecf.mgmt.consumer.util.RemoteServiceHolder;
 import org.eclipse.ecf.remoteservice.IRemoteServiceReference;
 import org.eclipse.ecf.remoteserviceadmin.ui.rsa.AbstractRemoteServiceAdminView;
 import org.eclipse.ecf.remoteserviceadmin.ui.rsa.model.AbstractRSANode;
@@ -110,7 +112,7 @@ public class RemoteRSAView extends AbstractRemoteServiceAdminView {
 			RemoteServiceHolder h = e.getRemoteServiceHolder();
 			if (type == RemoteServiceEvent.ADDED) 
 				refreshBoth((IRemoteServiceAdminManagerAsync) h.getRemoteService(), h.getRemoteServiceReference());
-			else {
+			else if (type == RemoteServiceEvent.REMOVED) {
 				if (viewer == null)
 					return;
 				viewer.getControl().getDisplay().asyncExec(new Runnable() {
@@ -128,15 +130,26 @@ public class RemoteRSAView extends AbstractRemoteServiceAdminView {
 	
 	@Override
 	public void dispose() {
-		RSAManagerComponent.getInstance().addListener(rsListener, IRemoteServiceAdminManagerAsync.class);
+		RSAManagerComponent.getInstance().removeListener(rsListener);
 		super.dispose();
 	}
 
+	private Collection<RemoteServiceHolder> initialRemoteServiceHolders;
+	
 	@Override
 	protected void setupListeners() {
-		RSAManagerComponent.getInstance().removeListener(rsListener);
+		initialRemoteServiceHolders = RSAManagerComponent.getInstance().addListener(rsListener, IRemoteServiceAdminManagerAsync.class);
 	}
 
+	@Override
+	protected void updateModel() {
+		if (initialRemoteServiceHolders != null) {
+			for(RemoteServiceHolder h: initialRemoteServiceHolders) 
+				refreshBoth((IRemoteServiceAdminManagerAsync) h.getRemoteService(), h.getRemoteServiceReference());
+			initialRemoteServiceHolders = null;
+		}
+		super.updateModel();
+	}
 	private void refreshExports(IRemoteServiceAdminManagerAsync rsaManagerAsync, IRemoteServiceReference rsRef) {
 		if (viewer == null)
 			return;
