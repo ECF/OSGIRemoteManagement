@@ -18,7 +18,6 @@ import java.util.Map;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.ecf.core.identity.ID;
-import org.eclipse.ecf.mgmt.framework.IFrameworkManagerAsync;
 
 public class RemoteServicesComponent {
 
@@ -107,7 +106,7 @@ public class RemoteServicesComponent {
 			listeners.put(l, clazz);
 			for (List<RemoteServiceHolder> hl : map.values())
 				for (RemoteServiceHolder rsh : hl)
-					if (rsh.getClass().equals(clazz))
+					if (rsh.getServiceClass().equals(clazz))
 						results.add(rsh);
 		}
 		return results;
@@ -128,7 +127,7 @@ public class RemoteServicesComponent {
 
 	void fireRemoteServicesEvent(Map<IRemoteServiceListener, Class<?>> lcopy, final int type,
 			final RemoteServiceHolder holder) {
-		Class<?> clazz = holder.getClass();
+		Class<?> clazz = holder.getServiceClass();
 		for (final IRemoteServiceListener l : lcopy.keySet())
 			if (clazz.equals(lcopy.get(l)))
 				SafeRunner.run(new ISafeRunnable() {
@@ -140,16 +139,6 @@ public class RemoteServicesComponent {
 						l.handleEvent(new RemoteServiceEvent(type, holder));
 					}
 				});
-	}
-
-	void bindFrameworkManager(IFrameworkManagerAsync fmAsync) {
-		if (RemoteServiceHolder.isRemoteServiceProxy(fmAsync))
-			addServiceHolder(new RemoteServiceHolder(IFrameworkManagerAsync.class, fmAsync));
-	}
-
-	void unbindFrameworkManager(IFrameworkManagerAsync fmAsync) {
-		if (RemoteServiceHolder.isRemoteServiceProxy(fmAsync))
-			removeServiceHolder(new RemoteServiceHolder(IFrameworkManagerAsync.class, fmAsync));
 	}
 
 }
