@@ -8,7 +8,7 @@
             class="org.eclipse.ecf.remoteservice.ui.serviceview.ServicesView"
             icon="platform:/plugin/org.eclipse.ecf.remoteservice.ui/icons/obj16/int_obj.gif"
             id="org.eclipse.ecf.remoteservice.ui.serviceview.ServiceView"
-            name="OSGi Services"
+            name="Local OSGi Services"
             restorable="true">
       </view>
    </extension>
