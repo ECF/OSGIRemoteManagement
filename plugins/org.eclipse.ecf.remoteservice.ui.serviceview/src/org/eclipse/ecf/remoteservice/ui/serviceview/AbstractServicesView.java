@@ -94,8 +94,6 @@ public abstract class AbstractServicesView extends ViewPart implements IServices
 
 		TreeViewer viewer = filteredTree.getViewer();
 
-		contentProvider = new ServicesContentProvider(getViewSite());
-
 		viewer.setContentProvider(contentProvider);
 		viewer.setLabelProvider(new WorkbenchLabelProvider());
 		viewer.setUseHashlookup(true);
