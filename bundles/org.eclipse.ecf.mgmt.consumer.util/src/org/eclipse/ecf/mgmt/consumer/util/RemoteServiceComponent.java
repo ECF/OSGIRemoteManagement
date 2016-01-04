@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.ecf.core.identity.ID;
 
-public class RemoteServicesComponent {
+public class RemoteServiceComponent {
 
 	private Map<ID, List<RemoteServiceHolder>> map;
 	private Map<IRemoteServiceListener, Class<?>> listeners;
