@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ECF Remote Management Eclipse UI for Framework
+Bundle-SymbolicName: org.eclipse.ecf.mgmt.framework.eclipse.ui;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.eclipse.ecf.mgmt.framework.eclipse.ui.Activator
+Bundle-Vendor: Eclipse.org - ECF
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Import-Package: org.eclipse.ecf.core.identity;version="3.2.0",
+ org.eclipse.ecf.mgmt.consumer.util;version="1.0.0",
+ org.eclipse.ecf.mgmt.framework;version="1.0.0",
+ org.eclipse.ecf.remoteservice;version="7.2.0",
+ org.eclipse.ecf.remoteservice.ui.serviceview;version="1.0.0",
+ org.eclipse.ecf.remoteservice.ui.serviceview.model;version="1.0.0",
+ org.eclipse.ecf.remoteservices.ui;version="3.0.0"
+Bundle-Localization: plugin
+Service-Component: OSGI-INF/servicemanagers.xml

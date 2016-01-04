@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            name="%remote.services.remote.service.view.name"
+            icon="platform:/plugin/org.eclipse.ecf.remoteservice.ui/icons/obj16/int_obj.gif"
+            category="org.eclipse.ecf.remoteservice.ui.rsgroup"
+            class="org.eclipse.ecf.mgmt.framework.eclipse.ui.services.RemoteServicesView"
+            id="org.eclipse.ecf.mgmt.framework.eclipse.ui.RemoteServicesView">
+      </view>
+   </extension>
+
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+              <factory
+            adaptableType="org.eclipse.ecf.mgmt.framework.eclipse.ui.services.model.RemoteServiceManagerNode"
+            class="org.eclipse.ecf.mgmt.framework.eclipse.ui.services.model.RemoteServiceManagerAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter2">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter3">
+         </adapter>
+      </factory>
+      
+     <factory
+            adaptableType="org.eclipse.ecf.remoteservice.ui.serviceview.model.ServiceNode"
+            class="org.eclipse.ecf.remoteservice.ui.serviceview.model.ServicesAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter2">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter3">
+         </adapter>
+      </factory>
+      
+           <factory
+            adaptableType="org.eclipse.ecf.remoteservice.ui.serviceview.model.BundleIdNode"
+            class="org.eclipse.ecf.remoteservice.ui.serviceview.model.ServicesAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter2">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter3">
+         </adapter>
+      </factory>
+      
+      <factory
+            adaptableType="org.eclipse.ecf.remoteservice.ui.serviceview.model.RegisteringBundleIdNode"
+            class="org.eclipse.ecf.remoteservice.ui.serviceview.model.ServicesAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter2">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter3">
+         </adapter>
+      </factory>
+      
+      <factory
+            adaptableType="org.eclipse.ecf.remoteservice.ui.serviceview.model.UsingBundleIdsNode"
+            class="org.eclipse.ecf.remoteservice.ui.serviceview.model.ServicesAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter2">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter3">
+         </adapter>
+      </factory>
+      
+   </extension>
+
+</plugin>
