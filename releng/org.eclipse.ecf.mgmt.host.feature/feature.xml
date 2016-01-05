@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.ecf.mgmt.feature"
-      label="ECF Remote Services Management Feature"
+      id="org.eclipse.ecf.mgmt.host.feature"
+      label="ECF Remote Management Host Feature"
       version="1.0.0.qualifier"
-      provider-name="Eclipse ECF">
+      provider-name="Eclipse.org - ECF">
 
    <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+      This feature provides the ECF Remote Management Host implementations.  These host implementations may be exported as remote services.
    </description>
 
    <copyright url="http://www.example.com/copyright">
@@ -17,92 +17,89 @@
       [Enter License Description here.]
    </license>
 
+   <requires>
+      <import feature="org.eclipse.ecf.mgmt.feature" version="1.0.0.qualifier" match="greaterOrEqual"/>
+   </requires>
+
    <plugin
-         id="org.eclipse.ecf.mgmt"
+         id="org.eclipse.ecf.mgmt.application.host"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.ecf.mgmt.application"
+         id="org.eclipse.ecf.mgmt.container.host"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.ecf.mgmt.container"
+         id="org.eclipse.ecf.mgmt.framework.host"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.ecf.mgmt.framework"
+         id="org.eclipse.ecf.mgmt.identity.host"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.ecf.mgmt.identity"
+         id="org.eclipse.ecf.mgmt.p2.host"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.ecf.mgmt.p2"
+         id="org.eclipse.ecf.mgmt.p2.install.host"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.ecf.mgmt.p2.install"
+         id="org.eclipse.ecf.mgmt.p2.profile.host"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.ecf.mgmt.p2.profile"
+         id="org.eclipse.ecf.mgmt.p2.repository.host"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.ecf.mgmt.p2.repository"
+         id="org.eclipse.ecf.mgmt.registry.host"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.ecf.mgmt.registry"
+         id="org.eclipse.ecf.mgmt.rsa.host"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.ecf.mgmt.rsa"
+         id="org.eclipse.ecf.mgmt.scr.host"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.ecf.mgmt.scr"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.ecf.mgmt.sharedobject"
+         id="org.eclipse.ecf.mgmt.sharedobject.host"
          download-size="0"
          install-size="0"
          version="0.0.0"
