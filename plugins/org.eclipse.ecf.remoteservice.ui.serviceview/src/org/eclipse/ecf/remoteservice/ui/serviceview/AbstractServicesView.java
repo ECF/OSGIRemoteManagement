@@ -11,6 +11,9 @@ package org.eclipse.ecf.remoteservice.ui.serviceview;
 import java.util.Collection;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.ecf.remoteservice.ui.internal.serviceview.Activator;
 import org.eclipse.ecf.remoteservice.ui.services.IServicesView;
 import org.eclipse.ecf.remoteservice.ui.serviceview.model.AbstractServicesContentProvider;
 import org.eclipse.ecf.remoteservice.ui.serviceview.model.AbstractServicesNode;
@@ -19,6 +22,10 @@ import org.eclipse.ecf.remoteservice.ui.serviceview.model.ServiceNode;
 import org.eclipse.ecf.remoteservice.ui.serviceview.model.ServicesContentProvider;
 import org.eclipse.ecf.remoteservice.ui.serviceview.model.ServicesRootNode;
 import org.eclipse.ecf.remoteservice.ui.serviceview.model.UsingBundleIdsNode;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -29,6 +36,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IViewSite;
@@ -43,6 +51,45 @@ public abstract class AbstractServicesView extends ViewPart implements IServices
 	private AbstractServicesContentProvider contentProvider;
 	private ServicesFilteredTree filteredTree;
 
+	protected void fillContextMenu(IMenuManager manager) {
+
+	}
+
+	protected void makeActions() {
+
+	}
+
+	protected void log(int level, String message, Throwable e) {
+		Activator.getDefault().getLog().log(new Status(level, Activator.PLUGIN_ID, message, e));
+	}
+
+	protected void logWarning(String message, Throwable e) {
+		log(IStatus.WARNING, message, e);
+	}
+
+	protected void logError(String message, Throwable e) {
+		log(IStatus.ERROR, message, e);
+	}
+
+	protected void logAndShowError(String message, Throwable exception) {
+		logError(message, exception);
+		MessageDialog.openInformation(viewer.getControl().getShell(), "Error", message
+				+ ((exception != null) ? "\nException: " + exception.getMessage() + "\nSee Error Log for stack" : ""));
+	}
+
+	protected void hookContextMenu() {
+		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
+		menuMgr.setRemoveAllWhenShown(true);
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				AbstractServicesView.this.fillContextMenu(manager);
+			}
+		});
+		Menu menu = menuMgr.createContextMenu(viewer.getControl());
+		viewer.getControl().setMenu(menu);
+		getSite().registerContextMenu(menuMgr, viewer);
+	}
+
 	@Override
 	public void createPartControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -52,9 +99,12 @@ public abstract class AbstractServicesView extends ViewPart implements IServices
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		this.contentProvider = createContentProvider(getViewSite());
-		
+
 		this.viewer = createTreeViewer(composite);
-		
+
+		makeActions();
+		hookContextMenu();
+
 		initializeServices();
 	}
 
@@ -63,8 +113,8 @@ public abstract class AbstractServicesView extends ViewPart implements IServices
 		FilteredTree filteredTree = getFilteredTree();
 		if (filteredTree != null) {
 			Text filterText = filteredTree.getFilterControl();
-			if (filterText != null) 
-				filterText.setFocus();			
+			if (filterText != null)
+				filterText.setFocus();
 		}
 	}
 
@@ -74,15 +124,15 @@ public abstract class AbstractServicesView extends ViewPart implements IServices
 		this.viewer = null;
 		this.contentProvider = null;
 	}
-	
+
 	protected TreeViewer getTreeViewer() {
 		return viewer;
 	}
-	
+
 	protected FilteredTree getFilteredTree() {
 		return filteredTree;
 	}
-	
+
 	protected TreeViewer createTreeViewer(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -113,7 +163,7 @@ public abstract class AbstractServicesView extends ViewPart implements IServices
 		getViewSite().setSelectionProvider(viewer);
 		return viewer;
 	}
-	
+
 	protected ServicesFilteredTree createFilteredTree(Composite parent, int options, PatternFilter filter) {
 		ServicesFilteredTree result = new ServicesFilteredTree(this, parent, options, filter);
 		result.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
@@ -121,19 +171,19 @@ public abstract class AbstractServicesView extends ViewPart implements IServices
 		result.setLayoutData(gd);
 		return result;
 	}
-	
+
 	protected AbstractServicesContentProvider getContentProvider() {
 		return contentProvider;
 	}
-	
+
 	protected ServicesContentProvider createContentProvider(IViewSite viewSite) {
 		return new ServicesContentProvider(viewSite);
 	}
-	
+
 	protected void initializeServices() {
 		// do nothing;
 	}
-	
+
 	protected ServiceNode findServiceNode(long serviceId) {
 		AbstractServicesNode[] services = getServicesRoot().getChildren();
 		for (AbstractServicesNode asn : services) {
@@ -169,7 +219,7 @@ public abstract class AbstractServicesView extends ViewPart implements IServices
 	protected void updateTitle() {
 		setContentDescription(getTitleSummary());
 	}
-	
+
 	protected AbstractServicesNode getSelectedNode() {
 		return ((AbstractServicesNode) ((ITreeSelection) viewer.getSelection()).getFirstElement());
 	}
@@ -199,13 +249,14 @@ public abstract class AbstractServicesView extends ViewPart implements IServices
 		return null;
 	}
 
-	protected ServiceNode createServiceNode(long serviceId, long bundleId, long[] usingBundleIds, Map<String, Object> properties) {
+	protected ServiceNode createServiceNode(long serviceId, long bundleId, long[] usingBundleIds,
+			Map<String, Object> properties) {
 		ServiceNode result = new ServiceNode(bundleId, usingBundleIds, properties);
 		result.addChild(new RegisteringBundleIdNode(bundleId));
 		result.addChild(new UsingBundleIdsNode("Using Bundles", usingBundleIds));
 		return result;
 	}
-	
+
 	protected void addServiceNodes(final Collection<ServiceNode> sns) {
 		TreeViewer viewer = getTreeViewer();
 		if (viewer == null)
@@ -214,7 +265,8 @@ public abstract class AbstractServicesView extends ViewPart implements IServices
 			@Override
 			public void run() {
 				TreeViewer tv = getTreeViewer();
-				if (tv == null) return;
+				if (tv == null)
+					return;
 				ServicesRootNode srn = getServicesRoot();
 				for (ServiceNode sn : sns)
 					srn.addChild(sn);

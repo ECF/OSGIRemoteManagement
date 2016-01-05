@@ -24,7 +24,8 @@ public class ServiceNode extends AbstractServicesNode {
 	private ExportReference exportRef;
 	private ImportReference importRef;
 
-	public ServiceNode(long bundleId, long[] usingBundles, Map<String, Object> props, ExportReference eRef, ImportReference iRef) {
+	public ServiceNode(long bundleId, long[] usingBundles, Map<String, Object> props, ExportReference eRef,
+			ImportReference iRef) {
 		this.bundleId = bundleId;
 		this.usingBundleIds = usingBundles;
 		this.properties = props;
@@ -35,7 +36,7 @@ public class ServiceNode extends AbstractServicesNode {
 	public ServiceNode(long bundleId, long[] usingBundles, Map<String, Object> props) {
 		this(bundleId, usingBundles, props, null, null);
 	}
-	
+
 	public void setProperties(Map<String, Object> updatedProperties) {
 		this.properties = updatedProperties;
 	}
@@ -80,15 +81,18 @@ public class ServiceNode extends AbstractServicesNode {
 
 	public int getExportedImportedState() {
 		if (this.exportRef == null) {
-			if (this.importRef == null) return 0;
-			else return 2;
-		} else return 1;
+			if (this.importRef == null)
+				return 0;
+			else
+				return 2;
+		} else
+			return 1;
 	}
 
 	public ExportReference getExportRef() {
 		return this.exportRef;
 	}
-	
+
 	public ImportReference getImportRef() {
 		return this.importRef;
 	}

@@ -20,15 +20,19 @@ public class ServiceNodeWorkbenchAdapter extends AbstractServicesWorkbenchAdapte
 	@Override
 	public String getLabel(Object object) {
 		ServiceNode sn = (ServiceNode) object;
-		return PropertyUtils.convertStringArrayToString(sn.getServiceInterfaces()); //$NON-NLS-1$ //$NON-NLS-2$
+		return PropertyUtils.convertStringArrayToString(sn.getServiceInterfaces()); // $NON-NLS-1$
+																					// //$NON-NLS-2$
 	}
 
 	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
 		int eiState = ((ServiceNode) object).getExportedImportedState();
-		if (eiState == 2) return RSAImageRegistry.RSPROXY_OBJ;
-		else if (eiState == 1) return RSAImageRegistry.RS_OBJ;
-		else return RSAImageRegistry.INTERFACE_OBJ;
+		if (eiState == 2)
+			return RSAImageRegistry.RSPROXY_OBJ;
+		else if (eiState == 1)
+			return RSAImageRegistry.RS_OBJ;
+		else
+			return RSAImageRegistry.INTERFACE_OBJ;
 	}
 
 }

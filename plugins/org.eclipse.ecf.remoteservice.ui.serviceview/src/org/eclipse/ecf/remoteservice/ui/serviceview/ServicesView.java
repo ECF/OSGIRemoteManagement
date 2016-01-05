@@ -125,7 +125,7 @@ public class ServicesView extends AbstractServicesView {
 			}
 		}).start();
 	}
-	
+
 	protected ServiceNode createServiceNode(long serviceId, long bundleId, long[] usingBundleIds,
 			Map<String, Object> properties) {
 		org.osgi.service.remoteserviceadmin.RemoteServiceAdmin rsa = DiscoveryComponent.getDefault().getRSA();
@@ -149,7 +149,6 @@ public class ServicesView extends AbstractServicesView {
 		result.addChild(new UsingBundleIdsNode("Using Bundles", usingBundleIds));
 		return result;
 	}
-
 
 	private ServiceNode findServiceNode(ExportReference eRef) {
 		AbstractServicesNode[] services = getServicesRoot().getChildren();
@@ -175,7 +174,6 @@ public class ServicesView extends AbstractServicesView {
 		return null;
 	}
 
-
 	private long getServiceId(ServiceReference<?> ref) {
 		return (Long) ref.getProperty(Constants.SERVICE_ID);
 	}
@@ -188,7 +186,8 @@ public class ServicesView extends AbstractServicesView {
 			@Override
 			public void run() {
 				TreeViewer tv = getTreeViewer();
-				if (tv == null) return;
+				if (tv == null)
+					return;
 				Throwable t = event.getException();
 				if (t == null) {
 					switch (event.getType()) {

@@ -18,12 +18,12 @@ import org.eclipse.ui.dialogs.PatternFilter;
 public class ServicesFilteredTree extends FilteredTree {
 
 	private AbstractServicesView servicesView;
-	
+
 	public ServicesFilteredTree(AbstractServicesView view, Composite parent, int treeStyle, PatternFilter filter) {
 		super(parent, treeStyle, filter, true);
 		this.servicesView = view;
 	}
-	
+
 	protected void createControl(Composite parent, int treeStyle) {
 		super.createControl(parent, treeStyle);
 
@@ -39,7 +39,7 @@ public class ServicesFilteredTree extends FilteredTree {
 		data.right = new FormAttachment(100, 0);
 		data.bottom = new FormAttachment(100, 0);
 		if (showFilterControls) {
-			FormData filterData= new FormData();
+			FormData filterData = new FormData();
 			filterData.top = new FormAttachment(0, 2);
 			filterData.left = new FormAttachment(0, 2);
 			filterData.right = new FormAttachment(100, -2);

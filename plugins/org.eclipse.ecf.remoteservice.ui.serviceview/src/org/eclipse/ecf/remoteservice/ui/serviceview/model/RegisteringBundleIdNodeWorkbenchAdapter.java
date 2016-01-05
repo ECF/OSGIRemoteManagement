@@ -18,8 +18,7 @@ public class RegisteringBundleIdNodeWorkbenchAdapter extends AbstractServicesWor
 
 	@Override
 	public String getLabel(Object object) {
-		return "Registering Bundle Id: "
-				+ ((RegisteringBundleIdNode) object).getBundleId();
+		return "Registering Bundle Id: " + ((RegisteringBundleIdNode) object).getBundleId();
 	}
 
 	@Override
