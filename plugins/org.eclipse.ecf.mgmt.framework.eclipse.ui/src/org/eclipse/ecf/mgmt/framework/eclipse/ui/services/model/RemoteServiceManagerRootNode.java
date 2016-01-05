@@ -25,7 +25,8 @@ public class RemoteServiceManagerRootNode extends ServicesRootNode {
 		super(groupName);
 	}
 
-	public RemoteServiceManagerNode getServiceManagerNode(IRemoteServiceReference rsRef, IServiceManagerAsync rsaManager) {
+	public RemoteServiceManagerNode getServiceManagerNode(IRemoteServiceReference rsRef,
+			IServiceManagerAsync rsaManager) {
 		synchronized (managers) {
 			RemoteServiceManagerNode managerNode = managers.get(rsRef);
 			if (managerNode == null) {

@@ -14,18 +14,19 @@ import org.eclipse.ecf.mgmt.framework.IServiceManagerAsync;
 public class RemoteServiceManagerComponent extends RemoteServiceComponent {
 
 	private static RemoteServiceManagerComponent instance;
-	
+
 	public static RemoteServiceManagerComponent getInstance() {
 		return instance;
 	}
-	
+
 	public RemoteServiceManagerComponent() {
 		instance = this;
 	}
+
 	void bindServicesManagerAsync(IServiceManagerAsync sm) {
 		addServiceHolder(IServiceManagerAsync.class, sm);
 	}
-	
+
 	void unbindServicesManagerAsync(IServiceManagerAsync sm) {
 		removeServiceHolder(IServiceManagerAsync.class, sm);
 	}

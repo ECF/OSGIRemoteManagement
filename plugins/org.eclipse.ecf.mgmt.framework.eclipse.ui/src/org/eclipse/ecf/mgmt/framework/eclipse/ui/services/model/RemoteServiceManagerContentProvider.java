@@ -20,12 +20,12 @@ public class RemoteServiceManagerContentProvider extends ServicesContentProvider
 		super(viewSite);
 		this.root = new RemoteServiceManagerRootNode("");
 	}
-	
+
 	@Override
 	protected ServicesRootNode getInvisibleRoot() {
 		return getServicesRoot();
 	}
-	
+
 	public RemoteServiceManagerRootNode getServicesRoot() {
 		return root;
 	}
