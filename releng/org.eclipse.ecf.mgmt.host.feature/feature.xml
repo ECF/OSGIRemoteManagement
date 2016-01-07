@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.ecf.mgmt.host.feature"
-      label="ECF Remote Management Host Feature"
+      label="Remote Management Host Feature"
       version="1.0.0.qualifier"
       provider-name="Eclipse.org - ECF">
 
@@ -18,7 +18,7 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.ecf.mgmt.feature" version="1.0.0.qualifier" match="greaterOrEqual"/>
+      <import feature="org.eclipse.ecf.mgmt.feature" version="1.0.0" match="compatible"/>
    </requires>
 
    <plugin
