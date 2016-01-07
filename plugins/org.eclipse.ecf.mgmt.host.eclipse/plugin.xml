@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="org.eclipse.ecf.mgmt.host.eclipse.CategoryPreferencePage"
+            id="org.eclipse.ecf.mgmt.eclipse.ui.category"
+            name="Remote Management">
+      </page>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eclipse.ecf.mgmt.eclipse.ui.category"
+            class="org.eclipse.ecf.mgmt.host.eclipse.HostCategoryPreferencePage"
+            id="org.eclipse.ecf.mgmt.eclipse.ui.category.host"
+            name="Service Host">
+      </page>
+   </extension>
+
+</plugin>

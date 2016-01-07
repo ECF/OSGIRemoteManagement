@@ -1,12 +1,14 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ECF Remote Management Eclipse Host
-Bundle-SymbolicName: org.eclipse.ecf.mgmt.host.eclipse
+Bundle-SymbolicName: org.eclipse.ecf.mgmt.host.eclipse;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.ecf.mgmt.host.eclipse.Activator
 Bundle-Vendor: Eclipse.org - ECF
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ org.eclipse.osgi,
+ org.eclipse.swt
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.ecf.mgmt;version="1.0.0",
@@ -37,5 +39,7 @@ Import-Package: org.eclipse.ecf.mgmt;version="1.0.0",
  org.eclipse.ecf.mgmt.scr.host;version="1.0.0",
  org.eclipse.ecf.mgmt.sharedobject;version="1.0.0",
  org.eclipse.ecf.mgmt.sharedobject.host;version="1.0.0",
+ org.eclipse.ecf.osgi.services.distribution;version="2.0.0",
+ org.eclipse.ecf.osgi.services.remoteserviceadmin;version="1.2.0",
  org.osgi.service.remoteserviceadmin;version="1.1.0"
-Service-Component: OSGI-INF/servicemanager.xml, OSGI-INF/remoteserviceadminmanager.xml
+Service-Component: OSGI-INF/rsa.xml

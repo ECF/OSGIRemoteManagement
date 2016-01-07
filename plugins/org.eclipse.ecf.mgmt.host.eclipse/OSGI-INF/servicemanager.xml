@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" immediate="true" name="org.eclipse.ecf.mgmt.host.eclipse.servicemanager">
-   <implementation class="org.eclipse.ecf.mgmt.framework.host.ServiceManager"/>
-   <service>
-      <provide interface="org.eclipse.ecf.mgmt.framework.IServiceManager"/>
-   </service>
-   <reference cardinality="1..1" interface="org.osgi.service.remoteserviceadmin.RemoteServiceAdmin" name="RemoteServiceAdmin" policy="static"/>
-   <properties entry="OSGI-INF/remotemanager.properties"/>
-</scr:component>
