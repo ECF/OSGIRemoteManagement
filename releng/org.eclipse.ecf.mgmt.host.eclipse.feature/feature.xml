@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.ecf.mgmt.host.eclipse.feature"
-      label="Remote Management Eclipse Host Feature"
+      label="ECF Remote Management Eclipse Service Host Feature"
       version="1.0.0.qualifier"
       provider-name="ECF - Eclipse.org">
 

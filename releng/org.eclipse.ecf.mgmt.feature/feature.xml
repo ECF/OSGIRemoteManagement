@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.ecf.mgmt.feature"
-      label="ECF Remote Services Management Feature"
+      label="ECF Remote Management API Feature"
       version="1.0.0.qualifier"
-      provider-name="Eclipse ECF">
+      provider-name="Eclipse.org - ECF">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]

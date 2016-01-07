@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: ECF Container Management API
+Bundle-Name: ECF Remote Container Management API
 Bundle-SymbolicName: org.eclipse.ecf.mgmt.container
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Eclipse.org - ECF

@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: ECF Service Component Runtime Management Host
+Bundle-Name: ECF Remote SCR Management Service Host
 Bundle-SymbolicName: org.eclipse.ecf.mgmt.scr.host
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Eclipse.org - ECF

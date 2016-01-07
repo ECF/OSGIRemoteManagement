@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: ECF SharedObject Management API
+Bundle-Name: ECF Remote SharedObject Management API
 Bundle-SymbolicName: org.eclipse.ecf.mgmt.sharedobject
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Eclipse.org - ECF

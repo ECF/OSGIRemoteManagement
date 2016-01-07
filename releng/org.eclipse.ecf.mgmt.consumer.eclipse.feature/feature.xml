@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.ecf.mgmt.consumer.eclipse.feature"
-      label="Remote Management Eclipse Consumer Feature"
+      label="ECF Remote Management Eclipse Consumer Feature"
       version="1.0.0.qualifier"
       provider-name="Eclipse.org - ECF">
 

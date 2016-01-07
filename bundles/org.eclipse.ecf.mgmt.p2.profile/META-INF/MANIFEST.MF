@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: ECF P2 Profile Management API
+Bundle-Name: ECF Remote P2 Profile Management API
 Bundle-SymbolicName: org.eclipse.ecf.mgmt.p2.profile
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Eclipse.org - ECF

@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: ECF Identity Management API
+Bundle-Name: ECF Remote Identity Management API
 Bundle-SymbolicName: org.eclipse.ecf.mgmt.identity
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Eclipse.org - ECF
