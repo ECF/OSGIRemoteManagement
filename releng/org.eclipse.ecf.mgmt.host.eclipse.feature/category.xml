@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.eclipse.ecf.mgmt.host.eclipse.feature_1.0.0.qualifier.jar" id="org.eclipse.ecf.mgmt.host.eclipse.feature" version="1.0.0.qualifier">
+      <category name="hostcategory"/>
+   </feature>
+   <feature url="features/org.eclipse.ecf.mgmt.consumer.eclipse.feature_1.0.0.qualifier.jar" id="org.eclipse.ecf.mgmt.consumer.eclipse.feature" version="1.0.0.qualifier">
+      <category name="clientcategory"/>
+   </feature>
+   <category-def name="hostcategory" label="ECF Remote Management Eclipse Host">
+      <description>
+         When installed, this feature allows Eclipse to host remote management services, allowing a client to remotely monitor and manage Eclipse.
+      </description>
+   </category-def>
+   <category-def name="clientcategory" label="ECF Remote Managment Eclipse Client">
+      <description>
+         When installed, this feature allows Eclipse to consume remote management services, and show a user interface for a remote management host.
+      </description>
+   </category-def>
+</site>
