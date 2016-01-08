@@ -1,6 +1,7 @@
 package org.eclipse.ecf.mgmt.rsa.eclipse.ui.model;
 
 import org.eclipse.ecf.mgmt.rsa.IRemoteServiceAdminManagerAsync;
+import org.eclipse.ecf.remoteservice.IRemoteServiceID;
 import org.eclipse.ecf.remoteservice.IRemoteServiceReference;
 import org.eclipse.ecf.remoteserviceadmin.ui.rsa.model.AbstractRSANode;
 import org.eclipse.ecf.remoteserviceadmin.ui.rsa.model.ExportedServicesRootNode;
@@ -39,7 +40,9 @@ public class RSAManagerNode extends AbstractRSANode {
 	}
 
 	public String getManagerContainer() {
-		return this.managerRef.getID().getContainerID().getName();
+		IRemoteServiceID rsID = this.managerRef.getID();
+		return rsID.getContainerID().getName() + ":"
+				+ rsID.getContainerRelativeID();
 	}
 
 }

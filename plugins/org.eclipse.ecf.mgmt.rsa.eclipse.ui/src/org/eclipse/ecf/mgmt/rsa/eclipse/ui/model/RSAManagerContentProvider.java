@@ -9,7 +9,6 @@
 package org.eclipse.ecf.mgmt.rsa.eclipse.ui.model;
 
 import org.eclipse.ecf.remoteserviceadmin.ui.rsa.model.AbstractRSAContentProvider;
-import org.eclipse.ecf.remoteserviceadmin.ui.rsa.model.ExportedServicesRootNode;
 import org.eclipse.ui.IViewSite;
 
 /**
@@ -17,16 +16,21 @@ import org.eclipse.ui.IViewSite;
  */
 public class RSAManagerContentProvider extends AbstractRSAContentProvider {
 
-	private RemoteRSAManagersRootNode root;
+	private final RemoteRSAManagersRootNode invisibleRoot;
 
 	public RSAManagerContentProvider(IViewSite viewSite) {
 		super(viewSite);
-		ExportedServicesRootNode invisibleRoot = getInvisibleRoot();
-		this.root = new RemoteRSAManagersRootNode("Remote RSA Managers");
-		invisibleRoot.addChild(root);
+		this.invisibleRoot = new RemoteRSAManagersRootNode(""); //$NON-NLS-1$
+	}
+
+	public Object[] getElements(Object parent) {
+		if (parent.equals(getViewSite())) {
+			return getChildren(invisibleRoot);
+		}
+		return getChildren(parent);
 	}
 
 	public RemoteRSAManagersRootNode getRoot() {
-		return root;
+		return invisibleRoot;
 	}
 }

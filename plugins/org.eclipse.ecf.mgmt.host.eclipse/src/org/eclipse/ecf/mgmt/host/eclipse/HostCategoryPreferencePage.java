@@ -58,6 +58,7 @@ public class HostCategoryPreferencePage extends FieldEditorPreferencePage implem
 	}
 
 	public void init(IWorkbench workbench) {
+		Activator.getDefault().stopCompositeDiscoveryBundle();
 		setDescription(
 				"To export services for remote access, specify this machine's external Hostname (or inet address), Port, and select 'Export Services'.");
 		this.enabled = !Activator.getDefault().isServiceManagerRegistered();

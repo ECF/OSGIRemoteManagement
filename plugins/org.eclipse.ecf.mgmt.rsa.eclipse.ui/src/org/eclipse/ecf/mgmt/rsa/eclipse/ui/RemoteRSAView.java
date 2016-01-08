@@ -26,6 +26,7 @@ import org.eclipse.ecf.mgmt.consumer.util.RemoteServiceEvent;
 import org.eclipse.ecf.mgmt.consumer.util.RemoteServiceHolder;
 import org.eclipse.ecf.remoteservice.IRemoteServiceReference;
 import org.eclipse.ecf.remoteserviceadmin.ui.rsa.AbstractRemoteServiceAdminView;
+import org.eclipse.ecf.remoteserviceadmin.ui.rsa.model.AbstractRSAContentProvider;
 import org.eclipse.ecf.remoteserviceadmin.ui.rsa.model.AbstractRSANode;
 import org.eclipse.ecf.remoteserviceadmin.ui.rsa.model.ExportedServicesRootNode;
 import org.eclipse.ecf.remoteserviceadmin.ui.rsa.model.ImportedEndpointsRootNode;
@@ -101,7 +102,7 @@ public class RemoteRSAView extends AbstractRemoteServiceAdminView {
 	}
 
 	@Override
-	protected RSAManagerContentProvider createContentProvider(IViewSite viewSite) {
+	protected AbstractRSAContentProvider createContentProvider(IViewSite viewSite) {
 		return new RSAManagerContentProvider(viewSite);
 	}
 
@@ -176,7 +177,7 @@ public class RemoteRSAView extends AbstractRemoteServiceAdminView {
 										exportedRoot.addChild(new ExportReferenceMTONode(eref));
 								}
 							}
-							viewer.expandToLevel(4);
+							viewer.expandToLevel(3);
 							viewer.refresh();
 						}
 					}

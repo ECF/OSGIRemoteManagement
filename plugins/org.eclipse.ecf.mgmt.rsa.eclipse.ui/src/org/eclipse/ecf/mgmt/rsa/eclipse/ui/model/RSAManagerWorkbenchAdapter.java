@@ -24,6 +24,6 @@ public class RSAManagerWorkbenchAdapter extends AbstractRSAWorkbenchAdapter {
 
 	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
-		return RSAImageRegistry.RSA_OBJ;
+		return RSAImageRegistry.ENDPOINTDESCRIPTION_OBJ;
 	}
 }

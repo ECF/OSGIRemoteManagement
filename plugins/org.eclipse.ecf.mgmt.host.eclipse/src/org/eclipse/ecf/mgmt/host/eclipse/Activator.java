@@ -18,6 +18,7 @@ import org.eclipse.ecf.osgi.services.distribution.IDistributionConstants;
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.DebugRemoteServiceAdminListener;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.remoteserviceadmin.RemoteServiceAdminEvent;
@@ -149,8 +150,22 @@ public class Activator extends AbstractUIPlugin {
 		// debugging
 		if (DEBUG)
 			this.context.registerService(RemoteServiceAdminListener.class, new DebugRemoteServiceAdminListener(), null);
+	
 	}
 
+	public void stopCompositeDiscoveryBundle() {
+		if (context == null) return;
+		Bundle discoveryProvider = null;
+		for(Bundle b: this.context.getBundles()) 
+			if (b.getSymbolicName().equals("org.eclipse.ecf.provider.discovery"))
+				discoveryProvider = b;
+		if (discoveryProvider != null) 
+			try {
+				discoveryProvider.stop();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
