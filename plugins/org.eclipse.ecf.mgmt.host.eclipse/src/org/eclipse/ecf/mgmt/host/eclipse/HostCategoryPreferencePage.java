@@ -38,8 +38,8 @@ import org.osgi.framework.Constants;
 
 public class HostCategoryPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
-	static final String EXPORT_LABEL = "  Export Services  ";
-	static final String UNEXPORT_LABEL = "Unexport Services";
+	static final String EXPORT_LABEL = "   Export Management Services   ";
+	static final String UNEXPORT_LABEL = "Unexport Management Services";
 
 	private boolean enabled = true;
 	private Composite editorComposite;
@@ -60,7 +60,7 @@ public class HostCategoryPreferencePage extends FieldEditorPreferencePage implem
 	public void init(IWorkbench workbench) {
 		Activator.getDefault().stopCompositeDiscoveryBundle();
 		setDescription(
-				"To export services for remote access, specify this machine's external Hostname (or inet address), Port, and select 'Export Services'.");
+				"To export management services for remote access, provde this machine's externally-visible Hostname (or inet address), Port, and select 'Export Management Services'.");
 		this.enabled = !Activator.getDefault().isServiceManagerRegistered();
 		String localName = null;
 		try {
