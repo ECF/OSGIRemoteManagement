@@ -38,8 +38,8 @@ import org.osgi.framework.Constants;
 
 public class HostCategoryPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
-	static final String EXPORT_LABEL = "   Export Management Services   ";
-	static final String UNEXPORT_LABEL = "Unexport Management Services";
+	static final String EXPORT_LABEL = "   Export Remote Management Services   ";
+	static final String UNEXPORT_LABEL = "Unexport Remote Management Services";
 
 	private boolean enabled = true;
 	private Composite editorComposite;
@@ -60,7 +60,7 @@ public class HostCategoryPreferencePage extends FieldEditorPreferencePage implem
 	public void init(IWorkbench workbench) {
 		Activator.getDefault().stopCompositeDiscoveryBundle();
 		setDescription(
-				"To export management services for remote access, provde this machine's externally-visible Hostname (or inet address), Port, and select 'Export Management Services'.");
+				"To export management services for remote access, provde this machine's externally-visible Hostname (or inet address), Port, and select 'Export Remote Management Services'.");
 		this.enabled = !Activator.getDefault().isServiceManagerRegistered();
 		String localName = null;
 		try {
@@ -145,20 +145,20 @@ public class HostCategoryPreferencePage extends FieldEditorPreferencePage implem
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
 					if (enabled) {
-						monitor.beginTask("Exporting service manager...", 100);
+						monitor.beginTask("Exporting remote service manager...", 100);
 						monitor.worked(10);
 						Activator.getDefault().registerServiceManager(props);
 						monitor.worked(50);
-						monitor.setTaskName("Exporting RSA manager...");
+						monitor.setTaskName("Exporting remote RSA manager...");
 						Activator.getDefault().registerRSAManager(props);
 						monitor.worked(40);
 						enabled = false;
 						changed = true;
 					} else {
-						monitor.beginTask("Unexporting service manager...", 100);
+						monitor.beginTask("Unexporting remote service manager...", 100);
 						Activator.getDefault().unregisterServiceManager();
 						monitor.worked(50);
-						monitor.setTaskName("Unexporting RSA manager...");
+						monitor.setTaskName("Unexporting remote RSA manager...");
 						Activator.getDefault().unregisterRSAManager();
 						monitor.worked(50);
 						enabled = true;
