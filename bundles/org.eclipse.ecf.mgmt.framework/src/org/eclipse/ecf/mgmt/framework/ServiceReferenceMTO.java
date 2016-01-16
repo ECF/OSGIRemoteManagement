@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.ecf.mgmt.PropertiesUtil;
 import org.osgi.framework.Constants;
 import org.osgi.framework.dto.ServiceReferenceDTO;
 
@@ -38,10 +39,11 @@ public class ServiceReferenceMTO implements Serializable {
 		return results.toArray(new ServiceReferenceMTO[results.size()]);
 	}
 
+	@SuppressWarnings("unchecked")
 	ServiceReferenceMTO(ServiceReferenceDTO srDTO) {
 		this.id = srDTO.id;
 		this.bundle = srDTO.bundle;
-		this.properties = srDTO.properties;
+		this.properties = (Map<String, Object>) PropertiesUtil.convertMapToSerializableMap(srDTO.properties);
 		this.usingBundles = srDTO.usingBundles;
 	}
 
@@ -75,8 +77,7 @@ public class ServiceReferenceMTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ServiceReferenceMTO [id=" + id + ", bundle=" + bundle
-				+ ", properties=" + properties + ", usingBundles="
+		return "ServiceReferenceMTO [id=" + id + ", bundle=" + bundle + ", properties=" + properties + ", usingBundles="
 				+ Arrays.toString(usingBundles) + "]";
 	}
 
