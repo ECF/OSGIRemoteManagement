@@ -18,6 +18,10 @@ import org.osgi.service.remoteserviceadmin.ImportReference;
 
 public class ServiceNode extends AbstractServicesNode {
 
+	public static final byte EXPORTED = 1;
+	public static final byte IMPORTED = 2;
+	public static final byte LOCAL = 0;
+	
 	private final long bundleId;
 	private final long[] usingBundleIds;
 	private Map<String, Object> properties;
@@ -82,11 +86,11 @@ public class ServiceNode extends AbstractServicesNode {
 	public int getExportedImportedState() {
 		if (this.exportRef == null) {
 			if (this.importRef == null)
-				return 0;
+				return LOCAL;
 			else
-				return 2;
+				return IMPORTED;
 		} else
-			return 1;
+			return EXPORTED;
 	}
 
 	public ExportReference getExportRef() {
