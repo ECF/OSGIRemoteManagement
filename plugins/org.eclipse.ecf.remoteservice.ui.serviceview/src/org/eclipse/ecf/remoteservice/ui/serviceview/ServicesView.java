@@ -9,15 +9,28 @@
 package org.eclipse.ecf.remoteservice.ui.serviceview;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin.ExportRegistration;
+import org.eclipse.ecf.remoteservice.ui.internal.serviceview.Activator;
 import org.eclipse.ecf.remoteservice.ui.internal.serviceview.DiscoveryComponent;
 import org.eclipse.ecf.remoteservice.ui.serviceview.model.AbstractServicesNode;
 import org.eclipse.ecf.remoteservice.ui.serviceview.model.RegisteringBundleIdNode;
 import org.eclipse.ecf.remoteservice.ui.serviceview.model.ServiceNode;
 import org.eclipse.ecf.remoteservice.ui.serviceview.model.UsingBundleIdsNode;
+import org.eclipse.ecf.remoteservices.ui.RSAImageRegistry;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.widgets.Menu;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceEvent;
@@ -27,6 +40,7 @@ import org.osgi.framework.dto.FrameworkDTO;
 import org.osgi.framework.dto.ServiceReferenceDTO;
 import org.osgi.service.remoteserviceadmin.ExportReference;
 import org.osgi.service.remoteserviceadmin.ImportReference;
+import org.osgi.service.remoteserviceadmin.RemoteConstants;
 import org.osgi.service.remoteserviceadmin.RemoteServiceAdminEvent;
 
 /**
@@ -35,6 +49,9 @@ import org.osgi.service.remoteserviceadmin.RemoteServiceAdminEvent;
 public class ServicesView extends AbstractServicesView {
 
 	public static final String ID_VIEW = "org.eclipse.ecf.remoteservice.ui.serviceview.ServiceView"; //$NON-NLS-1$
+
+	private Action exportServiceNodeAction;
+	private Action unexportServiceNodeAction;
 
 	public ServicesView() {
 	}
@@ -108,6 +125,127 @@ public class ServicesView extends AbstractServicesView {
 			});
 		}
 	};
+
+	private void logRSAException(String message, Exception e) {
+		Activator.getDefault().getLog().log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, message, e));
+	}
+
+	@Override
+	protected void makeActions() {
+		super.makeActions();
+		exportServiceNodeAction = new Action() {
+			public void run() {
+				Object o = ((ITreeSelection) getTreeViewer().getSelection()).getFirstElement();
+				if (o instanceof ServiceNode) {
+					ServiceNode sn = (ServiceNode) o;
+					int state = sn.getExportedImportedState();
+					if (state == 0) {
+						long serviceId = sn.getServiceId();
+						exportServiceReference(Activator.getDefault().getServiceReference(serviceId), serviceId);
+					}
+				}
+			}
+		};
+		exportServiceNodeAction.setText("Export Service");
+		exportServiceNodeAction.setImageDescriptor(RSAImageRegistry.RS_OBJ);
+		unexportServiceNodeAction = new Action() {
+			public void run() {
+				Object o = ((ITreeSelection) getTreeViewer().getSelection()).getFirstElement();
+				if (o instanceof ServiceNode) {
+					final ServiceNode sn = (ServiceNode) o;
+					ExportReference er = sn.getExportRef();
+					if (er != null) {
+						final org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin rsa = (org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin) DiscoveryComponent
+								.getDefault().getRSA();
+						if (rsa != null) {
+							ExportRegistration eReg = null;
+							for (ExportRegistration reg : rsa.getExportedRegistrations()) {
+								ExportReference exportReference = reg.getExportReference();
+								if (exportReference != null && er.equals(exportReference))
+									eReg = reg;
+							}
+							closeExportRegistration(eReg, sn.getServiceId());
+						}
+					}
+				}
+			}
+		};
+		unexportServiceNodeAction.setText("Unexport Service");
+	}
+
+	private void exportServiceReference(final ServiceReference<?> sr, final long serviceId) {
+		if (sr != null) {
+			final org.osgi.service.remoteserviceadmin.RemoteServiceAdmin rsa = DiscoveryComponent.getDefault().getRSA();
+			if (rsa != null) {
+				InputDialog id = new InputDialog(getViewSite().getShell(), "Distribution Provider",
+						"Distribution Provider Config", "ecf.generic.server", null);
+				id.setBlockOnOpen(true);
+				int result = id.open();
+				if (result == InputDialog.OK) {
+					String exportingProvider = id.getValue();
+					if (exportingProvider != null) {
+						final Hashtable<String, Object> overridingProperties = new Hashtable<String, Object>();
+						overridingProperties.put(RemoteConstants.SERVICE_EXPORTED_INTERFACES, "*");
+						overridingProperties.put(RemoteConstants.SERVICE_EXPORTED_CONFIGS, exportingProvider);
+						new Thread(new Runnable() {
+							public void run() {
+								try {
+									rsa.exportService(sr, overridingProperties);
+								} catch (Exception e) {
+									logRSAException("Exception on exportService for service id=" + serviceId, e);
+								}
+							}
+						}).start();
+
+					}
+				}
+			}
+		}
+	}
+
+	private void closeExportRegistration(final ExportRegistration exportRegistration, final long serviceId) {
+		if (exportRegistration != null)
+			new Thread(new Runnable() {
+				public void run() {
+					if (exportRegistration != null)
+						try {
+							exportRegistration.close();
+						} catch (Exception e) {
+							logRSAException("Exception on export registration close for service id=" + serviceId, e);
+						}
+				}
+			}).start();
+	}
+
+	protected void hookContextMenu() {
+		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
+		menuMgr.setRemoveAllWhenShown(true);
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				ServicesView.this.fillContextMenu(manager);
+			}
+		});
+		TreeViewer viewer = getTreeViewer();
+		if (viewer != null) {
+			Menu menu = menuMgr.createContextMenu(viewer.getControl());
+			viewer.getControl().setMenu(menu);
+			getSite().registerContextMenu(menuMgr, viewer);
+		}
+	}
+
+	protected void fillContextMenu(IMenuManager manager) {
+		ITreeSelection selection = (ITreeSelection) getTreeViewer().getSelection();
+		if (selection != null) {
+			Object e = selection.getFirstElement();
+			if (e instanceof ServiceNode) {
+				ServiceNode sn = (ServiceNode) e;
+				if (sn.getExportRef() == null)
+					manager.add(exportServiceNodeAction);
+				else
+					manager.add(unexportServiceNodeAction);
+			}
+		}
+	}
 
 	protected void initializeServices() {
 		DiscoveryComponent d = DiscoveryComponent.getDefault();
