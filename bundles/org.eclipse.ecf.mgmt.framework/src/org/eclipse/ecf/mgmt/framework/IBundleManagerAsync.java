@@ -36,8 +36,7 @@ public interface IBundleManagerAsync {
 	CompletableFuture<Void> setBundleStartlevelAsync(long bundleId,
 			int startLevel);
 
-	CompletableFuture<BundleMTO> installBundleAsync(String url)
-			throws BundleInstallException;
+	CompletableFuture<BundleMTO> installBundleAsync(String url);
 
 	CompletableFuture<IStatus> uninstallBundleAsync(long bundleId);
 
