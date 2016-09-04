@@ -148,19 +148,25 @@ public class HostCategoryPreferencePage extends FieldEditorPreferencePage implem
 						monitor.beginTask("Exporting remote service manager...", 100);
 						monitor.worked(10);
 						Activator.getDefault().registerServiceManager(props);
-						monitor.worked(50);
+						monitor.worked(30);
+						monitor.setTaskName("Exporting remote bundle manager...");
+						Activator.getDefault().registerBundleManager(props);
+						monitor.worked(30);
 						monitor.setTaskName("Exporting remote RSA manager...");
 						Activator.getDefault().registerRSAManager(props);
-						monitor.worked(40);
+						monitor.worked(30);
 						enabled = false;
 						changed = true;
 					} else {
 						monitor.beginTask("Unexporting remote service manager...", 100);
 						Activator.getDefault().unregisterServiceManager();
-						monitor.worked(50);
+						monitor.worked(30);
+						monitor.setTaskName("Unexporting remote bundle manager...");
+						Activator.getDefault().unregisterBundleManager();
+						monitor.worked(30);
 						monitor.setTaskName("Unexporting remote RSA manager...");
 						Activator.getDefault().unregisterRSAManager();
-						monitor.worked(50);
+						monitor.worked(40);
 						enabled = true;
 						changed = true;
 					}

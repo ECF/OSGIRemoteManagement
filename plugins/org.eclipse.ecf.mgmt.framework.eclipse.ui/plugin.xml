@@ -5,7 +5,7 @@
          point="org.eclipse.ui.views">
       <view
             name="%remote.services.remote.service.view.name"
-            icon="platform:/plugin/org.eclipse.ecf.remoteservice.ui/icons/obj16/int_obj.gif"
+            icon="platform:/plugin/org.eclipse.ecf.remoteservice.ui.bundleview/icons/bundle.png"
             category="org.eclipse.ecf.remoteservice.ui.rsgroup"
             class="org.eclipse.ecf.mgmt.framework.eclipse.ui.services.RemoteServicesView"
             id="org.eclipse.ecf.mgmt.framework.eclipse.ui.RemoteServicesView">
@@ -83,6 +83,50 @@
                type="org.eclipse.ui.model.IWorkbenchAdapter3">
          </adapter>
       </factory>
+   
+   </extension>
+   
+   <extension
+       point="org.eclipse.ui.views">
+      <view
+            name="%remote.services.remote.bundle.view.name"
+            icon="platform:/plugin/org.eclipse.ecf.remoteservice.ui/icons/obj16/int_obj.gif"
+            category="org.eclipse.ecf.remoteservice.ui.rsgroup"
+            class="org.eclipse.ecf.mgmt.framework.eclipse.ui.services.RemoteBundlesView"
+            id="org.eclipse.ecf.mgmt.framework.eclipse.ui.RemoteBundlesView">
+      </view>
+   </extension>
+
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+              <factory
+            adaptableType="org.eclipse.ecf.mgmt.framework.eclipse.ui.services.model.RemoteBundleManagerNode"
+            class="org.eclipse.ecf.mgmt.framework.eclipse.ui.services.model.RemoteBundleManagerAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter2">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter3">
+         </adapter>
+      </factory>
+      
+     <factory
+            adaptableType="org.eclipse.ecf.remoteservice.ui.bundleview.model.BundleNode"
+            class="org.eclipse.ecf.remoteservice.ui.bundleview.model.BundlesAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter2">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter3">
+         </adapter>
+      </factory>
+      
       
    </extension>
 

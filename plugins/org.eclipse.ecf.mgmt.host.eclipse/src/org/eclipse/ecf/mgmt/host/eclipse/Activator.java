@@ -10,7 +10,9 @@ package org.eclipse.ecf.mgmt.host.eclipse;
 
 import java.util.Dictionary;
 
+import org.eclipse.ecf.mgmt.framework.IBundleManager;
 import org.eclipse.ecf.mgmt.framework.IServiceManager;
+import org.eclipse.ecf.mgmt.framework.host.BundleManager;
 import org.eclipse.ecf.mgmt.framework.host.ServiceManager;
 import org.eclipse.ecf.mgmt.rsa.IRemoteServiceAdminManager;
 import org.eclipse.ecf.mgmt.rsa.host.RemoteServiceAdminManager;
@@ -52,6 +54,8 @@ public class Activator extends AbstractUIPlugin {
 	private ServiceRegistration<IServiceManager> smReg;
 	private ServiceRegistration<IRemoteServiceAdminManager> rsamReg;
 
+	private ServiceRegistration<IBundleManager> bmReg;
+
 	/**
 	 * The constructor
 	 */
@@ -64,6 +68,12 @@ public class Activator extends AbstractUIPlugin {
 		}
 	}
 
+	static class EclipseBundleManager extends BundleManager {
+		public EclipseBundleManager(BundleContext context) throws Exception {
+			activate(context);
+		}
+	}
+	
 	static class EclipseRSAManager extends RemoteServiceAdminManager {
 		public EclipseRSAManager(BundleContext context) throws Exception {
 			bindRemoteServiceAdmin(RSAComponent.getRemoteServiceAdmin());
@@ -114,10 +124,34 @@ public class Activator extends AbstractUIPlugin {
 		}
 	}
 
+	public synchronized void registerBundleManager(Dictionary<String, Object> props) throws Throwable {
+		bmReg = this.context.registerService(IBundleManager.class, new EclipseBundleManager(this.context), props);
+		if (this.rsaEvent == null) {
+			unregisterRSAManager();
+			throw new Exception("No registered rsaEvent for service manager registration");
+		} else {
+			Throwable t = this.rsaEvent.getException();
+			if (t != null) {
+				unregisterBundleManager();
+				rsaEvent = null;
+				throw t;
+			} else if (this.rsaEvent.getType() != RemoteServiceAdminEvent.EXPORT_REGISTRATION) {
+				unregisterServiceManager();
+				rsaEvent = null;
+				throw new Exception("Invalid rsaEvent type for service manager registration");
+			}
+			rsaEvent = null;
+		}
+	}
+
 	public boolean isServiceManagerRegistered() {
 		return smReg != null;
 	}
 
+	public boolean isBundleManagerRegistered() {
+		return bmReg != null;
+	}
+	
 	public boolean isRSAManagerRegistered() {
 		return rsamReg != null;
 	}
@@ -174,6 +208,7 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		unregisterServiceManager();
+		unregisterBundleManager();
 		unregisterRSAManager();
 		plugin = null;
 		this.context = null;
@@ -193,6 +228,14 @@ public class Activator extends AbstractUIPlugin {
 		if (smReg != null) {
 			smReg.unregister();
 			smReg = null;
+			rsaEvent = null;
+		}
+	}
+
+	public void unregisterBundleManager() {
+		if (bmReg != null) {
+			bmReg.unregister();
+			bmReg = null;
 			rsaEvent = null;
 		}
 	}

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="org.eclipse.ecf.remoteservice.ui.rsgroup"
+            class="org.eclipse.ecf.remoteservice.ui.bundleview.BundlesView"
+            icon="icons/bundle.png"
+            id="org.eclipse.ecf.remoteservice.ui.bundleview.BundleView"
+            name="Local OSGi Bundles"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+              <factory
+            adaptableType="org.eclipse.ecf.remoteservice.ui.bundleview.model.BundlesRootNode"
+            class="org.eclipse.ecf.remoteservice.ui.bundleview.model.BundlesAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter2">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter3">
+         </adapter>
+      </factory>
+      
+     <factory
+            adaptableType="org.eclipse.ecf.remoteservice.ui.bundleview.model.BundleNode"
+            class="org.eclipse.ecf.remoteservice.ui.bundleview.model.BundlesAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter2">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter3">
+         </adapter>
+      </factory>
+    </extension>
+
+</plugin>
