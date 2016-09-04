@@ -29,11 +29,11 @@ import org.osgi.framework.dto.FrameworkDTO;
 /**
  * @since 3.3
  */
-public class BundlesView extends AbstractBundlesView {
+public class LocalBundlesView extends AbstractBundlesView {
 
 	public static final String ID_VIEW = "org.eclipse.ecf.remoteservice.ui.bundleview.BundleView"; //$NON-NLS-1$
 
-	public BundlesView() {
+	public LocalBundlesView() {
 	}
 
 	private BundleContext getLocalBundleContext() {
