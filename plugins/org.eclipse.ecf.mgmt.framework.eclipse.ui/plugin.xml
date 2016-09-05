@@ -5,7 +5,7 @@
          point="org.eclipse.ui.views">
       <view
             name="%remote.services.remote.service.view.name"
-            icon="platform:/plugin/org.eclipse.ecf.remoteservice.ui.bundleview/icons/bundle.png"
+            icon="platform:/plugin/org.eclipse.ecf.remoteservice.ui/icons/obj16/int_obj.gif"
             category="org.eclipse.ecf.remoteservice.ui.rsgroup"
             class="org.eclipse.ecf.mgmt.framework.eclipse.ui.services.RemoteServicesView"
             id="org.eclipse.ecf.mgmt.framework.eclipse.ui.RemoteServicesView">
@@ -90,7 +90,7 @@
        point="org.eclipse.ui.views">
       <view
             name="%remote.services.remote.bundle.view.name"
-            icon="platform:/plugin/org.eclipse.ecf.remoteservice.ui/icons/obj16/int_obj.gif"
+            icon="platform:/plugin/org.eclipse.ecf.remoteservice.ui.bundleview/icons/bundle.png"
             category="org.eclipse.ecf.remoteservice.ui.rsgroup"
             class="org.eclipse.ecf.mgmt.framework.eclipse.ui.services.RemoteBundlesView"
             id="org.eclipse.ecf.mgmt.framework.eclipse.ui.RemoteBundlesView">
