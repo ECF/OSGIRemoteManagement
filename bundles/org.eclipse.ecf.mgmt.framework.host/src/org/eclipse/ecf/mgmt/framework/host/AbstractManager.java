@@ -139,6 +139,7 @@ public abstract class AbstractManager implements IAdaptable {
 				srMTOs.toArray(new ServiceReferenceMTO[srMTOs.size()]));
 	}
 
+	@SuppressWarnings("unchecked")
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 		if (adapter == null)
 			return null;
