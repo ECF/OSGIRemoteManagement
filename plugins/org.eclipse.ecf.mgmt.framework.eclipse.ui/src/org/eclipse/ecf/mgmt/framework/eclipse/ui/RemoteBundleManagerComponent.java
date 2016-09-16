@@ -10,9 +10,6 @@ package org.eclipse.ecf.mgmt.framework.eclipse.ui;
 
 import org.eclipse.ecf.mgmt.consumer.util.RemoteServiceComponent;
 import org.eclipse.ecf.mgmt.framework.IBundleManagerAsync;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferencePolicy;
 
 public class RemoteBundleManagerComponent extends RemoteServiceComponent {
 
