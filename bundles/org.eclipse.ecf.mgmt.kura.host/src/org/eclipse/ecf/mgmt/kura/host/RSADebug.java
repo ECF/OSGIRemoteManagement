@@ -5,6 +5,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.remoteserviceadmin.RemoteServiceAdminListener;
 
 @Component
-public class DebugRSA extends DebugRemoteServiceAdminListener implements RemoteServiceAdminListener {
+public class RSADebug extends DebugRemoteServiceAdminListener implements RemoteServiceAdminListener {
 
 }
