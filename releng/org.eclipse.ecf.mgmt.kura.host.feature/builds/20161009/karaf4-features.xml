@@ -1,4 +1,4 @@
-<features xmlns="http://karaf.apache.org/xmlns/features/v1.2.0" name="ecf-remoteservices-sdk-3.13.2">
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.2.0" name="ecf-kura-karaf-bundlemgr-3.13.2">
 
 <feature name="ecf-remoteservices-dependencies" version="3.13.2" description="ECF 3.13.2 RemoteServices External Dependencies.  https://wiki.eclipse.org/ECF#OSGi_Remote_Services">
     <bundle>http://download.eclipse.org/equinox/drops/R-Mars.1-201509040015/org.eclipse.equinox.supplement_1.6.0.v20141009-1504.jar</bundle>
@@ -25,19 +25,19 @@
 	<bundle>http://download.eclipse.org/rt/ecf/3.13.2/site.p2/plugins/org.eclipse.ecf.osgi.services.remoteserviceadmin_4.4.2.v20160823-2221.jar</bundle>
 </feature>
 
-<feature name="ecf-remoteservices-rsa-topology-manager" version="3.13.2" description="ECF RemoteServices OSGi R6 Default Topology Manager (promiscuous).  See https://wiki.eclipse.org/Remote_Services_Admin">
-	<bundle>http://download.eclipse.org/rt/ecf/3.13.2/site.p2/plugins/org.eclipse.ecf.osgi.services.distribution_2.1.0.v20160823-2221.jar</bundle>
-</feature>
-
 <feature name="ecf-remoteservices-distprovider-generic" version="3.13.2" description="ECF RemoteServices Generic Distribution Provider.  https://wiki.eclipse.org/EIG:Configuration_Properties">
 	<bundle>http://download.eclipse.org/rt/ecf/3.13.2/site.p2/plugins/org.eclipse.ecf.provider_4.7.500.v20160823-2221.jar</bundle>
 	<bundle>http://download.eclipse.org/rt/ecf/3.13.2/site.p2/plugins/org.eclipse.ecf.provider.remoteservice_4.2.100.v20160823-2221.jar</bundle>
 </feature>
 
-<feature name="ecf-remoteservices-sdk" version="3.13.2" description="ECF 3.13.2 RemoteServices SDK with Generic Dist Provider and JMDNS/Zeroconf Discovery Provider">
+<feature name="ecf-kura-karaf-bundlemgr" version="3.13.2" description="ECF 3.13.2 Karaf Remote Services BundleManager">
 	<feature version="3.13.2">ecf-remoteservices-rsa-impl</feature>
 	<feature version="3.13.2">ecf-remoteservices-distprovider-generic</feature>
-	<feature version="3.13.2">ecf-remoteservices-rsa-topology-manager</feature>
+	<bundle>http://download.eclipse.org/rt/ecf/kuratest/plugins/org.eclipse.ecf.mgmt_1.0.0.201610091743.jar</bundle>
+	<bundle>http://download.eclipse.org/rt/ecf/kuratest/plugins/org.eclipse.ecf.mgmt.framework_1.0.0.201610091743.jar</bundle>
+	<bundle>http://download.eclipse.org/rt/ecf/kuratest/plugins/org.eclipse.ecf.mgmt.framework.host_1.0.0.201610091743.jar</bundle>
+	<bundle>http://download.eclipse.org/rt/ecf/kuratest/plugins/org.eclipse.ecf.mgmt.kura.host_1.0.0.201610091743.jar</bundle>
+	<bundle>http://download.eclipse.org/rt/ecf/kuratest/plugins/org.eclipse.ecf.mgmt.rsa_2.0.0.201610091743.jar</bundle>
+	<bundle>http://download.eclipse.org/rt/ecf/kuratest/plugins/org.eclipse.ecf.mgmt.rsa.host_1.0.0.201610091743.jar</bundle>
 </feature>
-
 </features>
