@@ -90,7 +90,7 @@
        point="org.eclipse.ui.views">
       <view
             name="%remote.services.remote.bundle.view.name"
-            icon="platform:/plugin/org.eclipse.ecf.remoteservice.ui.bundleview/icons/bundle.png"
+            icon="platform:/plugin/org.eclipse.ecf.remoteservice.ui.bundleview/icons/bundle_active.png"
             category="org.eclipse.ecf.remoteservice.ui.rsgroup"
             class="org.eclipse.ecf.mgmt.framework.eclipse.ui.services.RemoteBundlesView"
             id="org.eclipse.ecf.mgmt.framework.eclipse.ui.RemoteBundlesView">

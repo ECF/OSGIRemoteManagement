@@ -10,12 +10,16 @@ package org.eclipse.ecf.remoteservice.ui.bundleview.model;
 
 import org.eclipse.ecf.remoteservice.ui.internal.bundleview.Activator;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.osgi.framework.Bundle;
 
 /**
  * @since 3.3
  */
 public class BundleNodeWorkbenchAdapter extends AbstractBundlesWorkbenchAdapter {
 
+	private static final String ICON_ACTIVE = "/icons/bundle_active.png";
+	private static final String ICON_INACTIVE = "/icons/bundle_inactive.png";
+	
 	@Override
 	public String getLabel(Object object) {
 		BundleNode bn = (BundleNode) object;
@@ -28,7 +32,8 @@ public class BundleNodeWorkbenchAdapter extends AbstractBundlesWorkbenchAdapter 
 
 	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
-		return Activator.getImageDescriptor("/icons/bundle.png");
+		BundleNode bn = (BundleNode) object;
+		return Activator.getImageDescriptor((bn.getState() == Bundle.ACTIVE)?ICON_ACTIVE:ICON_INACTIVE);
 	}
 
 }

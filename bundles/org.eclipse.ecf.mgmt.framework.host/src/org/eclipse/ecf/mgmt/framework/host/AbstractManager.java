@@ -24,8 +24,6 @@ import org.eclipse.ecf.mgmt.framework.FrameworkMTO;
 import org.eclipse.ecf.mgmt.framework.ServiceReferenceMTO;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleEvent;
-import org.osgi.framework.BundleListener;
 import org.osgi.framework.dto.FrameworkDTO;
 import org.osgi.service.log.LogService;
 
@@ -65,12 +63,6 @@ public abstract class AbstractManager implements IAdaptable {
 
 	protected void activate(BundleContext context) throws Exception {
 		this.bundleContext = context;
-		this.bundleContext.addBundleListener(new BundleListener() {
-			@Override
-			public void bundleChanged(BundleEvent event) {
-				// TODO Auto-generated method stub
-				
-			}});
 	}
 
 	protected void deactivate() throws Exception {

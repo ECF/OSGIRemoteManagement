@@ -11,18 +11,24 @@ package org.eclipse.ecf.mgmt.framework.host;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ecf.core.status.SerializableStatus;
+import org.eclipse.ecf.mgmt.framework.BundleEventMTO;
 import org.eclipse.ecf.mgmt.framework.BundleInstallException;
 import org.eclipse.ecf.mgmt.framework.BundleMTO;
+import org.eclipse.ecf.mgmt.framework.IBundleEventHandlerAsync;
 import org.eclipse.ecf.mgmt.framework.IBundleManager;
 import org.eclipse.ecf.mgmt.framework.startlevel.BundleStartLevelMTO;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.BundleListener;
 import org.osgi.framework.startlevel.BundleStartLevel;
 import org.osgi.framework.startlevel.dto.BundleStartLevelDTO;
 
@@ -160,4 +166,46 @@ public class BundleManager extends AbstractManager implements IBundleManager {
 		}
 	}
 
+	protected List<IBundleEventHandlerAsync> behs = new ArrayList<IBundleEventHandlerAsync>();
+	
+	protected boolean addBundleEventHandler(IBundleEventHandlerAsync async) {
+		synchronized (behs) {
+			return behs.add(async);
+		}
+	}
+	
+	protected boolean removeBundleEventHandler(IBundleEventHandlerAsync async) {
+		synchronized (behs) {
+			return behs.remove(async);
+		}
+	}
+	
+	protected void fireBundleChangedEvent(final BundleEvent event) {
+		System.out.println("fireBundleChangedEvent event="+event);
+		List<IBundleEventHandlerAsync> notify = null;
+		synchronized (behs) {
+			notify = new ArrayList<IBundleEventHandlerAsync>(behs);
+		}
+		for(IBundleEventHandlerAsync beh: notify) 
+			beh.handleBundleEventAsync(new BundleEventMTO(event.getBundle().getBundleId(),event.getOrigin().getBundleId(), event.getType()));
+	}
+	
+	protected BundleListener localBundleListener = new BundleListener() {
+		@Override
+		public void bundleChanged(BundleEvent event) {
+			fireBundleChangedEvent(event);
+		}
+	};
+	
+	@Override
+	protected void activate(BundleContext context) throws Exception {
+		super.activate(context);
+		getContext().addBundleListener(localBundleListener);
+	}
+	
+	@Override
+	protected void deactivate() throws Exception {
+		getContext().removeBundleListener(localBundleListener);
+		super.deactivate();
+	}
 }

@@ -4,7 +4,7 @@ import org.eclipse.ecf.osgi.services.remoteserviceadmin.DebugRemoteServiceAdminL
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.remoteserviceadmin.RemoteServiceAdminListener;
 
-@Component
+@Component(immediate=true)
 public class RSADebug extends DebugRemoteServiceAdminListener implements RemoteServiceAdminListener {
 
 }

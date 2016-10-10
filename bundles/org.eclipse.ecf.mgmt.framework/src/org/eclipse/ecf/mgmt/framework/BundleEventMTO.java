@@ -43,4 +43,9 @@ public class BundleEventMTO implements Serializable {
 		return type;
 	}
 
+	@Override
+	public String toString() {
+		return "BundleEventMTO [bundleId=" + bundleId + ", originId=" + originId + ", type=" + type + "]";
+	}
+
 }

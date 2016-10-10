@@ -10,6 +10,8 @@ package org.eclipse.ecf.remoteservice.ui.bundleview.model;
 
 import java.util.Map;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.views.properties.IPropertySource;
 import org.osgi.framework.Bundle;
 
 public class BundleNode extends AbstractBundlesNode {
@@ -80,5 +82,14 @@ public class BundleNode extends AbstractBundlesNode {
 	public String getLocation() {
 		return location;
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
+		if (adapter == IPropertySource.class)
+			return new BundlePropertySource(getManifest());
+		return Platform.getAdapterManager().getAdapter(this, adapter);
+	}
+
 
 }

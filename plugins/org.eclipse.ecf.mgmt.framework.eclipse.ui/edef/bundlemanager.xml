@@ -1,0 +1,36 @@
+<endpoint-descriptions xmlns="http://www.osgi.org/xmlns/rsa/v1.0.0">
+  <endpoint-description>
+    <property name="ecf.endpoint.id" value-type="String" value="ecftcp://localhost:3939/server"/>
+    <property name="ecf.endpoint.id.ns" value-type="String" value="org.eclipse.ecf.core.identity.StringID"/>
+    <property name="ecf.endpoint.ts" value-type="Long" value="1476042662436"/>
+    <property name="ecf.exported.async.interfaces" value-type="String" value="*"/>
+    <property name="ecf.rsvc.id" value-type="Long" value="0"/>
+    <property name="endpoint.framework.uuid" value-type="String" value="90ce9cac-598e-0016-1294-9f8f99f23a86"/>
+    <property name="endpoint.id" value-type="String" value="81317cc0-b118-4297-bc7e-68dcae9d52ff"/>
+    <property name="endpoint.package.version.org.eclipse.ecf.mgmt.framework" value-type="String" value="1.0.0"/>
+    <property name="endpoint.service.id" value-type="Long" value="0"/>
+    <property name="objectClass" value-type="String">
+      <array>
+        <value>org.eclipse.ecf.mgmt.framework.IBundleManager</value>
+      </array>
+    </property>
+    <property name="remote.configs.supported" value-type="String">
+      <array>
+        <value>ecf.generic.server</value>
+      </array>
+    </property>
+    <property name="remote.intents.supported" value-type="String">
+      <array>
+        <value>passByValue</value>
+        <value>exactlyOnce</value>
+        <value>ordered</value>
+      </array>
+    </property>
+    <property name="service.imported" value-type="String" value="true"/>
+    <property name="service.imported.configs" value-type="String">
+      <array>
+        <value>ecf.generic.server</value>
+      </array>
+    </property>
+  </endpoint-description>
+</endpoint-descriptions>

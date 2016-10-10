@@ -7,7 +7,7 @@
       <view
             category="org.eclipse.ecf.remoteservice.ui.rsgroup"
             class="org.eclipse.ecf.remoteservice.ui.bundleview.LocalBundlesView"
-            icon="icons/bundle.png"
+            icon="icons/bundle_active.png"
             id="org.eclipse.ecf.remoteservice.ui.bundleview.BundleView"
             name="Local OSGi Bundles"
             restorable="true">

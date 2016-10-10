@@ -10,6 +10,7 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.ecf.remoteservices.ui;version="3.0.0",
- org.eclipse.ecf.remoteservices.ui.util
+ org.eclipse.ecf.remoteservices.ui.util,
+ org.eclipse.ui.views.properties
 Export-Package: org.eclipse.ecf.remoteservice.ui.bundleview;version="1.0.0",
  org.eclipse.ecf.remoteservice.ui.bundleview.model;version="1.0.0"
