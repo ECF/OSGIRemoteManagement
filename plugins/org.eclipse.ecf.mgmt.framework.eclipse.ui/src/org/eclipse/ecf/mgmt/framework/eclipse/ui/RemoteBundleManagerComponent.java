@@ -8,48 +8,26 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.framework.eclipse.ui;
 
-import java.util.Collection;
-import java.util.Hashtable;
-
 import org.eclipse.ecf.core.IContainer;
 import org.eclipse.ecf.core.IContainerManager;
 import org.eclipse.ecf.core.identity.ID;
 import org.eclipse.ecf.mgmt.consumer.util.RemoteServiceComponent;
 import org.eclipse.ecf.mgmt.framework.IBundleEventHandler;
 import org.eclipse.ecf.mgmt.framework.IBundleManagerAsync;
-import org.eclipse.ecf.remoteservice.IRemoteServiceProxy;
 import org.osgi.framework.ServiceReference;
-import org.osgi.service.remoteserviceadmin.ExportRegistration;
-import org.osgi.service.remoteserviceadmin.RemoteServiceAdmin;
 
 public class RemoteBundleManagerComponent extends RemoteServiceComponent {
 
+	private ServiceReference<IBundleEventHandler> behRef;
+	
 	private static RemoteBundleManagerComponent instance;
-
+	
 	public static RemoteBundleManagerComponent getInstance() {
 		return instance;
 	}
-
 	public RemoteBundleManagerComponent() {
 		instance = this;
 	}
-
-	private RemoteServiceAdmin localRSA;
-	
-	void bindRemoteServiceAdmin(RemoteServiceAdmin rsa) {
-		this.localRSA = rsa;
-	}
-	
-	void unbindRemoteServiceAdmin(RemoteServiceAdmin rsa) {
-		this.localRSA = null;
-	}
-	
-	public RemoteServiceAdmin getRSA() {
-		return this.localRSA;
-	}
-	
-	private ServiceReference<IBundleEventHandler> behRef;
-	
 	void bindBundleEventHandler(ServiceReference<IBundleEventHandler> ref) {
 		this.behRef = ref;
 	}
@@ -68,7 +46,7 @@ public class RemoteBundleManagerComponent extends RemoteServiceComponent {
 		this.cm = null;
 	}
 	
-	IContainer getContainerForID(ID connectedID) {
+	public IContainer getContainerForID(ID connectedID) {
 		for(IContainer c: this.cm.getAllContainers()) {
 			ID targetID = c.getConnectedID();
 			if (targetID != null && targetID.equals(connectedID))

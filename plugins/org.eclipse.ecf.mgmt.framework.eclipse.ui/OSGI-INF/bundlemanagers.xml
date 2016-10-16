@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" name="org.eclipse.ecf.mgmt.framework.eclipse.ui.bundlesmanager">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" activate="activate" deactivate="deactivate" name="org.eclipse.ecf.mgmt.framework.eclipse.ui.bundlesmanager">
    <implementation class="org.eclipse.ecf.mgmt.framework.eclipse.ui.RemoteBundleManagerComponent"/>
    <reference bind="bindBundleManagerAsync" cardinality="0..n" interface="org.eclipse.ecf.mgmt.framework.IBundleManagerAsync" name="IBundleManagerAsync" policy="dynamic" unbind="unbindBundleManagerAsync"/>
 <!--   <reference bind="bindRemoteServiceAdminManager" cardinality="0..1" interface="org.eclipse.ecf.mgmt.rsa.IRemoteServiceAdminManagerAsync" name="IRemoteServiceAdminManagerAsync" policy="dynamic" unbind="unbindRemoteServiceAdminManager"/> -->
-   <reference bind="bindRemoteServiceAdmin" cardinality="1..1" interface="org.osgi.service.remoteserviceadmin.RemoteServiceAdmin" name="RemoteServiceAdmin" policy="static" unbind="unbindRemoteServiceAdmin"/>
+<!--   <reference bind="bindRemoteServiceAdmin" cardinality="1..1" interface="org.osgi.service.remoteserviceadmin.RemoteServiceAdmin" name="RemoteServiceAdmin" policy="static" unbind="unbindRemoteServiceAdmin"/> -->
 <!--   <reference bind="bindBundleEventHandler" cardinality="1..1" interface="org.eclipse.ecf.mgmt.framework.IBundleEventHandler" name="IBundleEventHandler" policy="static" unbind="unbindBundleEventHandler"/> -->
-   <reference bind="bindContainerManager" cardinality="1..1" interface="org.eclipse.ecf.core.IContainerManager" name="IContainerManager" policy="static" unbind="unbindContainerManager"/>
+   <reference bind="bindContainerManager" cardinality="1..1" interface="org.eclipse.ecf.core.IContainerManager" name="IContainerManager" policy="static" unbind="unbindContainerManager"/> 
 </scr:component>

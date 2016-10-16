@@ -8,16 +8,18 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.framework.eclipse.ui.services;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.ecf.core.IContainer;
+import org.eclipse.ecf.core.identity.ID;
 import org.eclipse.ecf.mgmt.consumer.util.IRemoteServiceListener;
 import org.eclipse.ecf.mgmt.consumer.util.RemoteServiceEvent;
 import org.eclipse.ecf.mgmt.consumer.util.RemoteServiceHolder;
@@ -30,9 +32,9 @@ import org.eclipse.ecf.mgmt.framework.eclipse.ui.services.model.RemoteBundleMana
 import org.eclipse.ecf.mgmt.framework.eclipse.ui.services.model.RemoteBundleManagerNode;
 import org.eclipse.ecf.mgmt.framework.eclipse.ui.services.model.RemoteBundleManagerRootNode;
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.EndpointDescription;
-import org.eclipse.ecf.osgi.services.remoteserviceadmin.EndpointDescriptionReader;
-import org.osgi.service.remoteserviceadmin.ImportRegistration;
-import org.osgi.service.remoteserviceadmin.RemoteServiceAdmin;
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin.ImportReference;
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin.ImportRegistration;
+import org.eclipse.ecf.remoteservice.IRemoteServiceID;
 import org.eclipse.ecf.remoteservice.IRemoteServiceReference;
 import org.eclipse.ecf.remoteservice.ui.bundleview.AbstractBundlesView;
 import org.eclipse.ecf.remoteservice.ui.bundleview.model.AbstractBundlesNode;
@@ -40,6 +42,7 @@ import org.eclipse.ecf.remoteservice.ui.bundleview.model.BundleNode;
 import org.eclipse.ecf.remoteservice.ui.bundleview.model.BundlesContentProvider;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.ITreeSelection;
@@ -49,6 +52,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PlatformUI;
+import org.osgi.service.remoteserviceadmin.RemoteServiceAdmin;
 
 public class RemoteBundlesView extends AbstractBundlesView {
 
@@ -59,6 +63,9 @@ public class RemoteBundlesView extends AbstractBundlesView {
 
 	private Action refreshAction;
 	private Action connectAction;
+	private Action disconnectAction;
+	
+	private List<ImportRegistration> regs = Collections.synchronizedList(new ArrayList<ImportRegistration>());
 
 	@Override
 	protected void makeActions() {
@@ -70,7 +77,7 @@ public class RemoteBundlesView extends AbstractBundlesView {
 					refresh(node);
 			};
 		};
-		refreshAction.setText("Refresh remote OSGi services");
+		refreshAction.setText("Refresh");
 		connectAction = new Action() {
 			public void run() {
 				InputDialog id = new InputDialog(getViewSite().getShell(), "Connect to Remote Bundle Manager",
@@ -88,8 +95,19 @@ public class RemoteBundlesView extends AbstractBundlesView {
 		IActionBars bars = getViewSite().getActionBars();
 		bars.getMenuManager().add(connectAction);
 		bars.getToolBarManager().add(connectAction);
+		disconnectAction = new Action() {
+			public void run() {
+				RemoteBundleManagerNode node = getSelectedRSManagerNode();
+				if (node != null)
+					disconnect(node);
+			}
+		};
+		disconnectAction.setText("Disconnect");
 	}
 
+	private RemoteServiceAdmin getRSA() {
+		return Activator.getDefault().getRSA();
+	}
 	private void connectToBundleManager(String hostnamePort) {
 		try {
 			String hostname = "localhost";
@@ -100,40 +118,35 @@ public class RemoteBundlesView extends AbstractBundlesView {
 				p = hostnamePort.substring(colonIndex + 1);
 			}
 			int port = Integer.valueOf(p);
-			URL url = Activator.getDefault().getBundle().getEntry("/edef/bundlemanager.xml");
-			if (url == null)
-				throw new NullPointerException("Cannot get /edef/bundlemanager.xml");
-			EndpointDescriptionReader reader = new EndpointDescriptionReader();
-			org.osgi.service.remoteserviceadmin.EndpointDescription[] eds = reader
-					.readEndpointDescriptions(url.openStream());
-			if (eds.length == 0)
-				throw new NullPointerException("Cannot read edef from /edef/bundlemanager.xml");
-			Map<String, Object> props = new HashMap<String, Object>(eds[0].getProperties());
+			EndpointDescription ed = Activator.getDefault().getEndpointDescription();
+			Map<String, Object> props = new HashMap<String, Object>(ed.getProperties());
 			props.put("ecf.endpoint.id", "ecftcp://" + hostname + ":" + port + "/server");
-			RemoteServiceAdmin rsa = RemoteBundleManagerComponent.getInstance().getRSA();
+			RemoteServiceAdmin rsa = getRSA();
 			if (rsa == null)
 				throw new NullPointerException("Cannot get local RSA");
-			ImportRegistration reg = rsa.importService(new EndpointDescription(props));
+			ImportRegistration reg = (ImportRegistration) rsa.importService(new EndpointDescription(props));
 			Throwable t = reg.getException();
 			if (t != null)
 				throw t;
 			regs.add(reg);
 		} catch (Throwable e) {
 			ErrorDialog.openError(getViewSite().getShell(), "Bundle Manager Error",
-					"Exception importing remote Bundle Manager", new Status(IStatus.ERROR,
+					"Exception importing Bundle Manager", new Status(IStatus.ERROR,
 							"org.eclipse.ecf.mgmt.framework.eclipse.ui", "Error in Bundle Manager Import", e));
+			e.printStackTrace();
 		}
 	}
-
-	private List<ImportRegistration> regs = Collections.synchronizedList(new ArrayList<ImportRegistration>());
 
 	protected void fillContextMenu(IMenuManager manager) {
 		super.fillContextMenu(manager);
 		ITreeSelection selection = (ITreeSelection) getTreeViewer().getSelection();
 		if (selection != null) {
 			Object e = selection.getFirstElement();
-			if (e instanceof RemoteBundleManagerNode)
+			if (e instanceof RemoteBundleManagerNode) {
 				manager.add(refreshAction);
+				manager.add(new Separator());
+				manager.add(disconnectAction);
+			}
 		}
 	}
 
@@ -226,6 +239,36 @@ public class RemoteBundlesView extends AbstractBundlesView {
 		updateRemoteBundleManager(managerNode.getBundleManager(), managerNode.getBundleManagerRef(), managerNode);
 	}
 
+	void disconnect(RemoteBundleManagerNode managerNode) {
+		IRemoteServiceReference rsRef = managerNode.getBundleManagerRef();
+		IRemoteServiceID rsID = rsRef.getID();
+		ImportRegistration importReg =  null;
+		for(Iterator<ImportRegistration> i = regs.iterator(); i.hasNext();) {
+			ImportRegistration reg = i.next();
+			if (reg.getException() == null) {
+				ImportReference imRef = (ImportReference) reg.getImportReference();
+				ID remoteContainerID = ((EndpointDescription) imRef.getImportedEndpoint()).getContainerID();
+				if (remoteContainerID.equals(rsID.getContainerID())) {
+					importReg = reg;
+					i.remove();
+				}
+			}
+		}
+		if (importReg != null) {
+			try {
+				importReg.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			IContainer c = RemoteBundleManagerComponent.getInstance().getContainerForID(rsID.getContainerID());
+			if (c != null)
+				try {
+					c.disconnect();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+		}
+	}
 	@Override
 	protected void initializeBundles() {
 		Collection<RemoteServiceHolder> existing = RemoteBundleManagerComponent.getInstance().addListener(rsListener,

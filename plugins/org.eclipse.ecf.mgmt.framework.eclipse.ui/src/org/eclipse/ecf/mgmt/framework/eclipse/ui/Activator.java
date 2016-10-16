@@ -8,8 +8,15 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.framework.eclipse.ui;
 
+import java.io.IOException;
+import java.net.URL;
+
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.EndpointDescription;
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.EndpointDescriptionReader;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.remoteserviceadmin.RemoteServiceAdmin;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -28,6 +35,9 @@ public class Activator extends AbstractUIPlugin {
 	public Activator() {
 	}
 
+	private EndpointDescriptionReader reader;
+	private BundleContext context;
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -36,7 +46,9 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		this.context = context;
 		plugin = this;
+		this.reader = new EndpointDescriptionReader();
 	}
 
 	/*
@@ -46,10 +58,31 @@ public class Activator extends AbstractUIPlugin {
 	 * BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
-		plugin = null;
 		super.stop(context);
+		plugin = null;
+		this.reader = null;
+		this.context = null;
 	}
 
+	public EndpointDescription getEndpointDescription() {
+		URL url = Activator.getDefault().getBundle().getEntry("/edef/bundlemanager.xml");
+		try {
+			org.osgi.service.remoteserviceadmin.EndpointDescription[] eds = reader
+					.readEndpointDescriptions(url.openStream());
+			return (EndpointDescription) eds[0];
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public RemoteServiceAdmin getRSA() {
+		ServiceTracker<RemoteServiceAdmin,RemoteServiceAdmin> st = new ServiceTracker<RemoteServiceAdmin,RemoteServiceAdmin>(context,RemoteServiceAdmin.class,null);
+		st.open();
+		RemoteServiceAdmin r = st.getService();
+		st.close();
+		return r;
+	}
 	/**
 	 * Returns the shared instance
 	 *

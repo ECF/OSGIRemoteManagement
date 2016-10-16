@@ -67,6 +67,10 @@ public class BundleNode extends AbstractBundlesNode {
 		}
 	}
 
+	public boolean isFragment() {
+		 return getManifest().containsKey("Fragment-Host");
+	}
+	
 	public String getSymbolicName() {
 		return symbolicName;
 	}

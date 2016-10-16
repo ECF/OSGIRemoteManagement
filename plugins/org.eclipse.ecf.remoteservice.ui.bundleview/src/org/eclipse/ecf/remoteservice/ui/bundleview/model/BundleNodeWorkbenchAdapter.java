@@ -18,7 +18,8 @@ import org.osgi.framework.Bundle;
 public class BundleNodeWorkbenchAdapter extends AbstractBundlesWorkbenchAdapter {
 
 	private static final String ICON_ACTIVE = "/icons/bundle_active.png";
-	private static final String ICON_INACTIVE = "/icons/bundle_inactive.png";
+	private static final String ICON_RESOLVED = "/icons/bundle_resolved.png";
+	private static final String ICON_INSTALLED = "/icons/bundle_installed.png";
 	
 	@Override
 	public String getLabel(Object object) {
@@ -26,14 +27,23 @@ public class BundleNodeWorkbenchAdapter extends AbstractBundlesWorkbenchAdapter 
 		StringBuffer buf = new StringBuffer(String.valueOf(bn.getId()));
 		buf.append(" - ").append(bn.getSymbolicName());
 		buf.append(" - ").append(bn.getVersion());
-		buf.append(" - ").append(bn.getStateLabel());
 		return buf.toString(); // //$NON-NLS-2$
 	}
 
 	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
 		BundleNode bn = (BundleNode) object;
-		return Activator.getImageDescriptor((bn.getState() == Bundle.ACTIVE)?ICON_ACTIVE:ICON_INACTIVE);
+		int bstate = bn.getState();
+		String icon = null;
+		if (bstate == Bundle.INSTALLED)
+			icon = ICON_INSTALLED;
+		else {
+			boolean active = (bn.isFragment())?(bstate == Bundle.ACTIVE || bstate == Bundle.RESOLVED):(bstate == Bundle.ACTIVE);
+			icon = active?ICON_ACTIVE:ICON_RESOLVED;
+		}
+		if (icon == null)
+			return null;
+		return Activator.getImageDescriptor(icon);
 	}
 
 }
