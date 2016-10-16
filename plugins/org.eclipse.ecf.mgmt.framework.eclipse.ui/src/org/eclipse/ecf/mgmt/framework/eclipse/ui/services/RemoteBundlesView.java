@@ -64,7 +64,7 @@ public class RemoteBundlesView extends AbstractBundlesView {
 	private Action refreshAction;
 	private Action connectAction;
 	private Action disconnectAction;
-	
+
 	private List<ImportRegistration> regs = Collections.synchronizedList(new ArrayList<ImportRegistration>());
 
 	@Override
@@ -108,6 +108,7 @@ public class RemoteBundlesView extends AbstractBundlesView {
 	private RemoteServiceAdmin getRSA() {
 		return Activator.getDefault().getRSA();
 	}
+
 	private void connectToBundleManager(String hostnamePort) {
 		try {
 			String hostname = "localhost";
@@ -242,15 +243,20 @@ public class RemoteBundlesView extends AbstractBundlesView {
 	void disconnect(RemoteBundleManagerNode managerNode) {
 		IRemoteServiceReference rsRef = managerNode.getBundleManagerRef();
 		IRemoteServiceID rsID = rsRef.getID();
-		ImportRegistration importReg =  null;
-		for(Iterator<ImportRegistration> i = regs.iterator(); i.hasNext();) {
+		ImportRegistration importReg = null;
+		for (Iterator<ImportRegistration> i = regs.iterator(); i.hasNext();) {
 			ImportRegistration reg = i.next();
 			if (reg.getException() == null) {
 				ImportReference imRef = (ImportReference) reg.getImportReference();
-				ID remoteContainerID = ((EndpointDescription) imRef.getImportedEndpoint()).getContainerID();
-				if (remoteContainerID.equals(rsID.getContainerID())) {
-					importReg = reg;
-					i.remove();
+				if (imRef != null) {
+					EndpointDescription ed = (EndpointDescription) imRef.getImportedEndpoint();
+					if (ed != null) {
+						ID remoteContainerID = ed.getContainerID();
+						if (remoteContainerID != null && remoteContainerID.equals(rsID.getContainerID())) {
+							importReg = reg;
+							i.remove();
+						}
+					}
 				}
 			}
 		}
@@ -269,6 +275,7 @@ public class RemoteBundlesView extends AbstractBundlesView {
 				}
 		}
 	}
+
 	@Override
 	protected void initializeBundles() {
 		Collection<RemoteServiceHolder> existing = RemoteBundleManagerComponent.getInstance().addListener(rsListener,
