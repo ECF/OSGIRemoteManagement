@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -64,6 +65,7 @@ public class ManagerExporter {
 	void unbindContainerManager(IContainerManager cm) {
 		this.containerManager = null;
 	}
+
 	@Reference
 	void bindBundleManager(ServiceReference<IBundleManager> r) {
 		this.bmRef = r;
@@ -76,18 +78,20 @@ public class ManagerExporter {
 	@Activate
 	protected void activate(BundleContext c) throws Exception {
 
-		//c.registerService(RemoteServiceAdminListener.class, new MyRSAListener(), null);
+		// c.registerService(RemoteServiceAdminListener.class, new
+		// MyRSAListener(), null);
 		Map<String, Object> rsProps = createRemoteServiceProperties();
 
 		bmRegs = this.rsa.exportService(this.bmRef, rsProps);
-		// should only be one exportregistration for this provider
-		Throwable t = bmRegs.iterator().next().getException();
-		if (t != null) {
-			bmRegs.forEach(reg -> reg.close());
-			bmRegs = null;
-			throw new ServiceException("Could not export bundle manager service", t);
-		} else {
-
+		// should only be one export registration for this provider
+		Iterator<ExportRegistration> i = bmRegs.iterator();
+		if (i.hasNext()) {
+			Throwable t = i.next().getException();
+			if (t != null) {
+				bmRegs.forEach(reg -> reg.close());
+				bmRegs = null;
+				throw new ServiceException("Could not export bundle manager service", t);
+			}
 		}
 
 	}
@@ -101,47 +105,37 @@ public class ManagerExporter {
 	}
 
 	private static final String SERVICE_EXPORTED_CONFIGS = "service.exported.configs";
-	private static final String DEFAULT_CONFIG = "ecf.generic.server";
-	private static final String DEFAULT_PORT = "3939";
-	private static final String DEFAULT_HOST = "localhost";
+	private static final String EXPORT_CONFIG = "ecf.jms.mqtt.manager";
+	private static final String EXPORT_CONFIG_ID = "tcp://iot.eclipse.org:1883/kura/remoteservices";
 
 	private Map<String, Object> createRemoteServiceProperties() {
 		Hashtable<String, Object> result = new Hashtable<String, Object>();
-		// This property is required by the Remote Services specification
-		// (chapter 100 in enterprise specification), and when set results
-		// in RSA impl exporting as a remote service
 		result.put("service.exported.interfaces", "*");
-		// async interfaces is an ECF Remote Services service property
-		// that allows any declared asynchronous interfaces
-		// to be used by consumers.
-		// See https://wiki.eclipse.org/ECF/Asynchronous_Remote_Services
 		result.put("ecf.exported.async.interfaces", "*");
 		// get system properties
 		Properties props = System.getProperties();
-		// Get OSGi service.exported.configs property
 		String config = props.getProperty(SERVICE_EXPORTED_CONFIGS);
-		// If not present, then use default
-		if (config == null) {
-			config = DEFAULT_CONFIG;
-			result.put(config + ".port", DEFAULT_PORT);
-			result.put(config + ".hostname", DEFAULT_HOST);
-		}
-		result.put(SERVICE_EXPORTED_CONFIGS, config);
-		// add any config properties. config properties start with
-		// the config name '.' property
-		for (Object k : props.keySet()) {
-			if (k instanceof String) {
-				String key = (String) k;
-				if (key.startsWith(config))
-					result.put(key, props.get(key));
+		if (config != null) {
+			result.put(SERVICE_EXPORTED_CONFIGS, config);
+			// add any config properties. config properties start with
+			// the config name '.' property
+			for (Object k : props.keySet()) {
+				if (k instanceof String) {
+					String key = (String) k;
+					if (key.startsWith(EXPORT_CONFIG))
+						result.put(key, props.get(key));
+				}
 			}
+		} else {
+			result.put(SERVICE_EXPORTED_CONFIGS, EXPORT_CONFIG);
+			result.put(EXPORT_CONFIG+".id", EXPORT_CONFIG_ID);
 		}
 		return result;
 	}
 
 	private Class<?> clazz = IBundleEventHandler.class;
 	private ImportRegistration importRegistration;
-	
+
 	private void handleRemoteServiceRegisteredEvent(ID localID, IRemoteServiceReference rsRef) {
 		synchronized (this) {
 			if (importRegistration != null)
@@ -158,24 +152,29 @@ public class ManagerExporter {
 	}
 
 	private Map<String, Object> createImportProps(ID localID, IRemoteServiceReference rsRef) {
-		Map<String,Object> result = new HashMap<String,Object>();
+		Map<String, Object> result = new HashMap<String, Object>();
 		IRemoteServiceID rsID = rsRef.getID();
 		ID rcID = rsID.getContainerID();
 		result.put(RemoteConstants.ENDPOINT_ID, rcID.getName());
 		result.put(RemoteConstants.ENDPOINT_CONTAINER_ID_NAMESPACE, rcID.getNamespace().getName());
 		result.put(RemoteConstants.ENDPOINT_TIMESTAMP, System.currentTimeMillis());
 		result.put(RemoteConstants.SERVICE_EXPORTED_ASYNC_INTERFACES, "*");
-		result.put(org.eclipse.ecf.remoteservice.Constants.SERVICE_ID, rsID.getContainerRelativeID() );
-		result.put(org.osgi.service.remoteserviceadmin.RemoteConstants.ENDPOINT_FRAMEWORK_UUID, UUID.randomUUID().toString());
+		result.put(org.eclipse.ecf.remoteservice.Constants.SERVICE_ID, rsID.getContainerRelativeID());
+		result.put(org.osgi.service.remoteserviceadmin.RemoteConstants.ENDPOINT_FRAMEWORK_UUID,
+				UUID.randomUUID().toString());
 		result.put(org.osgi.service.remoteserviceadmin.RemoteConstants.ENDPOINT_ID, UUID.randomUUID().toString());
-		result.put(org.osgi.service.remoteserviceadmin.RemoteConstants.ENDPOINT_PACKAGE_VERSION_+"org.eclipse.ecf.mgmt.framework", "1.0.0");
+		result.put(org.osgi.service.remoteserviceadmin.RemoteConstants.ENDPOINT_PACKAGE_VERSION_
+				+ "org.eclipse.ecf.mgmt.framework", "1.0.0");
 		result.put("objectClass", new String[] { IBundleEventHandler.class.getName() });
-		result.put(org.osgi.service.remoteserviceadmin.RemoteConstants.REMOTE_CONFIGS_SUPPORTED, new String[] { "ecf.generic.client" }  );
-		result.put(org.osgi.service.remoteserviceadmin.RemoteConstants.REMOTE_INTENTS_SUPPORTED, new String[] { "passByValue,exactlyOnce,ordered" }  );
+		result.put(org.osgi.service.remoteserviceadmin.RemoteConstants.REMOTE_CONFIGS_SUPPORTED,
+				new String[] { "ecf.generic.client" });
+		result.put(org.osgi.service.remoteserviceadmin.RemoteConstants.REMOTE_INTENTS_SUPPORTED,
+				new String[] { "passByValue,exactlyOnce,ordered" });
 		result.put(org.osgi.service.remoteserviceadmin.RemoteConstants.SERVICE_IMPORTED, "true");
-		result.put(org.osgi.service.remoteserviceadmin.RemoteConstants.SERVICE_IMPORTED_CONFIGS, new String[] { "ecf.generic.client" }  );
+		result.put(org.osgi.service.remoteserviceadmin.RemoteConstants.SERVICE_IMPORTED_CONFIGS,
+				new String[] { "ecf.generic.client" });
 		result.put("ecf.endpoint.connecttarget.id", localID.getName());
-		result.put("ecf.endpoint.idfilter.ids", new String[] { rcID.getName() } );
+		result.put("ecf.endpoint.idfilter.ids", new String[] { rcID.getName() });
 
 		return result;
 	}
