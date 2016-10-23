@@ -7,7 +7,7 @@ public class BundleEventHandler implements IBundleEventHandler {
 
 	@Override
 	public void handleBundleEvent(BundleEventMTO bundleEvent) {
-		System.out.println("RECEIVED bundleEvent="+bundleEvent);
+		System.out.println("RECEIVED bundleEvent=" + bundleEvent);
 	}
 
 }

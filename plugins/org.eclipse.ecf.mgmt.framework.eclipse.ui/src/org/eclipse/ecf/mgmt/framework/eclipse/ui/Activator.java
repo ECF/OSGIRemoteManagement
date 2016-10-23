@@ -8,7 +8,6 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.framework.eclipse.ui;
 
-import java.io.IOException;
 import java.net.URL;
 
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.EndpointDescription;
@@ -37,7 +36,7 @@ public class Activator extends AbstractUIPlugin {
 
 	private EndpointDescriptionReader reader;
 	private BundleContext context;
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -64,25 +63,22 @@ public class Activator extends AbstractUIPlugin {
 		this.context = null;
 	}
 
-	public EndpointDescription getEndpointDescription() {
-		URL url = Activator.getDefault().getBundle().getEntry("/edef/bundlemanager.xml");
-		try {
-			org.osgi.service.remoteserviceadmin.EndpointDescription[] eds = reader
-					.readEndpointDescriptions(url.openStream());
-			return (EndpointDescription) eds[0];
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
+	public EndpointDescription getEndpointDescription(String fileName) throws Exception {
+		URL url = Activator.getDefault().getBundle().getEntry(fileName);
+		org.osgi.service.remoteserviceadmin.EndpointDescription[] eds = reader
+				.readEndpointDescriptions(url.openStream());
+		return (EndpointDescription) eds[0];
 	}
-	
+
 	public RemoteServiceAdmin getRSA() {
-		ServiceTracker<RemoteServiceAdmin,RemoteServiceAdmin> st = new ServiceTracker<RemoteServiceAdmin,RemoteServiceAdmin>(context,RemoteServiceAdmin.class,null);
+		ServiceTracker<RemoteServiceAdmin, RemoteServiceAdmin> st = new ServiceTracker<RemoteServiceAdmin, RemoteServiceAdmin>(
+				context, RemoteServiceAdmin.class, null);
 		st.open();
 		RemoteServiceAdmin r = st.getService();
 		st.close();
 		return r;
 	}
+
 	/**
 	 * Returns the shared instance
 	 *

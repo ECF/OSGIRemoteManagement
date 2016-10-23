@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -26,6 +28,7 @@ import org.eclipse.ecf.mgmt.consumer.util.RemoteServiceHolder;
 import org.eclipse.ecf.mgmt.framework.BundleMTO;
 import org.eclipse.ecf.mgmt.framework.IBundleManagerAsync;
 import org.eclipse.ecf.mgmt.framework.eclipse.ui.Activator;
+import org.eclipse.ecf.mgmt.framework.eclipse.ui.MqttUsernamePasswordDialog;
 import org.eclipse.ecf.mgmt.framework.eclipse.ui.RemoteBundleManagerComponent;
 import org.eclipse.ecf.mgmt.framework.eclipse.ui.RemoteServiceManagerComponent;
 import org.eclipse.ecf.mgmt.framework.eclipse.ui.services.model.RemoteBundleManagerContentProvider;
@@ -44,7 +47,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
@@ -67,6 +69,15 @@ public class RemoteBundlesView extends AbstractBundlesView {
 
 	private List<ImportRegistration> regs = Collections.synchronizedList(new ArrayList<ImportRegistration>());
 
+	void showException(String title, String message, Throwable e) {
+		IViewSite vs = getViewSite();
+		if (vs != null) {
+			ErrorDialog.openError(vs.getShell(), title, message,
+					new Status(IStatus.ERROR, "org.eclipse.ecf.mgmt.framework.eclipse.ui", message, e));
+			e.printStackTrace();
+		}
+	}
+
 	@Override
 	protected void makeActions() {
 		super.makeActions();
@@ -80,10 +91,42 @@ public class RemoteBundlesView extends AbstractBundlesView {
 		refreshAction.setText("Refresh");
 		connectAction = new Action() {
 			public void run() {
-				InputDialog id = new InputDialog(getViewSite().getShell(), "Connect to Remote Bundle Manager",
-						"Enter <hostname>[:<port>]", "localhost:3939", null);
-				if (id.open() == Window.OK) {
-					connectToBundleManager(id.getValue());
+				MqttUsernamePasswordDialog d = new MqttUsernamePasswordDialog(getViewSite().getShell(),
+						"Connect to Mqtt Broker", "tcp://iot.eclipse.org:1883/kura/remoteservices");
+				if (d.open() == Window.OK) {
+					final String brokerUrl = d.getBrokerUrl();
+					final String username = d.getUsername();
+					final String password = d.getPassword();
+					CompletableFuture.supplyAsync(new Supplier<ImportRegistration>() {
+						@Override
+						public ImportRegistration get() {
+							try {
+								EndpointDescription ed = Activator.getDefault()
+										.getEndpointDescription("/edef/bundlemanager.mqtt.xml");
+								Map<String, Object> props = new HashMap<String, Object>(ed.getProperties());
+								props.put("ecf.endpoint.id", brokerUrl);
+								if (username != null && password != null) {
+									props.put("ecf.jms.mqtt.client.username", username);
+									props.put("ecf.jms.mqtt.client.password", password);
+								}
+								return (ImportRegistration) getRSA().importService(new EndpointDescription(props));
+							} catch (Exception e) {
+								throw new RuntimeException(e);
+							}
+						}
+					}).whenComplete((ir, e) -> {
+						String title = "BundleManager Import Error";
+						String message = "Error in BundleManager Import";
+						if (e != null)
+							showException(title, message, e);
+						else {
+							Throwable t = ir.getException();
+							if (t != null)
+								showException(title, message, t);
+							regs.add(ir);
+						}
+					});
+
 				}
 			};
 		};
@@ -107,35 +150,6 @@ public class RemoteBundlesView extends AbstractBundlesView {
 
 	private RemoteServiceAdmin getRSA() {
 		return Activator.getDefault().getRSA();
-	}
-
-	private void connectToBundleManager(String hostnamePort) {
-		try {
-			String hostname = "localhost";
-			String p = "3939";
-			int colonIndex = hostnamePort.indexOf(':');
-			if (colonIndex > 0) {
-				hostname = hostnamePort.substring(0, colonIndex);
-				p = hostnamePort.substring(colonIndex + 1);
-			}
-			int port = Integer.valueOf(p);
-			EndpointDescription ed = Activator.getDefault().getEndpointDescription();
-			Map<String, Object> props = new HashMap<String, Object>(ed.getProperties());
-			props.put("ecf.endpoint.id", "ecftcp://" + hostname + ":" + port + "/server");
-			RemoteServiceAdmin rsa = getRSA();
-			if (rsa == null)
-				throw new NullPointerException("Cannot get local RSA");
-			ImportRegistration reg = (ImportRegistration) rsa.importService(new EndpointDescription(props));
-			Throwable t = reg.getException();
-			if (t != null)
-				throw t;
-			regs.add(reg);
-		} catch (Throwable e) {
-			ErrorDialog.openError(getViewSite().getShell(), "Bundle Manager Error",
-					"Exception importing Bundle Manager", new Status(IStatus.ERROR,
-							"org.eclipse.ecf.mgmt.framework.eclipse.ui", "Error in Bundle Manager Import", e));
-			e.printStackTrace();
-		}
 	}
 
 	protected void fillContextMenu(IMenuManager manager) {
