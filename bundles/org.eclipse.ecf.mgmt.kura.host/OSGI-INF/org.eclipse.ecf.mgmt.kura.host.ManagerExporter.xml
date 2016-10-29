@@ -3,5 +3,6 @@
    <reference bind="bindBundleManager" cardinality="1..1" interface="org.eclipse.ecf.mgmt.framework.IBundleManager" name="BundleManager" policy="static" unbind="unbindBundleManager"/>
    <reference bind="bindContainerManager" cardinality="1..1" interface="org.eclipse.ecf.core.IContainerManager" name="ContainerManager" policy="static" unbind="unbindContainerManager"/>
    <reference bind="bindRemoteServiceAdmin" cardinality="1..1" interface="org.osgi.service.remoteserviceadmin.RemoteServiceAdmin" name="RemoteServiceAdmin" policy="static" unbind="unbindRemoteServiceAdmin"/>
+   <reference bind="bindServiceManager" cardinality="1..1" interface="org.eclipse.ecf.mgmt.framework.IServiceManager" name="ServiceManager" policy="static" unbind="unbindServiceManager"/>
    <implementation class="org.eclipse.ecf.mgmt.kura.host.ManagerExporter"/>
 </scr:component>

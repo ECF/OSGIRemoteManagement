@@ -1,5 +1,6 @@
 package org.eclipse.ecf.mgmt.kura.host;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import org.eclipse.ecf.core.IContainerManager;
 import org.eclipse.ecf.core.identity.ID;
 import org.eclipse.ecf.mgmt.framework.IBundleEventHandler;
 import org.eclipse.ecf.mgmt.framework.IBundleManager;
+import org.eclipse.ecf.mgmt.framework.IServiceManager;
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.EndpointDescription;
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteConstants;
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin.ExportReference;
@@ -46,8 +48,10 @@ public class ManagerExporter {
 	// private ServiceReference<IRemoteServiceAdminManager> rsaRef;
 	private ServiceReference<IBundleManager> bmRef;
 	// private Collection<ExportRegistration> rsaRegs;
-	private Collection<ExportRegistration> bmRegs;
+	private Collection<ExportRegistration> regs = new ArrayList<ExportRegistration>();
 
+	private ServiceReference<IServiceManager> smRef;
+	
 	@Reference
 	void bindRemoteServiceAdmin(RemoteServiceAdmin a) {
 		this.rsa = a;
@@ -75,6 +79,27 @@ public class ManagerExporter {
 		this.bmRef = null;
 	}
 
+	@Reference
+	void bindServiceManager(ServiceReference<IServiceManager> r) {
+		this.smRef = r;
+	}
+
+	void unbindServiceManager(ServiceReference<IServiceManager> r) {
+		this.smRef = null;
+	}
+
+	void export(ServiceReference<?> ref, Map<String,Object> props) throws Exception {
+		Collection<ExportRegistration> regs = this.rsa.exportService(ref, props);
+		Iterator<ExportRegistration> i = regs.iterator();
+		if (i.hasNext()) {
+			Throwable t = i.next().getException();
+			if (t != null) {
+				regs.forEach(reg -> reg.close());
+				throw new ServiceException("Could not export service", t);
+			}
+		}
+		this.regs.addAll(regs);
+	}
 	@Activate
 	protected void activate(BundleContext c) throws Exception {
 
@@ -82,25 +107,18 @@ public class ManagerExporter {
 		// MyRSAListener(), null);
 		Map<String, Object> rsProps = createRemoteServiceProperties();
 
-		bmRegs = this.rsa.exportService(this.bmRef, rsProps);
-		// should only be one export registration for this provider
-		Iterator<ExportRegistration> i = bmRegs.iterator();
-		if (i.hasNext()) {
-			Throwable t = i.next().getException();
-			if (t != null) {
-				bmRegs.forEach(reg -> reg.close());
-				bmRegs = null;
-				throw new ServiceException("Could not export bundle manager service", t);
-			}
-		}
-
+		if (this.bmRef != null) 
+			export(this.bmRef, rsProps);
+		
+		if (this.smRef != null)
+			export(this.smRef, rsProps);
 	}
 
 	@Deactivate
 	protected void deactivate() throws Exception {
-		if (bmRegs != null) {
-			bmRegs.forEach(reg -> reg.close());
-			bmRegs = null;
+		if (regs != null) {
+			regs.forEach(reg -> reg.close());
+			regs = null;
 		}
 	}
 
@@ -115,20 +133,21 @@ public class ManagerExporter {
 		// get system properties
 		Properties props = System.getProperties();
 		String config = props.getProperty(SERVICE_EXPORTED_CONFIGS);
-		if (config != null) {
-			result.put(SERVICE_EXPORTED_CONFIGS, config);
-			// add any config properties. config properties start with
-			// the config name '.' property
-			for (Object k : props.keySet()) {
-				if (k instanceof String) {
-					String key = (String) k;
-					if (key.startsWith(EXPORT_CONFIG))
-						result.put(key, props.get(key));
-				}
+		if (config == null)
+			config = EXPORT_CONFIG;
+		result.put(SERVICE_EXPORTED_CONFIGS, config);
+		String configid = props.getProperty(config+".id");
+		if (configid == null)
+			configid = EXPORT_CONFIG_ID;
+		result.put(config+".id", configid);
+		// add any config properties. config properties start with
+		// the config name '.' property
+		for (Object k : props.keySet()) {
+			if (k instanceof String) {
+				String key = (String) k;
+				if (key.startsWith(config))
+					result.put(key, props.get(key));
 			}
-		} else {
-			result.put(SERVICE_EXPORTED_CONFIGS, EXPORT_CONFIG);
-			result.put(EXPORT_CONFIG+".id", EXPORT_CONFIG_ID);
 		}
 		return result;
 	}

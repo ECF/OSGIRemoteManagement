@@ -20,5 +20,6 @@ Import-Package: org.eclipse.ecf.core;version="3.0.0",
 Require-Bundle: org.eclipse.equinox.common
 Service-Component: OSGI-INF/org.eclipse.ecf.mgmt.kura.host.RSADebug.xml,
  OSGI-INF/org.eclipse.ecf.mgmt.kura.host.KuraBundleManager.xml,
- OSGI-INF/org.eclipse.ecf.mgmt.kura.host.ManagerExporter.xml
+ OSGI-INF/org.eclipse.ecf.mgmt.kura.host.ManagerExporter.xml,
+ OSGI-INF/org.eclipse.ecf.mgmt.kura.host.KuraServiceManager.xml
 Bundle-ActivationPolicy: lazy
