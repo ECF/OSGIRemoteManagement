@@ -5,7 +5,7 @@
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors: Scott Lewis - initial API and implementation
- * Based upon work presented here http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/MqttUsernamePasswordDialog.htm
+ * Based upon work presented here http://www.java2s.com/Code/Java/SWT-JFace-Eclipse/MqttConnectDialog.htm
  * 
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.framework.eclipse.ui;
@@ -21,22 +21,22 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-public class MqttUsernamePasswordDialog extends Dialog {
+public class EcfTcpConnectDialog extends Dialog {
 	private static final int RESET_ID = IDialogConstants.NO_TO_ALL_ID + 1;
 
-	private Text brokerUrlField;
+	private Text hostnameField;
 
-	private Text usernameField;
-
-	private Text passwordField;
-
-	private String brokerUrlDefault;
+	private Text portField;
+	
+	private String hostnameDefault;
+	private String portDefault;
 
 	private String title;
 
-	public MqttUsernamePasswordDialog(Shell parentShell, String title, String brokerUrlDefault) {
+	public EcfTcpConnectDialog(Shell parentShell, String title, String hostnameDefault, String portDefault) {
 		super(parentShell);
-		this.brokerUrlDefault = brokerUrlDefault;
+		this.hostnameDefault = hostnameDefault==null?"":hostnameDefault;
+		this.portDefault = portDefault==null?"":portDefault;
 		this.title = title;
 	}
 
@@ -54,25 +54,18 @@ public class MqttUsernamePasswordDialog extends Dialog {
 		GridLayout layout = (GridLayout) comp.getLayout();
 		layout.numColumns = 2;
 
-		Label brokerUrlLabel = new Label(comp, SWT.RIGHT);
-		brokerUrlLabel.setText("Broker URL: ");
-		brokerUrlField = new Text(comp, SWT.SINGLE);
-		if (brokerUrlDefault != null)
-			brokerUrlField.setText(brokerUrlDefault);
+		Label hostnameLabel = new Label(comp, SWT.RIGHT);
+		hostnameLabel.setText("Hostname: ");
+		hostnameField = new Text(comp, SWT.SINGLE);
+		hostnameField.setText(hostnameDefault);
 
-		Label usernameLabel = new Label(comp, SWT.RIGHT);
-		usernameLabel.setText("Username: ");
+		Label portLabel = new Label(comp, SWT.RIGHT);
+		portLabel.setText("Port: ");
 
-		usernameField = new Text(comp, SWT.SINGLE);
+		portField = new Text(comp, SWT.SINGLE);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		usernameField.setLayoutData(data);
-
-		Label passwordLabel = new Label(comp, SWT.RIGHT);
-		passwordLabel.setText("Password: ");
-
-		passwordField = new Text(comp, SWT.SINGLE | SWT.PASSWORD);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		passwordField.setLayoutData(data);
+		portField.setLayoutData(data);
+		portField.setText(portDefault);
 
 		return comp;
 	}
@@ -84,41 +77,32 @@ public class MqttUsernamePasswordDialog extends Dialog {
 
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == RESET_ID) {
-			brokerUrlField.setText(this.brokerUrlDefault);
-			usernameField.setText("");
-			passwordField.setText("");
-		} else {
+			hostnameField.setText(this.hostnameDefault);
+			portField.setText(this.portDefault);
+		} else 
 			super.buttonPressed(buttonId);
-		}
 	}
 
-	private String brokerUrl;
-	private String username;
-	private String password;
+	private String hostname;
+	private String port;
 
 	@Override
 	protected void okPressed() {
-		this.brokerUrl = brokerUrlField.getText();
-		this.username = usernameField.getText();
-		this.password = passwordField.getText();
+		this.hostname = hostnameField.getText();
+		this.port = portField.getText();
 		super.okPressed();
 	}
 
-	public String getBrokerUrl() {
-		if (brokerUrl == null || "".equals(brokerUrl))
+	public String getHostname() {
+		if (hostname == null || "".equals(hostname))
 			return null;
-		return brokerUrl;
+		return hostname;
 	}
 
-	public String getUsername() {
-		if (username == null || "".equals(username))
+	public String getPort() {
+		if (port == null || "".equals(port))
 			return null;
-		return username;
+		return port;
 	}
 
-	public String getPassword() {
-		if (password == null || "".equals(password))
-			return null;
-		return password;
-	}
 }

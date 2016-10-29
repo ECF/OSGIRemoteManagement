@@ -8,8 +8,6 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.framework.eclipse.ui;
 
-import java.net.URL;
-
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.EndpointDescription;
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.EndpointDescriptionReader;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -63,11 +61,9 @@ public class Activator extends AbstractUIPlugin {
 		this.context = null;
 	}
 
-	public EndpointDescription getEndpointDescription(String fileName) throws Exception {
-		URL url = Activator.getDefault().getBundle().getEntry(fileName);
-		org.osgi.service.remoteserviceadmin.EndpointDescription[] eds = reader
-				.readEndpointDescriptions(url.openStream());
-		return (EndpointDescription) eds[0];
+	public EndpointDescription[] getEndpointDescriptions(String edefFilename) throws Exception {
+		return (EndpointDescription[]) reader
+				.readEndpointDescriptions(Activator.getDefault().getBundle().getEntry(edefFilename).openStream());
 	}
 
 	public RemoteServiceAdmin getRSA() {

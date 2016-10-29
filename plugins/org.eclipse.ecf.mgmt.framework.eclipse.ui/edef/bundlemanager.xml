@@ -33,4 +33,38 @@
       </array>
     </property>
   </endpoint-description>
+    <endpoint-description>
+    <property name="ecf.endpoint.id" value-type="String" value="ecftcp://localhost:3289/server"/>
+    <property name="ecf.endpoint.id.ns" value-type="String" value="org.eclipse.ecf.core.identity.StringID"/>
+    <property name="ecf.endpoint.ts" value-type="Long" value="1477774406910"/>
+    <property name="ecf.exported.async.interfaces" value-type="String" value="*"/>
+    <property name="ecf.rsvc.id" value-type="Long" value="0"/>
+    <property name="endpoint.framework.uuid" value-type="String" value="10f549b6-199e-0016-1f70-eca3775bba25"/>
+    <property name="endpoint.id" value-type="String" value="b6b436a1-8fd5-430a-ad5e-27d9cac798fd"/>
+    <property name="endpoint.package.version.org.eclipse.ecf.mgmt.framework" value-type="String" value="1.0.0"/>
+    <property name="endpoint.service.id" value-type="Long" value="0"/>
+    <property name="objectClass" value-type="String">
+      <array>
+        <value>org.eclipse.ecf.mgmt.framework.IServiceManager</value>
+      </array>
+    </property>
+    <property name="remote.configs.supported" value-type="String">
+      <array>
+        <value>ecf.generic.server</value>
+      </array>
+    </property>
+    <property name="remote.intents.supported" value-type="String">
+      <array>
+        <value>passByValue</value>
+        <value>exactlyOnce</value>
+        <value>ordered</value>
+      </array>
+    </property>
+    <property name="service.imported" value-type="String" value="true"/>
+    <property name="service.imported.configs" value-type="String">
+      <array>
+        <value>ecf.generic.server</value>
+      </array>
+    </property>
+  </endpoint-description>
 </endpoint-descriptions>

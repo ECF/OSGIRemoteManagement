@@ -8,6 +8,8 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.framework.eclipse.ui.services;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -16,9 +18,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.function.Supplier;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ecf.core.IContainer;
 import org.eclipse.ecf.core.identity.ID;
@@ -28,7 +32,8 @@ import org.eclipse.ecf.mgmt.consumer.util.RemoteServiceHolder;
 import org.eclipse.ecf.mgmt.framework.BundleMTO;
 import org.eclipse.ecf.mgmt.framework.IBundleManagerAsync;
 import org.eclipse.ecf.mgmt.framework.eclipse.ui.Activator;
-import org.eclipse.ecf.mgmt.framework.eclipse.ui.MqttUsernamePasswordDialog;
+import org.eclipse.ecf.mgmt.framework.eclipse.ui.EcfTcpConnectDialog;
+import org.eclipse.ecf.mgmt.framework.eclipse.ui.MqttConnectDialog;
 import org.eclipse.ecf.mgmt.framework.eclipse.ui.RemoteBundleManagerComponent;
 import org.eclipse.ecf.mgmt.framework.eclipse.ui.RemoteServiceManagerComponent;
 import org.eclipse.ecf.mgmt.framework.eclipse.ui.services.model.RemoteBundleManagerContentProvider;
@@ -50,6 +55,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewSite;
@@ -64,7 +70,8 @@ public class RemoteBundlesView extends AbstractBundlesView {
 	}
 
 	private Action refreshAction;
-	private Action connectAction;
+	private Action mqttConnectAction;
+	private Action ecftcpConnectAction;
 	private Action disconnectAction;
 
 	private List<ImportRegistration> regs = Collections.synchronizedList(new ArrayList<ImportRegistration>());
@@ -72,9 +79,28 @@ public class RemoteBundlesView extends AbstractBundlesView {
 	void showException(String title, String message, Throwable e) {
 		IViewSite vs = getViewSite();
 		if (vs != null) {
-			ErrorDialog.openError(vs.getShell(), title, message,
-					new Status(IStatus.ERROR, "org.eclipse.ecf.mgmt.framework.eclipse.ui", message, e));
-			e.printStackTrace();
+			final Shell s = vs.getShell();
+			if (s != null) {
+				s.getDisplay().asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						if (e instanceof CompletionException) {
+							Throwable t = e.getCause().getCause();
+						    StringWriter sw = new StringWriter();
+						    t.printStackTrace(new PrintWriter(sw));
+						    final String trace = sw.toString();
+						    List<Status> childStatuses = new ArrayList<>();
+						    for (String line : trace.split(System.getProperty("line.separator"))) 
+						        childStatuses.add(new Status(IStatus.ERROR, Activator.PLUGIN_ID, line));
+							ErrorDialog.openError(s,  title, message, new MultiStatus(Activator.PLUGIN_ID, IStatus.ERROR,
+						            childStatuses.toArray(new Status[] {}),
+						            t.getLocalizedMessage(), t));
+						} else
+							ErrorDialog.openError(s, title, message,
+									new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getLocalizedMessage()));
+					}
+				});
+			}
 		}
 	}
 
@@ -89,55 +115,106 @@ public class RemoteBundlesView extends AbstractBundlesView {
 			};
 		};
 		refreshAction.setText("Refresh");
-		connectAction = new Action() {
+		mqttConnectAction = new Action() {
 			public void run() {
-				MqttUsernamePasswordDialog d = new MqttUsernamePasswordDialog(getViewSite().getShell(),
-						"Connect to Mqtt Broker", "tcp://iot.eclipse.org:1883/kura/remoteservices");
+				MqttConnectDialog d = new MqttConnectDialog(getViewSite().getShell(), "Connect to MQTT Broker",
+						"tcp://iot.eclipse.org:1883/kura/remoteservices");
 				if (d.open() == Window.OK) {
 					final String brokerUrl = d.getBrokerUrl();
 					final String username = d.getUsername();
 					final String password = d.getPassword();
-					CompletableFuture.supplyAsync(new Supplier<ImportRegistration>() {
+					CompletableFuture.supplyAsync(new Supplier<Collection<ImportRegistration>>() {
 						@Override
-						public ImportRegistration get() {
+						public Collection<ImportRegistration> get() {
+							Collection<ImportRegistration> results = new ArrayList<ImportRegistration>();
+							EndpointDescription[] eds = null;
 							try {
-								EndpointDescription ed = Activator.getDefault()
-										.getEndpointDescription("/edef/bundlemanager.mqtt.xml");
-								Map<String, Object> props = new HashMap<String, Object>(ed.getProperties());
-								props.put("ecf.endpoint.id", brokerUrl);
-								if (username != null && password != null) {
-									props.put("ecf.jms.mqtt.client.username", username);
-									props.put("ecf.jms.mqtt.client.password", password);
+								eds = Activator.getDefault().getEndpointDescriptions("/edef/bundlemanager.mqtt.xml");
+								for (EndpointDescription ed : eds) {
+									Map<String, Object> props = new HashMap<String, Object>(ed.getProperties());
+									props.put("ecf.endpoint.id", brokerUrl);
+									if (username != null && password != null) {
+										props.put("ecf.jms.mqtt.client.username", username);
+										props.put("ecf.jms.mqtt.client.password", password);
+									}
+									ImportRegistration reg = (ImportRegistration) getRSA()
+											.importService(new EndpointDescription(props));
+									Throwable t = reg.getException();
+									if (t != null) {
+										results.forEach(r -> r.close());
+										throw t;
+									} else
+										results.add(reg);
 								}
-								return (ImportRegistration) getRSA().importService(new EndpointDescription(props));
-							} catch (Exception e) {
-								throw new RuntimeException(e);
+							} catch (Throwable t) {
+								throw new RuntimeException("Exception importing BundleManager", t);
 							}
+							return results;
 						}
-					}).whenComplete((ir, e) -> {
-						String title = "BundleManager Import Error";
-						String message = "Error in BundleManager Import";
+					}).whenComplete((irs, e) -> {
 						if (e != null)
-							showException(title, message, e);
-						else {
-							Throwable t = ir.getException();
-							if (t != null)
-								showException(title, message, t);
-							regs.add(ir);
-						}
+							showException("MQTT BundleManager Import Error", "MQTT BundleManager Import Error", e);
+						else
+							regs.addAll(irs);
 					});
-
 				}
 			};
 		};
-		connectAction.setText("Connect to remote framework");
-		connectAction.setToolTipText("Connct to remote framework");
-		connectAction.setImageDescriptor(
+		mqttConnectAction.setText("Add Remote BundleManager via MQTT");
+		mqttConnectAction.setToolTipText("Add Remote BundleManager via MQTT");
+		mqttConnectAction.setImageDescriptor(
+				PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ADD));
+
+		ecftcpConnectAction = new Action() {
+			public void run() {
+				EcfTcpConnectDialog d = new EcfTcpConnectDialog(getViewSite().getShell(), "Connect via ECFTCP",
+						"localhost", "3289");
+				if (d.open() == Window.OK) {
+					final String hostname = d.getHostname();
+					final String port = d.getPort();
+					CompletableFuture.supplyAsync(new Supplier<Collection<ImportRegistration>>() {
+						@Override
+						public Collection<ImportRegistration> get() {
+							Collection<ImportRegistration> results = new ArrayList<ImportRegistration>();
+							EndpointDescription[] eds = null;
+							try {
+								eds = Activator.getDefault().getEndpointDescriptions("/edef/bundlemanager.xml");
+								for (EndpointDescription ed : eds) {
+									Map<String, Object> props = new HashMap<String, Object>(ed.getProperties());
+									props.put("ecf.endpoint.id", "ecftcp://" + hostname + ":" + port + "/server");
+									ImportRegistration reg = (ImportRegistration) getRSA()
+											.importService(new EndpointDescription(props));
+									Throwable t = reg.getException();
+									if (t != null) {
+										results.forEach(r -> r.close());
+										throw t;
+									} else
+										results.add(reg);
+								}
+							} catch (Throwable t) {
+								throw new RuntimeException("Exception importing BundleManager", t);
+							}
+							return results;
+						}
+					}).whenComplete((irs, e) -> {
+						if (e != null)
+							showException("Import Error", "ECFTCP BundleManager Import Error", e);
+						else
+							regs.addAll(irs);
+					});
+				}
+			};
+		};
+		ecftcpConnectAction.setText("Add Remote BundleManager via ECFTCP");
+		ecftcpConnectAction.setToolTipText("Add RemoteBundle Manager via ECFTCP");
+		ecftcpConnectAction.setImageDescriptor(
 				PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ADD));
 
 		IActionBars bars = getViewSite().getActionBars();
-		bars.getMenuManager().add(connectAction);
-		bars.getToolBarManager().add(connectAction);
+		bars.getMenuManager().add(mqttConnectAction);
+		bars.getToolBarManager().add(mqttConnectAction);
+		bars.getMenuManager().add(ecftcpConnectAction);
+		bars.getToolBarManager().add(ecftcpConnectAction);
 		disconnectAction = new Action() {
 			public void run() {
 				RemoteBundleManagerNode node = getSelectedRSManagerNode();
