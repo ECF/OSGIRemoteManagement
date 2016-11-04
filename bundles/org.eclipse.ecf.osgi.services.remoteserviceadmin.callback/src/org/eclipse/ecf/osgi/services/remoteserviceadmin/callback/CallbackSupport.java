@@ -28,7 +28,7 @@ import org.osgi.service.remoteserviceadmin.RemoteServiceAdmin;
 
 public class CallbackSupport {
 
-	public static final String ECF_RSA_PROP_PREFIX = "ecf.rsa.";
+	public static final String ECF_RSA_PROP_PREFIX = "ecf.x.rsa.";
 	
 	private RemoteServiceAdmin rsa;
 	private IContainerManager containerManager;
