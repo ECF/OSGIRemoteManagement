@@ -15,6 +15,7 @@ Import-Package: org.eclipse.ecf.core;version="3.0.0",
  org.eclipse.ecf.mgmt.framework;version="1.0.0",
  org.eclipse.ecf.mgmt.rsa;version="1.0.0",
  org.eclipse.ecf.osgi.services.remoteserviceadmin,
+ org.eclipse.ecf.osgi.services.remoteserviceadmin.callback,
  org.eclipse.ecf.remoteservice;version="7.2.0",
  org.eclipse.ecf.remoteservice.ui.bundleview;version="1.0.0",
  org.eclipse.ecf.remoteservice.ui.bundleview.model;version="1.0.0",
@@ -25,4 +26,6 @@ Import-Package: org.eclipse.ecf.core;version="3.0.0",
  org.osgi.service.remoteserviceadmin;version="1.1.0"
 Bundle-Localization: plugin
 Service-Component: OSGI-INF/servicemanagers.xml,
+ OSGI-INF/org.eclipse.ecf.mgmt.framework.eclipse.ui.BundleEventHandler.xml,
  OSGI-INF/bundlemanagers.xml
+ 

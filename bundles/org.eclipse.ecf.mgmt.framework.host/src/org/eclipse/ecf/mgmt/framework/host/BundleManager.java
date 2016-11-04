@@ -181,7 +181,6 @@ public class BundleManager extends AbstractManager implements IBundleManager {
 	}
 	
 	protected void fireBundleChangedEvent(final BundleEvent event) {
-		System.out.println("fireBundleChangedEvent event="+event);
 		List<IBundleEventHandlerAsync> notify = null;
 		synchronized (behs) {
 			notify = new ArrayList<IBundleEventHandlerAsync>(behs);

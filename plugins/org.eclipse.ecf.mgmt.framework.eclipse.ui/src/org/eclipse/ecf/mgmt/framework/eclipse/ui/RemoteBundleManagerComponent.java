@@ -14,10 +14,14 @@ import org.eclipse.ecf.core.identity.ID;
 import org.eclipse.ecf.mgmt.consumer.util.RemoteServiceComponent;
 import org.eclipse.ecf.mgmt.framework.IBundleEventHandler;
 import org.eclipse.ecf.mgmt.framework.IBundleManagerAsync;
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.ServiceImporterCallbackExporter;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.remoteserviceadmin.RemoteServiceAdmin;
+import org.osgi.service.remoteserviceadmin.RemoteServiceAdminEvent;
+import org.osgi.service.remoteserviceadmin.RemoteServiceAdminListener;
 
-public class RemoteBundleManagerComponent extends RemoteServiceComponent {
+public class RemoteBundleManagerComponent extends RemoteServiceComponent implements RemoteServiceAdminListener {
 
 	private ServiceReference<IBundleEventHandler> behRef;
 
@@ -27,8 +31,11 @@ public class RemoteBundleManagerComponent extends RemoteServiceComponent {
 		return instance;
 	}
 
+	private ServiceImporterCallbackExporter importer;
+	
 	public RemoteBundleManagerComponent() {
 		instance = this;
+		importer = new ServiceImporterCallbackExporter();
 	}
 
 	void bindBundleEventHandler(ServiceReference<IBundleEventHandler> ref) {
@@ -39,62 +46,48 @@ public class RemoteBundleManagerComponent extends RemoteServiceComponent {
 		this.behRef = null;
 	}
 
-	private IContainerManager cm;
-
+	public void activate(BundleContext context) throws Exception {
+		super.activate();
+		this.importer.activate(context);
+		this.importer.addCallbackForService(IBundleManagerAsync.class, behRef);
+	}
+	
+	public void deactivate() {
+		this.importer.removeCallbackForService(IBundleManagerAsync.class);
+		this.importer.deactivate();
+		super.deactivate();
+	}
+	
+	public IContainer getContainerForID(ID id) {
+		return this.importer.getContainerConnectedToID(id);
+	}
+	
 	void bindContainerManager(IContainerManager c) {
-		this.cm = c;
+		this.importer.bindContainerManager(c);
 	}
 
 	void unbindContainerManager(IContainerManager c) {
-		this.cm = null;
+		this.importer.unbindContainerManager(c);
 	}
 
-	private RemoteServiceAdmin localRSA;
-
 	void bindRemoteServiceAdmin(RemoteServiceAdmin rsa) {
-		this.localRSA = rsa;
+		this.importer.bindRemoteServiceAdmin(rsa);
 	}
 
 	void unbindRemoteServiceAdmin(RemoteServiceAdmin rsa) {
-		this.localRSA = null;
-	}
-
-	public IContainer getContainerForID(ID connectedID) {
-		for (IContainer c : this.cm.getAllContainers()) {
-			ID targetID = c.getConnectedID();
-			if (targetID != null && targetID.equals(connectedID))
-				return c;
-		}
-		return null;
+		this.importer.unbindRemoteServiceAdmin(rsa);
 	}
 
 	void bindBundleManagerAsync(IBundleManagerAsync bm) {
-		/*
-		IRemoteServiceProxy rsProxy = (IRemoteServiceProxy) bm;
-		ID cID = rsProxy.getRemoteServiceReference().getContainerID();
-		Hashtable<String, Object> props = new Hashtable<String, Object>();
-		props.put("service.exported.interfaces", "*");
-		props.put("ecf.exported.async.interfaces", "*");
-		props.put("service.exported.configs", "ecf.generic.client");
-		props.put("ecf.endpoint.connecttarget.id", cID.getName());
-		IContainer c = getContainerForID(cID);
-		if (c != null)
-			props.put("ecf.endpoint.idfilter.ids", new String[] { c.getID().getName() });
-
-		// Export IBundleManagerAsync service
-		Collection<ExportRegistration> regs = this.localRSA.exportService(behRef, props);
-		ExportRegistration reg = regs.iterator().next();
-		if (reg.getException() == null) {
-		*/
-			addServiceHolder(IBundleManagerAsync.class, bm);
-		//}
+		addServiceHolder(IBundleManagerAsync.class, bm);
 	}
 
-	/*
-	 * void bindBundleManagerAsync(IBundleManagerAsync bm) {
-	 * addServiceHolder(IBundleManagerAsync.class, bm); }
-	 */
 	void unbindBundleManagerAsync(IBundleManagerAsync bm) {
 		removeServiceHolder(IBundleManagerAsync.class, bm);
+	}
+
+	@Override
+	public void remoteAdminEvent(RemoteServiceAdminEvent event) {
+		this.importer.remoteAdminEvent(event);
 	}
 }

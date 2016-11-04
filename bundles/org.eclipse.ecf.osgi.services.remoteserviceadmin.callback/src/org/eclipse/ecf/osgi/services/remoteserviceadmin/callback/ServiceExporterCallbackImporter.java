@@ -1,16 +1,21 @@
-package org.eclipse.ecf.mgmt.kura.host;
+/*******************************************************************************
+ * Copyright (c) 2016 Composent, Inc. All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: Scott Lewis - initial API and implementation
+ ******************************************************************************/
+package org.eclipse.ecf.osgi.services.remoteserviceadmin.callback;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import org.eclipse.ecf.core.IContainer;
-import org.eclipse.ecf.core.IContainerManager;
 import org.eclipse.ecf.core.identity.ID;
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.EndpointDescription;
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteConstants;
-import org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin;
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin.ExportReference;
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin.ImportRegistration;
 import org.eclipse.ecf.remoteservice.IRemoteServiceContainerAdapter;
@@ -20,13 +25,14 @@ import org.eclipse.ecf.remoteservice.IRemoteServiceReference;
 import org.eclipse.ecf.remoteservice.events.IRemoteServiceEvent;
 import org.eclipse.ecf.remoteservice.events.IRemoteServiceRegisteredEvent;
 import org.eclipse.ecf.remoteservice.events.IRemoteServiceUnregisteredEvent;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.remoteserviceadmin.RemoteServiceAdminEvent;
 import org.osgi.service.remoteserviceadmin.RemoteServiceAdminListener;
 
-public class ServiceExporterCallbackImporter implements RemoteServiceAdminListener {
-	private RemoteServiceAdmin rsa;
-	private IContainerManager containerManager;
+public class ServiceExporterCallbackImporter extends CallbackSupport implements RemoteServiceAdminListener {
+	
 	private Map<ServiceReference<?>, ExportedService> exportedServices;
 
 	protected class ExportedService {
@@ -47,7 +53,7 @@ public class ServiceExporterCallbackImporter implements RemoteServiceAdminListen
 		}
 
 		void exportViaContainer(ID containerID) {
-			exportingContainer = containerManager.getContainer(containerID);
+			exportingContainer = getContainerManager().getContainer(containerID);
 			IRemoteServiceContainerAdapter ca = getRSAdapter();
 			if (ca != null)
 				ca.addRemoteServiceListener(listener);
@@ -64,41 +70,65 @@ public class ServiceExporterCallbackImporter implements RemoteServiceAdminListen
 			@Override
 			public void handleServiceEvent(IRemoteServiceEvent event) {
 				if (Arrays.asList(event.getClazzes()).contains(callbackClass.getName())) 
-					if (event instanceof IRemoteServiceRegisteredEvent) 
-						handleRemoteServiceRegisteredEvent(event.getLocalContainerID(), event.getReference());
-					else if (event instanceof IRemoteServiceUnregisteredEvent) 
-						handleRemoteServiceUnregisteredEvent(event.getLocalContainerID(), event.getReference());
+					if (event instanceof IRemoteServiceRegisteredEvent)
+						synchronized (exportedServices) {
+							ExportedService es = null;
+							for(ExportedService c: exportedServices.values())
+								if (c.exportingContainer != null && c.exportingContainer.getID().equals(event.getLocalContainerID()) && c.importRegistration == null) {
+									es = c;
+									break;
+								}
+							if (es != null) 
+								try {
+									ImportRegistration ir = (ImportRegistration) getRSA().importService(new EndpointDescription(createImportProperties(es, event.getReference())));
+									if (ir == null)
+										throw new RuntimeException("Callback import registration returned is null");
+									Throwable t = ir.getException();
+									if (t != null)
+										throw new RuntimeException("Exception importing callback service",t);
+								} catch (Exception e) {
+									logException("Exception in callback rsa import",e);
+								}
+						}
+					else if (event instanceof IRemoteServiceUnregisteredEvent)
+						synchronized (exportedServices) {
+							ExportedService es = null;
+							for(ExportedService c: exportedServices.values())
+								if (c.exportingContainer != null && c.exportingContainer.getID().equals(event.getLocalContainerID()) && c.importRegistration != null) {
+									es = c;
+									break;
+								}
+							if (es != null) 
+								try {
+									es.importRegistration.close();
+									es.importRegistration = null;
+								} catch (Exception e) {
+									logException("Exception in callback rsa import",e);
+								}
+						}
 			}
 		};
 
 	}
-
-	void handleRemoteServiceRegisteredEvent(ID localContainerID, IRemoteServiceReference ref) {
-		synchronized (exportedServices) {
-			ExportedService es = null;
-			for(ExportedService c: exportedServices.values())
-				if (c.exportingContainer != null && c.exportingContainer.getID().equals(localContainerID) && c.importRegistration == null) {
-					es = c;
-					break;
-				}
-			if (es != null) 
-				try {
-					ImportRegistration ir = (ImportRegistration) rsa.importService(new EndpointDescription(createImportProperties(es, ref)));
-					if (ir == null)
-						throw new RuntimeException("Callback import registration returned is null");
-					Throwable t = ir.getException();
-					if (t != null)
-						throw new RuntimeException("Exception importing callback service",t);
-				} catch (Exception e) {
-					logException("Exception in callback rsa import",e);
-				}
-		}
+	
+	public void addExportedService(ServiceReference<?> ref, Class<?> clazz) {
+		this.exportedServices.put(ref, new ExportedService(clazz));
 	}
 
-	protected void logException(String string, Throwable e) {
-		System.out.println(string);
-		if (e != null)
-			e.printStackTrace();
+	private ServiceRegistration<RemoteServiceAdminListener> listenerReg;
+	
+	public void activate(BundleContext bundleContext) throws Exception {
+		super.activate(bundleContext);
+		exportedServices = new HashMap<ServiceReference<?>,ExportedService>();
+		listenerReg = bundleContext.registerService(RemoteServiceAdminListener.class,this,null);
+	}
+	
+	public void deactivate() {
+		if (listenerReg != null) {
+			listenerReg.unregister();
+			listenerReg = null;
+		}
+		super.deactivate();
 	}
 
 	protected Map<String, Object> createImportProperties(ExportedService es, IRemoteServiceReference rsRef) {
@@ -112,24 +142,15 @@ public class ServiceExporterCallbackImporter implements RemoteServiceAdminListen
 		result.put("ecf.endpoint.idfilter.ids", new String[] { rcID.getName() });
 		result.put(org.eclipse.ecf.remoteservice.Constants.SERVICE_ID, rsID.getContainerRelativeID());
 		result.put(org.osgi.service.remoteserviceadmin.RemoteConstants.SERVICE_IMPORTED, "true");
-		result.put(org.osgi.service.remoteserviceadmin.RemoteConstants.ENDPOINT_ID, UUID.randomUUID().toString());
-		
-		
-		result.put(RemoteConstants.ENDPOINT_TIMESTAMP, System.currentTimeMillis());
 		result.put(RemoteConstants.SERVICE_EXPORTED_ASYNC_INTERFACES, "*");
-		result.put(org.osgi.service.remoteserviceadmin.RemoteConstants.ENDPOINT_FRAMEWORK_UUID,
-				UUID.randomUUID().toString());
-		result.put(org.osgi.service.remoteserviceadmin.RemoteConstants.ENDPOINT_PACKAGE_VERSION_
-				+ "org.eclipse.ecf.mgmt.framework", "1.0.0");
-		result.put(org.osgi.service.remoteserviceadmin.RemoteConstants.REMOTE_CONFIGS_SUPPORTED,
-				new String[] { "ecf.generic.client" });
-		result.put(org.osgi.service.remoteserviceadmin.RemoteConstants.REMOTE_INTENTS_SUPPORTED,
-				new String[] { "passByValue,exactlyOnce,ordered" });
-		result.put(org.osgi.service.remoteserviceadmin.RemoteConstants.SERVICE_IMPORTED_CONFIGS,
-				new String[] { "ecf.generic.client" });
-
+		
+		for(String key: rsRef.getPropertyKeys()) 
+			if (key.startsWith(ECF_RSA_PROP_PREFIX)) 
+				result.put(key.substring(ECF_RSA_PROP_PREFIX.length()), rsRef.getProperty(key));
+		
 		return result;
 	}
+
 
 	void handleRemoteServiceUnregisteredEvent(ID localContainerID, IRemoteServiceReference ref) {
 		synchronized (exportedServices) {
@@ -147,30 +168,6 @@ public class ServiceExporterCallbackImporter implements RemoteServiceAdminListen
 					logException("Exception in callback rsa import",e);
 				}
 		}
-	}
-
-	protected void bindRemoteServiceAdmin(RemoteServiceAdmin rsa) {
-		this.rsa = rsa;
-	}
-
-	protected void unbindRemoteServiceAdmin(RemoteServiceAdmin rsa) {
-		this.rsa = null;
-	}
-
-	protected RemoteServiceAdmin getRSA() {
-		return rsa;
-	}
-
-	protected void bindContainerManager(IContainerManager cm) {
-		this.containerManager = cm;
-	}
-
-	protected void unbindContainerManager(IContainerManager cm) {
-		this.containerManager = null;
-	}
-
-	protected IContainerManager getContainerManager() {
-		return this.containerManager;
 	}
 
 	@Override
