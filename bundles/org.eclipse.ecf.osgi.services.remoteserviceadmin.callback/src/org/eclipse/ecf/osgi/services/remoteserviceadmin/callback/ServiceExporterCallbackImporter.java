@@ -128,6 +128,10 @@ public class ServiceExporterCallbackImporter extends CallbackSupport implements 
 			listenerReg.unregister();
 			listenerReg = null;
 		}
+		if (exportedServices != null) {
+			exportedServices.clear();
+			exportedServices = null;
+		}
 		super.deactivate();
 	}
 
