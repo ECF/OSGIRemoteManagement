@@ -14,9 +14,9 @@ public class RemoteServiceEvent {
 	public static final int REMOVED = 2;
 	
 	private final int eventType;
-	private final RemoteServiceHolder holder;
+	private final RemoteServiceHolder<?> holder;
 	
-	public RemoteServiceEvent(int type, RemoteServiceHolder holder) {
+	public RemoteServiceEvent(int type, RemoteServiceHolder<?> holder) {
 		this.eventType = type;
 		this.holder = holder;
 	}
@@ -25,7 +25,13 @@ public class RemoteServiceEvent {
 		return this.eventType;
 	}
 	
-	public RemoteServiceHolder getRemoteServiceHolder() {
+	public RemoteServiceHolder<?> getRemoteServiceHolder() {
 		return this.holder;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> RemoteServiceHolder<T> getRemoteServiceHolder(Class<T> clazz) {
+		Class<?> hc = this.holder.getServiceClass();
+		return (clazz.equals(hc))?(RemoteServiceHolder<T>) this.holder:null;
 	}
 }

@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.ecf.mgmt.framework.IBundleManagerAsync;
+import org.eclipse.ecf.remoteservice.IRemoteServiceID;
 import org.eclipse.ecf.remoteservice.IRemoteServiceReference;
 import org.eclipse.ecf.remoteservice.ui.bundleview.model.BundlesRootNode;
 
@@ -37,6 +38,16 @@ public class RemoteBundleManagerRootNode extends BundlesRootNode {
 		}
 	}
 
+	public RemoteBundleManagerNode getBundleManagerNode(IRemoteServiceID rsID) {
+		synchronized (managers) {
+			for(IRemoteServiceReference rsRef: managers.keySet()) {
+				if (rsID.equals(rsRef.getID()))
+					return managers.get(rsRef);
+			}
+			return null;
+		}
+	}
+	
 	public void removeBundleManagerNode(IRemoteServiceReference rsRef) {
 		synchronized (managers) {
 			RemoteBundleManagerNode managerNode = managers.remove(rsRef);

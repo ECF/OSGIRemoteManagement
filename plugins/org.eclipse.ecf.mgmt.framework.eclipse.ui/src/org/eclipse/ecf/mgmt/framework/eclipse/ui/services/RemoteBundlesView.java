@@ -29,10 +29,13 @@ import org.eclipse.ecf.core.identity.ID;
 import org.eclipse.ecf.mgmt.consumer.util.IRemoteServiceListener;
 import org.eclipse.ecf.mgmt.consumer.util.RemoteServiceEvent;
 import org.eclipse.ecf.mgmt.consumer.util.RemoteServiceHolder;
+import org.eclipse.ecf.mgmt.framework.BundleEventMTO;
 import org.eclipse.ecf.mgmt.framework.BundleMTO;
 import org.eclipse.ecf.mgmt.framework.IBundleManagerAsync;
 import org.eclipse.ecf.mgmt.framework.eclipse.ui.Activator;
+import org.eclipse.ecf.mgmt.framework.eclipse.ui.BundleEventHandler;
 import org.eclipse.ecf.mgmt.framework.eclipse.ui.EcfTcpConnectDialog;
+import org.eclipse.ecf.mgmt.framework.eclipse.ui.IBundleEventHandlerDelegate;
 import org.eclipse.ecf.mgmt.framework.eclipse.ui.MqttConnectDialog;
 import org.eclipse.ecf.mgmt.framework.eclipse.ui.RemoteBundleManagerComponent;
 import org.eclipse.ecf.mgmt.framework.eclipse.ui.RemoteServiceManagerComponent;
@@ -259,21 +262,49 @@ public class RemoteBundlesView extends AbstractBundlesView {
 			TreeViewer v = getTreeViewer();
 			if (v != null && !v.getControl().isDisposed()) {
 				int type = e.getType();
-				RemoteServiceHolder h = e.getRemoteServiceHolder();
-				if (type == RemoteServiceEvent.ADDED)
-					addRemoteBundleManager((IBundleManagerAsync) h.getRemoteService(), h.getRemoteServiceReference());
-				else if (type == RemoteServiceEvent.REMOVED)
-					removeRemoteServiceManager(h.getRemoteServiceReference());
+				RemoteServiceHolder<IBundleManagerAsync> h = e.getRemoteServiceHolder(IBundleManagerAsync.class);
+				if (type == RemoteServiceEvent.ADDED) {
+					IRemoteServiceReference ref = h.getRemoteServiceReference();
+					addRemoteBundleManager(h.getRemoteService(), ref);
+					BundleEventHandler.addDelegate(ref.getID(),new BundleEventHandlerDelegate());
+				}	
+				else if (type == RemoteServiceEvent.REMOVED) {
+					IRemoteServiceReference ref = h.getRemoteServiceReference();
+					removeRemoteBundleManager(ref);
+					BundleEventHandler.removeDelegate(ref.getID());
+				}
 			}
 		}
 
 	};
 
+	class BundleEventHandlerDelegate implements IBundleEventHandlerDelegate {
+		@Override
+		public void handleBundleEvent(final IRemoteServiceID rsID, final BundleEventMTO bundleEvent) {
+			final TreeViewer v = getTreeViewer();
+			if (v != null && !v.getControl().isDisposed()) {
+				v.getControl().getDisplay().asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						RemoteBundleManagerNode node = getRootNode().getBundleManagerNode(rsID);
+						if (node != null) {
+							BundleNode bundleNode = node.getBundleNode(bundleEvent.getBundleId());
+							if (bundleNode != null) {
+								refresh(node);
+							}
+						}
+					}
+				});
+			}
+		}
+	};
+	
 	@Override
 	public void dispose() {
 		regs.forEach(reg -> {
 			reg.close();
 		});
+		BundleEventHandler.removeDelegates();
 		RemoteServiceManagerComponent.getInstance().removeListener(rsListener);
 		super.dispose();
 	}
@@ -282,7 +313,7 @@ public class RemoteBundlesView extends AbstractBundlesView {
 		return (RemoteBundleManagerRootNode) getContentProvider().getBundlesRoot();
 	}
 
-	protected void removeRemoteServiceManager(final IRemoteServiceReference rsRef) {
+	protected void removeRemoteBundleManager(final IRemoteServiceReference rsRef) {
 		TreeViewer viewer = getTreeViewer();
 		if (viewer == null)
 			return;
@@ -369,10 +400,13 @@ public class RemoteBundlesView extends AbstractBundlesView {
 
 	@Override
 	protected void initializeBundles() {
-		Collection<RemoteServiceHolder> existing = RemoteBundleManagerComponent.getInstance().addListener(rsListener,
+		Collection<RemoteServiceHolder<IBundleManagerAsync>> existing = RemoteBundleManagerComponent.getInstance().addListener(rsListener,
 				IBundleManagerAsync.class);
-		for (RemoteServiceHolder rh : existing)
-			addRemoteBundleManager((IBundleManagerAsync) rh.getRemoteService(), rh.getRemoteServiceReference());
+		for (RemoteServiceHolder<IBundleManagerAsync> rh : existing) {
+			IRemoteServiceReference rsReference = rh.getRemoteServiceReference();
+			addRemoteBundleManager(rh.getRemoteService(), rsReference);
+			BundleEventHandler.addDelegate(rsReference.getID(),new BundleEventHandlerDelegate());
+		}
 	}
 
 	private RemoteBundleManagerNode findRemoteBundleManagerForBundleNode(BundleNode bn) {

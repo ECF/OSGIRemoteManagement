@@ -11,6 +11,7 @@ package org.eclipse.ecf.mgmt.framework.eclipse.ui.services.model;
 import org.eclipse.ecf.mgmt.framework.IBundleManagerAsync;
 import org.eclipse.ecf.remoteservice.IRemoteServiceReference;
 import org.eclipse.ecf.remoteservice.ui.bundleview.model.AbstractBundlesNode;
+import org.eclipse.ecf.remoteservice.ui.bundleview.model.BundleNode;
 
 public class RemoteBundleManagerNode extends AbstractBundlesNode {
 
@@ -36,5 +37,16 @@ public class RemoteBundleManagerNode extends AbstractBundlesNode {
 
 	public String getName() {
 		return getManagerContainer() + ":" + this.managerRef.getID().getContainerRelativeID();
+	}
+	
+	public BundleNode getBundleNode(long bundleId) {
+		for(AbstractBundlesNode bn: getChildren()) {
+			if (bn instanceof BundleNode) {
+				BundleNode bundleNode = (BundleNode) bn;
+				if (bundleNode.getId() == bundleId)
+					return bundleNode;
+			}
+		}
+		return null;
 	}
 }

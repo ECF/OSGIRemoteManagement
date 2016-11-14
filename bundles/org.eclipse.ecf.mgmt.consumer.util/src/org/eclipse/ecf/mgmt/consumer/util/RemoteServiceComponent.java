@@ -21,12 +21,12 @@ import org.eclipse.ecf.core.identity.ID;
 
 public class RemoteServiceComponent {
 
-	private Map<ID, List<RemoteServiceHolder>> map;
+	private Map<ID, List<RemoteServiceHolder<?>>> map;
 	private Map<IRemoteServiceListener, Class<?>> listeners;
 	private Object lock = new Object();
 
 	public void activate() throws Exception {
-		this.map = new HashMap<ID, List<RemoteServiceHolder>>();
+		this.map = new HashMap<ID, List<RemoteServiceHolder<?>>>();
 		this.listeners = new HashMap<IRemoteServiceListener, Class<?>>();
 	}
 
@@ -41,11 +41,11 @@ public class RemoteServiceComponent {
 		}
 	}
 
-	public void addServiceHolder(RemoteServiceHolder holder) {
+	public void addServiceHolder(RemoteServiceHolder<?> holder) {
 		Map<IRemoteServiceListener, Class<?>> lcopy = null;
 		ID remoteID = holder.getRemoteContainerID();
 		synchronized (lock) {
-			List<RemoteServiceHolder> holderList = null;
+			List<RemoteServiceHolder<?>> holderList = null;
 			for (ID id : map.keySet()) {
 				if (remoteID.equals(id)) {
 					holderList = map.get(id);
@@ -53,7 +53,7 @@ public class RemoteServiceComponent {
 				}
 			}
 			if (holderList == null)
-				holderList = new ArrayList<RemoteServiceHolder>();
+				holderList = new ArrayList<RemoteServiceHolder<?>>();
 			holderList.add(holder);
 			map.put(remoteID, holderList);
 			lcopy = new HashMap<IRemoteServiceListener, Class<?>>(listeners);
@@ -63,18 +63,18 @@ public class RemoteServiceComponent {
 
 	public <T> boolean addServiceHolder(Class<T> clazz, T service) {
 		if (RemoteServiceHolder.isRemoteServiceProxy(service)) {
-			addServiceHolder(new RemoteServiceHolder(clazz, service));
+			addServiceHolder(new RemoteServiceHolder<T>(clazz, service));
 			return true;
 		}
 		return false;
 	}
 
-	public boolean removeServiceHolder(RemoteServiceHolder holder) {
+	public boolean removeServiceHolder(RemoteServiceHolder<?> holder) {
 		Map<IRemoteServiceListener, Class<?>> lcopy = null;
 		ID remoteID = holder.getRemoteContainerID();
 		boolean removed = false;
 		synchronized (lock) {
-			List<RemoteServiceHolder> holderList = null;
+			List<RemoteServiceHolder<?>> holderList = null;
 			for (Iterator<ID> i = map.keySet().iterator(); i.hasNext();) {
 				ID next = i.next();
 				if (remoteID.equals(next))
@@ -85,7 +85,7 @@ public class RemoteServiceComponent {
 				}
 				if (holderList.size() == 0)
 					i.remove();
-				holderList = new ArrayList<RemoteServiceHolder>();
+				holderList = new ArrayList<RemoteServiceHolder<?>>();
 				lcopy = new HashMap<IRemoteServiceListener, Class<?>>(listeners);
 			}
 		}
@@ -96,18 +96,19 @@ public class RemoteServiceComponent {
 
 	public <T> boolean removeServiceHolder(Class<T> clazz, T service) {
 		if (RemoteServiceHolder.isRemoteServiceProxy(service))
-			return removeServiceHolder(new RemoteServiceHolder(clazz, service));
+			return removeServiceHolder(new RemoteServiceHolder<T>(clazz, service));
 		return false;
 	}
 
-	public Collection<RemoteServiceHolder> addListener(IRemoteServiceListener l, Class<?> clazz) {
-		Collection<RemoteServiceHolder> results = new ArrayList<RemoteServiceHolder>();
+	@SuppressWarnings("unchecked")
+	public <T> Collection<RemoteServiceHolder<T>> addListener(IRemoteServiceListener l, Class<T> clazz) {
+		Collection<RemoteServiceHolder<T>> results = new ArrayList<RemoteServiceHolder<T>>();
 		synchronized (lock) {
 			listeners.put(l, clazz);
-			for (List<RemoteServiceHolder> hl : map.values())
-				for (RemoteServiceHolder rsh : hl)
+			for (List<RemoteServiceHolder<?>> hl : map.values())
+				for (RemoteServiceHolder<?> rsh : hl)
 					if (rsh.getServiceClass().equals(clazz))
-						results.add(rsh);
+						results.add((RemoteServiceHolder<T>) rsh);
 		}
 		return results;
 	}
@@ -126,7 +127,7 @@ public class RemoteServiceComponent {
 	}
 
 	void fireRemoteServicesEvent(Map<IRemoteServiceListener, Class<?>> lcopy, final int type,
-			final RemoteServiceHolder holder) {
+			final RemoteServiceHolder<?> holder) {
 		Class<?> clazz = holder.getServiceClass();
 		for (final IRemoteServiceListener l : lcopy.keySet())
 			if (clazz.equals(lcopy.get(l)))

@@ -110,9 +110,9 @@ public class RemoteRSAView extends AbstractRemoteServiceAdminView {
 		@Override
 		public void handleEvent(RemoteServiceEvent e) {
 			int type = e.getType();
-			RemoteServiceHolder h = e.getRemoteServiceHolder();
+			RemoteServiceHolder<IRemoteServiceAdminManagerAsync> h = e.getRemoteServiceHolder(IRemoteServiceAdminManagerAsync.class);
 			if (type == RemoteServiceEvent.ADDED) 
-				refreshBoth((IRemoteServiceAdminManagerAsync) h.getRemoteService(), h.getRemoteServiceReference());
+				refreshBoth(h.getRemoteService(), h.getRemoteServiceReference());
 			else if (type == RemoteServiceEvent.REMOVED) {
 				if (viewer == null)
 					return;
@@ -135,7 +135,7 @@ public class RemoteRSAView extends AbstractRemoteServiceAdminView {
 		super.dispose();
 	}
 
-	private Collection<RemoteServiceHolder> initialRemoteServiceHolders;
+	private Collection<RemoteServiceHolder<IRemoteServiceAdminManagerAsync>> initialRemoteServiceHolders;
 	
 	@Override
 	protected void setupListeners() {
@@ -145,8 +145,8 @@ public class RemoteRSAView extends AbstractRemoteServiceAdminView {
 	@Override
 	protected void updateModel() {
 		if (initialRemoteServiceHolders != null) {
-			for(RemoteServiceHolder h: initialRemoteServiceHolders) 
-				refreshBoth((IRemoteServiceAdminManagerAsync) h.getRemoteService(), h.getRemoteServiceReference());
+			for(RemoteServiceHolder<IRemoteServiceAdminManagerAsync> h: initialRemoteServiceHolders) 
+				refreshBoth(h.getRemoteService(), h.getRemoteServiceReference());
 			initialRemoteServiceHolders = null;
 		}
 		super.updateModel();

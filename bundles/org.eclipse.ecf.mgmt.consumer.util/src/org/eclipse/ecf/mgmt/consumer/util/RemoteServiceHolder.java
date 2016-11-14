@@ -14,13 +14,14 @@ import org.eclipse.ecf.remoteservice.IRemoteServiceID;
 import org.eclipse.ecf.remoteservice.IRemoteServiceProxy;
 import org.eclipse.ecf.remoteservice.IRemoteServiceReference;
 
-public class RemoteServiceHolder {
+public class RemoteServiceHolder<T> {
 
-	private Class<?> rsClass;
-	private Object serviceInstance;
+	private Class<T> rsClass;
+	private T serviceInstance;
 	
 	public boolean equals(Object o) {
 		if (!(o instanceof RemoteServiceHolder)) return false;
+		@SuppressWarnings("rawtypes")
 		RemoteServiceHolder other = (RemoteServiceHolder) o;
 		return this.rsClass.equals(other.rsClass) && this.serviceInstance.equals(other.serviceInstance);
 	}
@@ -29,7 +30,7 @@ public class RemoteServiceHolder {
 		return this.serviceInstance.hashCode() ^ this.getClass().hashCode();
 	}
 	
-	public RemoteServiceHolder(Class<?> clazz, Object service) {
+	public RemoteServiceHolder(Class<T> clazz, T service) {
 		this.rsClass = clazz;
 		Assert.isTrue(isRemoteServiceProxy(service));
 		this.serviceInstance = service;
@@ -39,11 +40,11 @@ public class RemoteServiceHolder {
 		return (service instanceof IRemoteServiceProxy);
 	}
 	
-	public Class<?> getServiceClass() {
+	public Class<T> getServiceClass() {
 		return rsClass;
 	}
 	
-	public Object getRemoteService() {
+	public T getRemoteService() {
 		return serviceInstance;
 	}
 	

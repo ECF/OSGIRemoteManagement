@@ -77,9 +77,9 @@ public class RemoteServicesView extends AbstractServicesView {
 		@Override
 		public void handleEvent(RemoteServiceEvent e) {
 			int type = e.getType();
-			RemoteServiceHolder h = e.getRemoteServiceHolder();
+			RemoteServiceHolder<IServiceManagerAsync> h = e.getRemoteServiceHolder(IServiceManagerAsync.class);
 			if (type == RemoteServiceEvent.ADDED)
-				addRemoteServiceManager((IServiceManagerAsync) h.getRemoteService(), h.getRemoteServiceReference());
+				addRemoteServiceManager(h.getRemoteService(), h.getRemoteServiceReference());
 			else if (type == RemoteServiceEvent.REMOVED)
 				removeRemoteServiceManager(h.getRemoteServiceReference());
 		}
@@ -151,10 +151,10 @@ public class RemoteServicesView extends AbstractServicesView {
 
 	@Override
 	protected void initializeServices() {
-		Collection<RemoteServiceHolder> existing = RemoteServiceManagerComponent.getInstance().addListener(rsListener,
+		Collection<RemoteServiceHolder<IServiceManagerAsync>> existing = RemoteServiceManagerComponent.getInstance().addListener(rsListener,
 				IServiceManagerAsync.class);
-		for (RemoteServiceHolder rh : existing)
-			addRemoteServiceManager((IServiceManagerAsync) rh.getRemoteService(), rh.getRemoteServiceReference());
+		for (RemoteServiceHolder<IServiceManagerAsync> rh : existing)
+			addRemoteServiceManager(rh.getRemoteService(), rh.getRemoteServiceReference());
 	}
 
 }

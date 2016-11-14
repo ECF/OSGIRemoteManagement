@@ -14,16 +14,16 @@ import org.eclipse.ecf.core.identity.ID;
 import org.eclipse.ecf.mgmt.consumer.util.RemoteServiceComponent;
 import org.eclipse.ecf.mgmt.framework.IBundleEventHandler;
 import org.eclipse.ecf.mgmt.framework.IBundleManagerAsync;
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin.ImportReference;
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.ICallbackRegistrar;
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.ServiceImporterCallbackExporter;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.remoteserviceadmin.RemoteServiceAdmin;
 import org.osgi.service.remoteserviceadmin.RemoteServiceAdminEvent;
 import org.osgi.service.remoteserviceadmin.RemoteServiceAdminListener;
 
 public class RemoteBundleManagerComponent extends RemoteServiceComponent implements RemoteServiceAdminListener {
-
-	private ServiceReference<IBundleEventHandler> behRef;
 
 	private static RemoteBundleManagerComponent instance;
 
@@ -38,18 +38,14 @@ public class RemoteBundleManagerComponent extends RemoteServiceComponent impleme
 		importer = new ServiceImporterCallbackExporter();
 	}
 
-	void bindBundleEventHandler(ServiceReference<IBundleEventHandler> ref) {
-		this.behRef = ref;
-	}
-
-	void unbindBundleEventHandler(ServiceReference<IBundleEventHandler> ref) {
-		this.behRef = null;
-	}
-
-	public void activate(BundleContext context) throws Exception {
+	public void activate(final BundleContext context) throws Exception {
 		super.activate();
 		this.importer.activate(context);
-		this.importer.addCallbackForService(IBundleManagerAsync.class, behRef);
+		this.importer.addServiceCallback(IBundleManagerAsync.class, new ICallbackRegistrar() {
+			@Override
+			public ServiceRegistration<?> registerCallback(ImportReference importReference) throws Exception {
+				return context.registerService(IBundleEventHandler.class, new BundleEventHandler(importReference), null);
+			}});
 	}
 	
 	public void deactivate() {
