@@ -63,6 +63,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PlatformUI;
+import org.osgi.framework.BundleEvent;
 import org.osgi.service.remoteserviceadmin.RemoteServiceAdmin;
 
 public class RemoteBundlesView extends AbstractBundlesView {
@@ -89,15 +90,14 @@ public class RemoteBundlesView extends AbstractBundlesView {
 					public void run() {
 						if (e instanceof CompletionException) {
 							Throwable t = e.getCause().getCause();
-						    StringWriter sw = new StringWriter();
-						    t.printStackTrace(new PrintWriter(sw));
-						    final String trace = sw.toString();
-						    List<Status> childStatuses = new ArrayList<>();
-						    for (String line : trace.split(System.getProperty("line.separator"))) 
-						        childStatuses.add(new Status(IStatus.ERROR, Activator.PLUGIN_ID, line));
-							ErrorDialog.openError(s,  title, message, new MultiStatus(Activator.PLUGIN_ID, IStatus.ERROR,
-						            childStatuses.toArray(new Status[] {}),
-						            t.getLocalizedMessage(), t));
+							StringWriter sw = new StringWriter();
+							t.printStackTrace(new PrintWriter(sw));
+							final String trace = sw.toString();
+							List<Status> childStatuses = new ArrayList<>();
+							for (String line : trace.split(System.getProperty("line.separator")))
+								childStatuses.add(new Status(IStatus.ERROR, Activator.PLUGIN_ID, line));
+							ErrorDialog.openError(s, title, message, new MultiStatus(Activator.PLUGIN_ID, IStatus.ERROR,
+									childStatuses.toArray(new Status[] {}), t.getLocalizedMessage(), t));
 						} else
 							ErrorDialog.openError(s, title, message,
 									new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getLocalizedMessage()));
@@ -266,9 +266,8 @@ public class RemoteBundlesView extends AbstractBundlesView {
 				if (type == RemoteServiceEvent.ADDED) {
 					IRemoteServiceReference ref = h.getRemoteServiceReference();
 					addRemoteBundleManager(h.getRemoteService(), ref);
-					BundleEventHandler.addDelegate(ref.getID(),new BundleEventHandlerDelegate());
-				}	
-				else if (type == RemoteServiceEvent.REMOVED) {
+					BundleEventHandler.addDelegate(ref.getID(), new BundleEventHandlerDelegate());
+				} else if (type == RemoteServiceEvent.REMOVED) {
 					IRemoteServiceReference ref = h.getRemoteServiceReference();
 					removeRemoteBundleManager(ref);
 					BundleEventHandler.removeDelegate(ref.getID());
@@ -286,19 +285,42 @@ public class RemoteBundlesView extends AbstractBundlesView {
 				v.getControl().getDisplay().asyncExec(new Runnable() {
 					@Override
 					public void run() {
-						RemoteBundleManagerNode node = getRootNode().getBundleManagerNode(rsID);
-						if (node != null) {
-							BundleNode bundleNode = node.getBundleNode(bundleEvent.getBundleId());
-							if (bundleNode != null) {
-								refresh(node);
-							}
+						RemoteBundleManagerNode managerNode = getRootNode().getBundleManagerNode(rsID);
+						if (managerNode != null) {
+							final long bundleId = bundleEvent.getBundleId();
+							managerNode.getBundleManager().getBundleAsync(bundleId).whenComplete((bMTO, exception) -> {
+								if (!v.getControl().isDisposed())
+									v.getControl().getDisplay().asyncExec(new Runnable() {
+										@Override
+										public void run() {
+											if (exception != null)
+												logAndShowError("Exception using remote service reference="
+														+ managerNode.getBundleManagerRef(), exception);
+											else {
+												BundleNode bundleNode = managerNode.getBundleNode(bundleId);
+												if (bundleNode != null)
+													// remove old one
+													managerNode.removeChild(bundleNode);
+												if (bundleEvent.getType() != BundleEvent.UNINSTALLED) {
+													// Create new one and add
+													managerNode.addChild(createBundleNode(bMTO.getId(),
+															bMTO.getLastModified(), bMTO.getState(),
+															bMTO.getSymbolicName(), bMTO.getVersion(),
+															bMTO.getManifest(), bMTO.getLocation()));
+												}
+												v.expandToLevel(2);
+												v.refresh();
+											}
+										}
+									});
+							});
 						}
 					}
 				});
 			}
 		}
-	};
-	
+	}
+
 	@Override
 	public void dispose() {
 		regs.forEach(reg -> {
@@ -400,12 +422,12 @@ public class RemoteBundlesView extends AbstractBundlesView {
 
 	@Override
 	protected void initializeBundles() {
-		Collection<RemoteServiceHolder<IBundleManagerAsync>> existing = RemoteBundleManagerComponent.getInstance().addListener(rsListener,
-				IBundleManagerAsync.class);
+		Collection<RemoteServiceHolder<IBundleManagerAsync>> existing = RemoteBundleManagerComponent.getInstance()
+				.addListener(rsListener, IBundleManagerAsync.class);
 		for (RemoteServiceHolder<IBundleManagerAsync> rh : existing) {
 			IRemoteServiceReference rsReference = rh.getRemoteServiceReference();
 			addRemoteBundleManager(rh.getRemoteService(), rsReference);
-			BundleEventHandler.addDelegate(rsReference.getID(),new BundleEventHandlerDelegate());
+			BundleEventHandler.addDelegate(rsReference.getID(), new BundleEventHandlerDelegate());
 		}
 	}
 
