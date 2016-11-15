@@ -115,6 +115,10 @@ public class ServiceExporterCallbackImporter extends CallbackSupport implements 
 		this.exportedServices.put(ref, new ExportedService(clazz));
 	}
 
+	public void removeExportedService(ServiceReference<?> ref) {
+		this.exportedServices.remove(ref);
+	}
+	
 	private ServiceRegistration<RemoteServiceAdminListener> listenerReg;
 	
 	public void activate(BundleContext bundleContext) throws Exception {
