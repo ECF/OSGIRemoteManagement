@@ -288,32 +288,20 @@ public class RemoteBundlesView extends AbstractBundlesView {
 						RemoteBundleManagerNode managerNode = getRootNode().getBundleManagerNode(rsID);
 						if (managerNode != null) {
 							final long bundleId = bundleEvent.getBundleId();
-							managerNode.getBundleManager().getBundleAsync(bundleId).whenComplete((bMTO, exception) -> {
-								if (!v.getControl().isDisposed())
-									v.getControl().getDisplay().asyncExec(new Runnable() {
-										@Override
-										public void run() {
-											if (exception != null)
-												logAndShowError("Exception using remote service reference="
-														+ managerNode.getBundleManagerRef(), exception);
-											else {
-												BundleNode bundleNode = managerNode.getBundleNode(bundleId);
-												if (bundleNode != null)
-													// remove old one
-													managerNode.removeChild(bundleNode);
-												if (bundleEvent.getType() != BundleEvent.UNINSTALLED) {
-													// Create new one and add
-													managerNode.addChild(createBundleNode(bMTO.getId(),
-															bMTO.getLastModified(), bMTO.getState(),
-															bMTO.getSymbolicName(), bMTO.getVersion(),
-															bMTO.getManifest(), bMTO.getLocation()));
-												}
-												v.expandToLevel(2);
-												v.refresh();
-											}
-										}
-									});
-							});
+							BundleNode bundleNode = managerNode.getBundleNode(bundleId);
+							BundleMTO bMTO = bundleEvent.getBundleMTO();
+							if (bundleNode != null)
+								// remove old one
+								managerNode.removeChild(bundleNode);
+							if (bundleEvent.getType() != BundleEvent.UNINSTALLED) {
+								// Create new one and add
+								managerNode.addChild(createBundleNode(bMTO.getId(),
+										bMTO.getLastModified(), bMTO.getState(),
+										bMTO.getSymbolicName(), bMTO.getVersion(),
+										bMTO.getManifest(), bMTO.getLocation()));
+							}
+							v.expandToLevel(2);
+							v.refresh();
 						}
 					}
 				});

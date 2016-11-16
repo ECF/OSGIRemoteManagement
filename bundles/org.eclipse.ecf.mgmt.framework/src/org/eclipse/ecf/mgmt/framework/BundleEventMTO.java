@@ -15,24 +15,18 @@ public class BundleEventMTO implements Serializable {
 
 	private static final long serialVersionUID = -8761167381182242979L;
 
-	private long bundleId;
 	private long originId;
 	private int type;
+	private BundleMTO bundleMTO;
 	
-	public BundleEventMTO(long bundleId, long originId, int type) {
-		this.bundleId = bundleId;
+	public BundleEventMTO(long originId, int type, BundleMTO bundleMTO) {
 		this.originId = originId;
 		this.type = type;
-	}
-
-	public BundleEventMTO(long bundleId, int type) {
-		this.bundleId = bundleId;
-		this.originId = bundleId;
-		this.type = type;
+		this.bundleMTO = bundleMTO;
 	}
 
 	public long getBundleId() {
-		return bundleId;
+		return bundleMTO.getId();
 	}
 
 	public long getOriginId() {
@@ -42,10 +36,13 @@ public class BundleEventMTO implements Serializable {
 	public int getType() {
 		return type;
 	}
+	
+	public BundleMTO getBundleMTO() {
+		return this.bundleMTO;
+	}
 
 	@Override
 	public String toString() {
-		return "BundleEventMTO [bundleId=" + bundleId + ", originId=" + originId + ", type=" + type + "]";
+		return "BundleEventMTO [originId=" + originId + ", type=" + type + ", bundleMTO=" + bundleMTO + "]";
 	}
-
 }
