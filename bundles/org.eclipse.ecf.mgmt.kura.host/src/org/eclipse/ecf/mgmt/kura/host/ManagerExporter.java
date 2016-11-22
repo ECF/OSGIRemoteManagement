@@ -67,7 +67,7 @@ public class ManagerExporter extends ServiceExporterCallbackImporter {
 	@Activate
 	public void activate(BundleContext c) throws Exception {
 		super.activate(c);
-		addExportedService(bmRef, IBundleEventHandler.class);
+		addExportedServiceCallback(bmRef, IBundleEventHandler.class);
 		Map<String,Object> props = createRemoteServiceProperties();
 		Collection<ExportRegistration> regs = getRSA().exportService(bmRef, props);
 		bmReg = regs.iterator().next();

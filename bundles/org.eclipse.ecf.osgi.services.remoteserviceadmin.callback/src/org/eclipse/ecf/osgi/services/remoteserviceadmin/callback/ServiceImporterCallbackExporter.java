@@ -119,17 +119,17 @@ public class ServiceImporterCallbackExporter extends CallbackSupport implements 
 
 	private Map<Class<?>, ExportableCallback> serviceCallbackMap = new HashMap<Class<?>, ExportableCallback>();
 
-	public void addServiceCallback(Class<?> service, ICallbackRegistrar registrar) {
-		if (service == null || registrar == null)
+	public void addImportedServiceCallback(Class<?> importedServiceClass, ICallbackRegistrar callbackRegistrar) {
+		if (importedServiceClass == null || callbackRegistrar == null)
 			throw new NullPointerException("Service and registrar must both be non-null");
 		synchronized (serviceCallbackMap) {
-			serviceCallbackMap.put(service, new ExportableCallback(registrar));
+			serviceCallbackMap.put(importedServiceClass, new ExportableCallback(callbackRegistrar));
 		}
 	}
 
-	public void removeCallbackForService(Class<?> service) {
+	public void removeImportedServiceCallback(Class<?> importedServiceClass) {
 		synchronized (serviceCallbackMap) {
-			ExportableCallback ecb = serviceCallbackMap.remove(service);
+			ExportableCallback ecb = serviceCallbackMap.remove(importedServiceClass);
 			if (ecb != null)
 				ecb.closeAll();
 		}

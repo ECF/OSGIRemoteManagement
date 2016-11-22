@@ -41,7 +41,7 @@ public class RemoteBundleManagerComponent extends RemoteServiceComponent impleme
 	public void activate(final BundleContext context) throws Exception {
 		super.activate();
 		this.importer.activate(context);
-		this.importer.addServiceCallback(IBundleManagerAsync.class, new ICallbackRegistrar() {
+		this.importer.addImportedServiceCallback(IBundleManagerAsync.class, new ICallbackRegistrar() {
 			@Override
 			public ServiceRegistration<?> registerCallback(ImportReference importReference) throws Exception {
 				return context.registerService(IBundleEventHandler.class, new BundleEventHandler(importReference), null);
@@ -49,7 +49,7 @@ public class RemoteBundleManagerComponent extends RemoteServiceComponent impleme
 	}
 	
 	public void deactivate() {
-		this.importer.removeCallbackForService(IBundleManagerAsync.class);
+		this.importer.removeImportedServiceCallback(IBundleManagerAsync.class);
 		this.importer.deactivate();
 		super.deactivate();
 	}
