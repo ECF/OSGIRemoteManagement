@@ -5,13 +5,13 @@ Bundle-SymbolicName: org.eclipse.ecf.osgi.services.remoteserviceadmin.callback
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Eclipse.org - ECF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: org.eclipse.ecf.core;version="3.0.0",
- org.eclipse.ecf.core.identity;version="3.3.0",
+Import-Package: org.eclipse.ecf.core,
+ org.eclipse.ecf.core.identity,
  org.eclipse.ecf.osgi.services.remoteserviceadmin,
- org.eclipse.ecf.remoteservice;version="7.3.0",
- org.eclipse.ecf.remoteservice.events;version="6.0.0",
+ org.eclipse.ecf.remoteservice,
+ org.eclipse.ecf.remoteservice.events,
  org.osgi.framework,
- org.osgi.framework.wiring;version="1.2.0",
+ org.osgi.framework.wiring,
  org.osgi.service.remoteserviceadmin;version="1.1.0"
-Require-Bundle: org.eclipse.equinox.common;bundle-version="3.8.0"
+Require-Bundle: org.eclipse.equinox.common
 Export-Package: org.eclipse.ecf.osgi.services.remoteserviceadmin.callback
