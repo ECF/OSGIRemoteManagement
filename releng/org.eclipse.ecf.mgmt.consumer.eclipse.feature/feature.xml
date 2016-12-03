@@ -27,6 +27,30 @@
 
    <requires>
       <import feature="org.eclipse.ecf.mgmt.feature" version="1.0.0" match="compatible"/>
+      <import plugin="org.eclipse.equinox.common"/>
+      <import plugin="org.eclipse.ecf.identity"/>
+      <import plugin="org.eclipse.ecf.mgmt.framework"/>
+      <import plugin="org.eclipse.ecf.remoteservice"/>
+      <import plugin="org.eclipse.ecf.remoteservice.ui" version="3.3.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui" version="3.107.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ecf.osgi.services.remoteserviceadmin" version="4.3.200" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.equinox.common" version="3.7.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.views"/>
+      <import plugin="org.eclipse.core.runtime" version="3.11.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ecf.mgmt.rsa"/>
+      <import plugin="org.eclipse.osgi"/>
+      <import plugin="org.eclipse.osgi.services.remoteserviceadmin"/>
+      <import plugin="org.eclipse.jface"/>
+      <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="org.eclipse.ecf"/>
+      <import plugin="org.eclipse.ecf.osgi.services.remoteserviceadmin.callback"/>
+      <import plugin="org.eclipse.osgi.services"/>
+      <import plugin="org.eclipse.core.jobs"/>
+      <import plugin="org.eclipse.ecf.sharedobject"/>
+      <import plugin="org.eclipse.ecf.provider"/>
+      <import plugin="org.eclipse.ecf.provider.remoteservice"/>
+      <import plugin="org.eclipse.equinox.concurrent"/>
+      <import plugin="org.eclipse.ecf" version="3.2.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
@@ -87,6 +111,13 @@
 
    <plugin
          id="org.eclipse.paho.client.mqttv3"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.ecf.osgi.services.remoteserviceadmin.callback"
          download-size="0"
          install-size="0"
          version="0.0.0"
