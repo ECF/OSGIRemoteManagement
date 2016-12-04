@@ -1,70 +1,38 @@
 <features xmlns="http://karaf.apache.org/xmlns/features/v1.2.0"
-	name="ecf-kura-karaf-bundlemgr-3.13.2">
-	<feature name="ecf-remoteservices-dependencies" version="3.13.2"
-		description="ECF 3.13.2 RemoteServices External Dependencies. https://wiki.eclipse.org/ECF#OSGi_Remote_Services">
-		<bundle>
-			http://download.eclipse.org/equinox/drops/R-Mars.1-201509040015/org.eclipse.equinox.supplement_1.6.0.v20141009-1504.jar
-		</bundle>
-		<bundle start-level="50">
-			http://download.eclipse.org/equinox/drops/R-Mars.1-201509040015/org.eclipse.equinox.common_3.7.0.v20150402-1709.jar
-		</bundle>
-		<bundle>
-			http://download.eclipse.org/equinox/drops/R-Mars.1-201509040015/org.eclipse.core.jobs_3.7.0.v20150330-2103.jar
-		</bundle>
-		<bundle>
-			http://download.eclipse.org/equinox/drops/R-Mars.1-201509040015/org.eclipse.equinox.concurrent_1.1.0.v20130327-1442.jar
-		</bundle>
-		<feature>eventadmin</feature>
-	</feature>
-	<feature name="ecf-remoteservices-core" version="3.13.2"
-		description="ECF Core">
-		<feature version="3.13.2">ecf-remoteservices-dependencies</feature>
-		<bundle>
-			http://download.eclipse.org/rt/ecf/3.13.2/site.p2/plugins/org.eclipse.ecf.identity_3.7.0.v20160823-2221.jar
-		</bundle>
-		<bundle>
-			http://download.eclipse.org/rt/ecf/3.13.2/site.p2/plugins/org.eclipse.ecf_3.8.0.v20160823-2221.jar
-		</bundle>
-		<bundle>
-			http://download.eclipse.org/rt/ecf/3.13.2/site.p2/plugins/org.eclipse.ecf.sharedobject_2.5.100.v20160823-2221.jar
-		</bundle>
-		<bundle>
-			http://download.eclipse.org/rt/ecf/3.13.2/site.p2/plugins/org.eclipse.ecf.discovery_5.0.200.v20160823-2221.jar
-		</bundle>
-		<bundle>
-			http://download.eclipse.org/rt/ecf/3.13.2/site.p2/plugins/org.eclipse.ecf.remoteservice.asyncproxy_2.0.100.v20150702-1411.jar
-		</bundle>
-		<bundle>
-			http://download.eclipse.org/rt/ecf/3.13.2/site.p2/plugins/org.eclipse.ecf.remoteservice_8.11.0.v20160823-2221.jar
-		</bundle>
-	</feature>
-	<feature name="ecf-remoteservices-rsa-impl" version="3.13.2"
-		description="ECF RemoteServices OSGi R6 Remote Service Admin (RSA) Impl. See https://wiki.eclipse.org/Remote_Services_Admin">
-		<feature version="3.13.2">ecf-remoteservices-core</feature>
-		<bundle>
-			http://download.eclipse.org/rt/ecf/3.13.2/site.p2/plugins/org.eclipse.osgi.services.remoteserviceadmin_1.6.100.v20160823-2221.jar
-		</bundle>
-		<bundle>
-			http://download.eclipse.org/rt/ecf/3.13.2/site.p2/plugins/org.eclipse.ecf.osgi.services.remoteserviceadmin.proxy_1.0.0.v20160823-2221.jar
-		</bundle>
-		<bundle>
-			http://download.eclipse.org/rt/ecf/3.13.2/site.p2/plugins/org.eclipse.ecf.osgi.services.remoteserviceadmin_4.4.2.v20160823-2221.jar
-		</bundle>
-	</feature>
-	<feature name="ecf-remoteservices-distprovider-generic"
-		version="3.13.2"
-		description="ECF RemoteServices Generic Distribution Provider. https://wiki.eclipse.org/EIG:Configuration_Properties">
-		<bundle>
-			http://download.eclipse.org/rt/ecf/3.13.2/site.p2/plugins/org.eclipse.ecf.provider_4.7.500.v20160823-2221.jar
-		</bundle>
-		<bundle>
-			http://download.eclipse.org/rt/ecf/3.13.2/site.p2/plugins/org.eclipse.ecf.provider.remoteservice_4.2.100.v20160823-2221.jar
-		</bundle>
-	</feature>
-	<feature name="ecf-kura-karaf-bundlemgr" version="3.13.2"
-		description="ECF 3.13.2 Karaf Remote Services BundleManager">
-		<feature version="3.13.2">ecf-remoteservices-rsa-impl</feature>
-		<feature version="3.13.2">ecf-remoteservices-distprovider-generic</feature>
+	name="ecf-kura-karaf-bundlemgr-3.13.3">
+<feature name="ecf-remoteservices-dependencies" version="3.13.3" description="ECF 3.13.3 RemoteServices External Dependencies.  https://wiki.eclipse.org/ECF#OSGi_Remote_Services">
+    <bundle>http://download.eclipse.org/equinox/drops/R-Neon.1-201609071200/org.eclipse.equinox.supplement_1.6.100.v20160504-1419.jar</bundle>
+    <bundle start-level="50">http://download.eclipse.org/equinox/drops/R-Neon.1-201609071200/org.eclipse.equinox.common_3.8.0.v20160509-1230.jar</bundle>
+    <bundle>http://download.eclipse.org/equinox/drops/R-Neon.1-201609071200/org.eclipse.core.jobs_3.8.0.v20160509-0411.jar</bundle>
+    <bundle>http://download.eclipse.org/equinox/drops/R-Neon.1-201609071200/org.eclipse.equinox.concurrent_1.1.0.v20130327-1442.jar</bundle>
+    <feature>eventadmin</feature>
+</feature>
+<feature name="ecf-remoteservices-core" version="3.13.3" description="ECF Core">
+    <feature version="3.13.3">ecf-remoteservices-dependencies</feature>
+	<bundle>http://download.eclipse.org/rt/ecf/3.13.3/site.p2/plugins/org.eclipse.ecf.identity_3.8.0.v20161203-2153.jar</bundle>
+	<bundle>http://download.eclipse.org/rt/ecf/3.13.3/site.p2/plugins/org.eclipse.ecf_3.8.0.v20161127-2056.jar</bundle>
+	<bundle>http://download.eclipse.org/rt/ecf/3.13.3/site.p2/plugins/org.eclipse.ecf.sharedobject_2.5.100.v20160906-2112.jar</bundle>
+	<bundle>http://download.eclipse.org/rt/ecf/3.13.3/site.p2/plugins/org.eclipse.ecf.discovery_5.0.200.v20160905-1122.jar</bundle>
+	<bundle>http://download.eclipse.org/rt/ecf/3.13.3/site.p2/plugins/org.eclipse.ecf.remoteservice.asyncproxy_2.0.100.v20160907-0906.jar</bundle>
+	<bundle>http://download.eclipse.org/rt/ecf/3.13.3/site.p2/plugins/org.eclipse.ecf.remoteservice_8.11.0.v20160907-0906.jar</bundle>
+</feature>
+	
+<feature name="ecf-remoteservices-rsa-impl" version="3.13.3" description="ECF RemoteServices OSGi R6 Remote Service Admin (RSA) Impl.  See https://wiki.eclipse.org/Remote_Services_Admin">
+    <feature version="3.13.3">ecf-remoteservices-core</feature>
+	<bundle>http://download.eclipse.org/rt/ecf/3.13.3/site.p2/plugins/org.eclipse.osgi.services.remoteserviceadmin_1.6.100.v20160907-0906.jar</bundle>
+	<bundle>http://download.eclipse.org/rt/ecf/3.13.3/site.p2/plugins/org.eclipse.ecf.osgi.services.remoteserviceadmin.proxy_1.0.0.v20160907-0906.jar</bundle>
+	<bundle>http://download.eclipse.org/rt/ecf/3.13.3/site.p2/plugins/org.eclipse.ecf.osgi.services.remoteserviceadmin_4.5.0.v20161114-0030.jar</bundle>
+</feature>
+
+<feature name="ecf-remoteservices-distprovider-generic" version="3.13.3" description="ECF RemoteServices Generic Distribution Provider.  https://wiki.eclipse.org/EIG:Configuration_Properties">
+	<bundle>http://download.eclipse.org/rt/ecf/3.13.3/site.p2/plugins/org.eclipse.ecf.provider_4.7.500.v20161010-0033.jar</bundle>
+	<bundle>http://download.eclipse.org/rt/ecf/3.13.3/site.p2/plugins/org.eclipse.ecf.provider.remoteservice_4.2.100.v20161010-0033.jar</bundle>
+</feature>
+
+	<feature name="ecf-kura-karaf-bundlemgr" version="3.13.3"
+		description="ECF 3.13.3 Karaf Remote Services BundleManager">
+		<feature version="3.13.3">ecf-remoteservices-rsa-impl</feature>
+		<feature version="3.13.3">ecf-remoteservices-distprovider-generic</feature>
 		<bundle>
 			http://download.eclipse.org/rt/ecf/kura.20161128/plugins/javax.jms_1.1.0.201611281219.jar
 		</bundle>
