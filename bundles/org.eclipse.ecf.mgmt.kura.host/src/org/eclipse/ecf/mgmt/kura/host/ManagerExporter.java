@@ -9,6 +9,7 @@ import org.eclipse.ecf.core.IContainerManager;
 import org.eclipse.ecf.mgmt.framework.IBundleEventHandler;
 import org.eclipse.ecf.mgmt.framework.IBundleManager;
 import org.eclipse.ecf.mgmt.framework.IServiceManager;
+import org.eclipse.ecf.mgmt.karaf.features.KarafFeaturesInstaller;
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.ServiceExporterCallbackImporter;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -24,7 +25,7 @@ public class ManagerExporter extends ServiceExporterCallbackImporter {
 
 	private ServiceReference<IBundleManager> bmRef;
 	private ServiceReference<IServiceManager> smRef;
-	private ServiceReference<KarafFeaturesInstallerManager> fiRef;
+	private ServiceReference<KarafFeaturesInstaller> fiRef;
 	
 	@Reference
 	public void bindRemoteServiceAdmin(RemoteServiceAdmin a) {
@@ -63,11 +64,11 @@ public class ManagerExporter extends ServiceExporterCallbackImporter {
 	}
 
 	@Reference
-	void bindKarafFeaturesInstallerManager(ServiceReference<KarafFeaturesInstallerManager> r) {
+	void bindKarafFeaturesInstallerManager(ServiceReference<KarafFeaturesInstaller> r) {
 		this.fiRef = r;
 	}
 	
-	void unbindKarafFeaturesInstallerManager(ServiceReference<KarafFeaturesInstallerManager> r) {
+	void unbindKarafFeaturesInstallerManager(ServiceReference<KarafFeaturesInstaller> r) {
 		this.fiRef = null;
 	}
 	

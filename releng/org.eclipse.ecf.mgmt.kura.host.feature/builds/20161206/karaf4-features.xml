@@ -34,37 +34,43 @@
 		<feature version="3.13.3">ecf-remoteservices-rsa-impl</feature>
 		<feature version="3.13.3">ecf-remoteservices-distprovider-generic</feature>
 		<bundle>
-			http://download.eclipse.org/rt/ecf/kura.20161128/plugins/javax.jms_1.1.0.201611281219.jar
+			http://download.eclipse.org/rt/ecf/kura.20161206/plugins/javax.jms_1.1.0.201611281219.jar
 		</bundle>
 		<bundle>
-			http://download.eclipse.org/rt/ecf/kura.20161128/plugins/org.eclipse.ecf.provider.jms_1.9.1.201611281219.jar
+			http://download.eclipse.org/rt/ecf/kura.20161206/plugins/org.eclipse.ecf.provider.jms_1.9.1.201611281219.jar
 		</bundle>
 		<bundle>
-			http://download.eclipse.org/rt/ecf/kura.20161128/plugins/org.eclipse.ecf.provider.jms.mqtt_1.2.1.201611281219.jar
+			http://download.eclipse.org/rt/ecf/kura.20161206/plugins/org.eclipse.ecf.provider.jms.mqtt_1.2.1.201611281219.jar
 		</bundle>
 	    <bundle>
-			http://download.eclipse.org/rt/ecf/kura.20161128/plugins/org.eclipse.paho.client.mqttv3_1.1.0.jar
+			http://download.eclipse.org/rt/ecf/kura.20161206/plugins/org.eclipse.paho.client.mqttv3_1.1.0.jar
 		</bundle>
 		<bundle>
-			http://download.eclipse.org/rt/ecf/kura.20161128/plugins/org.eclipse.ecf.mgmt_1.0.0.201611281219.jar
+			http://download.eclipse.org/rt/ecf/kura.20161206/plugins/org.eclipse.ecf.mgmt_1.0.0.201611281219.jar
 		</bundle>
 		<bundle>
-			http://download.eclipse.org/rt/ecf/kura.20161128/plugins/org.eclipse.ecf.mgmt.framework_1.1.0.201611281219.jar
+			http://download.eclipse.org/rt/ecf/kura.20161206/plugins/org.eclipse.ecf.mgmt.framework_1.1.0.201611281219.jar
 		</bundle>
 		<bundle>
-			http://download.eclipse.org/rt/ecf/kura.20161128/plugins/org.eclipse.ecf.mgmt.framework.host_1.1.0.201611281219.jar
+			http://download.eclipse.org/rt/ecf/kura.20161206/plugins/org.eclipse.ecf.mgmt.framework.host_1.1.0.201611281219.jar
+		</bundle>
+		<bundle>
+			http://download.eclipse.org/rt/ecf/kura.20161206/plugins/org.eclipse.ecf.mgmt.karaf.features_1.0.0.201611281219.jar
+		</bundle>
+		<bundle>
+			http://download.eclipse.org/rt/ecf/kura.20161206/plugins/org.eclipse.ecf.mgmt.karaf.features.host_1.0.0.201611281219.jar
 		</bundle>
 		<bundle start-level="90">
-			http://download.eclipse.org/rt/ecf/kura.20161128/plugins/org.eclipse.ecf.mgmt.kura.host_1.0.0.201611281219.jar
+			http://download.eclipse.org/rt/ecf/kura.20161206/plugins/org.eclipse.ecf.mgmt.kura.host_1.0.0.201611281219.jar
 		</bundle>
 		<bundle>
-			http://download.eclipse.org/rt/ecf/kura.20161128/plugins/org.eclipse.ecf.mgmt.rsa_2.0.0.201611281219.jar
+			http://download.eclipse.org/rt/ecf/kura.20161206/plugins/org.eclipse.ecf.mgmt.rsa_2.0.0.201611281219.jar
 		</bundle>
 		<bundle>
-			http://download.eclipse.org/rt/ecf/kura.20161128/plugins/org.eclipse.ecf.osgi.services.remoteserviceadmin.callback_1.0.0.201611281219.jar
+			http://download.eclipse.org/rt/ecf/kura.20161206/plugins/org.eclipse.ecf.osgi.services.remoteserviceadmin.callback_1.0.0.201611281219.jar
 		</bundle>
 		<bundle>
-			http://download.eclipse.org/rt/ecf/kura.20161128/plugins/org.eclipse.ecf.mgmt.rsa.host_1.0.0.201611281219.jar
+			http://download.eclipse.org/rt/ecf/kura.20161206/plugins/org.eclipse.ecf.mgmt.rsa.host_1.0.0.201611281219.jar
 		</bundle>
 	</feature>
 </features>
