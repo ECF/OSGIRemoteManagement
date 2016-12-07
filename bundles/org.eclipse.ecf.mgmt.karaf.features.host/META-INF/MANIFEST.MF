@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ECF Karaf Features Remote Service Host
+Bundle-SymbolicName: org.eclipse.ecf.mgmt.karaf.features.host
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Eclipse.org - ECF
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: org.apache.karaf.features,
+ org.eclipse.ecf.mgmt;version="1.0.0",
+ org.eclipse.ecf.mgmt.framework.host;version="1.0.0",
+ org.eclipse.ecf.mgmt.karaf.features;version="1.0.0",
+ org.osgi.service.component.annotations;resolution:=optional
+Require-Bundle: org.eclipse.equinox.common
