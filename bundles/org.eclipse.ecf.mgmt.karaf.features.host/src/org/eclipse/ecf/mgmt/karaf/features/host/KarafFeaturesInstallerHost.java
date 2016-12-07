@@ -20,15 +20,11 @@ import org.eclipse.ecf.mgmt.framework.host.AbstractManager;
 import org.eclipse.ecf.mgmt.karaf.features.FeatureMTO;
 import org.eclipse.ecf.mgmt.karaf.features.KarafFeaturesInstaller;
 import org.eclipse.ecf.mgmt.karaf.features.RepositoryMTO;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
-@Component()
 public class KarafFeaturesInstallerHost extends AbstractManager implements KarafFeaturesInstaller {
 
 	private FeaturesService featuresService;
 
-	@Reference
 	protected void bindFeaturesService(FeaturesService featuresService) {
 		this.featuresService = featuresService;
 	}

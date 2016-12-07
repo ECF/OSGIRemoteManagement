@@ -24,6 +24,7 @@ public class ManagerExporter extends ServiceExporterCallbackImporter {
 
 	private ServiceReference<IBundleManager> bmRef;
 	private ServiceReference<IServiceManager> smRef;
+	private ServiceReference<KarafFeaturesInstallerManager> fiRef;
 	
 	@Reference
 	public void bindRemoteServiceAdmin(RemoteServiceAdmin a) {
@@ -61,8 +62,18 @@ public class ManagerExporter extends ServiceExporterCallbackImporter {
 		this.smRef = null;
 	}
 
+	@Reference
+	void bindKarafFeaturesInstallerManager(ServiceReference<KarafFeaturesInstallerManager> r) {
+		this.fiRef = r;
+	}
+	
+	void unbindKarafFeaturesInstallerManager(ServiceReference<KarafFeaturesInstallerManager> r) {
+		this.fiRef = null;
+	}
+	
 	private ExportRegistration bmReg;
 	private ExportRegistration smReg;
+	private ExportRegistration fiReg;
 	
 	@Activate
 	public void activate(BundleContext c) throws Exception {
@@ -85,6 +96,18 @@ public class ManagerExporter extends ServiceExporterCallbackImporter {
 			this.smReg = null;
 			throw new RuntimeException("Could not export ServiceManager service");
 		}
+		regs = getRSA().exportService(fiRef, props);
+		fiReg = regs.iterator().next();
+		t = fiReg.getException();
+		if (t != null) {
+			this.bmReg.close();
+			this.bmReg = null;
+			this.smReg.close();
+			this.smReg = null;
+			this.fiReg.close();
+			this.fiReg = null;
+			throw new RuntimeException("Could not export ServiceManager service");
+		}
 	}
 
 	@Deactivate
@@ -96,6 +119,10 @@ public class ManagerExporter extends ServiceExporterCallbackImporter {
 		if (smReg != null) {
 			smReg.close();
 			smReg = null;
+		}
+		if (fiReg != null) {
+			fiReg.close();
+			fiReg = null;
 		}
 		super.deactivate();
 	}

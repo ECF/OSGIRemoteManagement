@@ -12,3 +12,4 @@ Import-Package: org.apache.karaf.features,
  org.osgi.service.component.annotations;resolution:=optional
 Require-Bundle: org.eclipse.equinox.common
 Export-Package: org.eclipse.ecf.mgmt.karaf.features.host;version="1.0.0"
+Bundle-ActivationPolicy: lazy
