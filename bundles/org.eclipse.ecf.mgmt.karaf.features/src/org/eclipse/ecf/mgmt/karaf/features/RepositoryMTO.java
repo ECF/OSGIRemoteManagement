@@ -31,18 +31,18 @@ public class RepositoryMTO implements Serializable {
 		this.featureMTOs = features;
 	}
 	
-	String getName() {
+	public String getName() {
 		return name;
 	}
-	URI getURI() {
-		return uri;
-	}
+	
 	public URI getUri() {
 		return uri;
 	}
+	
 	public URI[] getRepositories() {
 		return repositories;
 	}
+	
 	public URI[] getResourceRepositories() {
 		return resourceRepositories;
 	}

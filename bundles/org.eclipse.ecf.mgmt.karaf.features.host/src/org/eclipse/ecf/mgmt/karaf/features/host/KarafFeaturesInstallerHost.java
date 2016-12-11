@@ -97,8 +97,8 @@ public class KarafFeaturesInstallerHost extends AbstractManager implements Karaf
 
 	protected FeatureMTO[] createFeatures(Feature[] features) {
 		List<FeatureMTO> result = selectAndMap(Arrays.asList(features), null, f -> {
-			return new FeatureMTO(f.getId(), f.getName(), f.getDescription(), f.getDetails(), f.hasVersion(),
-					f.isHidden());
+			return new FeatureMTO(f.getId(), f.getName(), f.getNamespace(), f.getVersion(), f.getDescription(), f.getDetails(), f.hasVersion(),
+					f.isHidden(),this.featuresService.isInstalled(f));
 		});
 		return result.toArray(new FeatureMTO[result.size()]);
 	}

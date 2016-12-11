@@ -12,12 +12,14 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.ecf.remoteservice.ui.bundleview.model.BundleNode;
 import org.eclipse.ecf.remoteservice.ui.bundleview.model.BundlesRootNode;
 import org.eclipse.ecf.remoteservice.ui.internal.bundleview.Activator;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -160,6 +162,35 @@ public class LocalBundlesView extends AbstractBundlesView {
 					// XXX todo
 					e.printStackTrace();
 				}
+		}
+	}
+
+	private String createStringFromBundles(BundleNode[] bnodes) {
+		List<String> names = new ArrayList<String>();
+		for (BundleNode bn : bnodes)
+			names.add(bn.getSymbolicName());
+		StringBuffer result = new StringBuffer();
+		for (Iterator<String> i = names.iterator(); i.hasNext();) {
+			result.append(i.next());
+			if (i.hasNext())
+				result.append(",");
+		}
+		return result.toString();
+	}
+
+	protected void uninstallBundlesAction(BundleNode[] bns) {
+		if (MessageDialog.openConfirm(getTreeViewer().getControl().getShell(), "Uninstall Bundles",
+				"Uninstall Bundles: '" + createStringFromBundles(bns) + "'?")) {
+			for (BundleNode bn : bns) {
+				Bundle b = getBundle(bn.getId());
+				if (b != null)
+					try {
+						b.uninstall();
+					} catch (Exception e) {
+						// XXX todo
+						e.printStackTrace();
+					}
+			}
 		}
 	}
 

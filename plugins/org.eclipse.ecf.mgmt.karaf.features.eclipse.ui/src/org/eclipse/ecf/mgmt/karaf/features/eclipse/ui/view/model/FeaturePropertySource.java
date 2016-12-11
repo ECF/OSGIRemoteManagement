@@ -8,7 +8,7 @@
  * 
  * @since 3.3
  ******************************************************************************/
-package org.eclipse.ecf.remoteservice.ui.bundleview.model;
+package org.eclipse.ecf.mgmt.karaf.features.eclipse.ui.view.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,12 +21,12 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 /**
  * @since 3.3
  */
-public class BundlePropertySource implements IPropertySource {
+public class FeaturePropertySource implements IPropertySource {
 
 	private final Map<String, String> props;
 	private final List<IPropertyDescriptor> descriptors;
 
-	public BundlePropertySource(Map<String, String> props) {
+	public FeaturePropertySource(Map<String, String> props) {
 		this.props = props;
 		descriptors = new ArrayList<IPropertyDescriptor>();
 		for (String k : props.keySet())

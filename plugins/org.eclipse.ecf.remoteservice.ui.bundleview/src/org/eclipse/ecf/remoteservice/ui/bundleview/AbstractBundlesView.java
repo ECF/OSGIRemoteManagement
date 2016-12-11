@@ -26,6 +26,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -53,7 +54,8 @@ public abstract class AbstractBundlesView extends ViewPart {
 	private BundlesFilteredTree filteredTree;
 	private Action stopBundleAction;
 	private Action startBundleAction;
-
+	private Action uninstallBundleAction;
+	
 	protected void fillContextMenu(IMenuManager manager) {
 		Object first = getSelection().getFirstElement();
 		if (first instanceof BundleNode) {
@@ -62,10 +64,14 @@ public abstract class AbstractBundlesView extends ViewPart {
 			switch (bState) {
 			case Bundle.ACTIVE:
 				manager.add(stopBundleAction);
+				manager.add(new Separator());
+				manager.add(uninstallBundleAction);
 				break;
 			case Bundle.RESOLVED:
 			case Bundle.STARTING:
 				manager.add(startBundleAction);
+				manager.add(new Separator());
+				manager.add(uninstallBundleAction);
 				break;
 			}
 		}
@@ -78,6 +84,8 @@ public abstract class AbstractBundlesView extends ViewPart {
 	protected abstract void stopBundlesAction(BundleNode[] bns);
 
 	protected abstract void startBundlesAction(BundleNode[] bns);
+
+	protected abstract void uninstallBundlesAction(BundleNode[] array);
 
 	protected void makeActions() {
 		stopBundleAction = new Action() {
@@ -108,7 +116,20 @@ public abstract class AbstractBundlesView extends ViewPart {
 			}
 		};
 		startBundleAction.setText("Start Bundle");
-
+		uninstallBundleAction = new Action() {
+			public void run() {
+				ITreeSelection selection = getSelection();
+				if (selection.getFirstElement() instanceof BundleNode) {
+					@SuppressWarnings("rawtypes")
+					Iterator i = selection.iterator();
+					List<BundleNode> bns = new ArrayList<BundleNode>();
+					while (i.hasNext())
+						bns.add((BundleNode) i.next());
+					uninstallBundlesAction(bns.toArray(new BundleNode[bns.size()]));
+				}
+			}
+		};
+		uninstallBundleAction.setText("Uninstall Bundle");
 	}
 
 	protected void log(int level, String message, Throwable e) {

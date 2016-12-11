@@ -17,18 +17,25 @@ public class FeatureMTO implements Serializable {
 
 	private String id;
 	private String name;
+	private String namespace;
+	private String version;
 	private String description;
 	private String details;
 	private boolean hasVersion;
 	private boolean hidden;
-	public FeatureMTO(String id, String name, String description, String details, boolean hasVersion, boolean hidden) {
+	private boolean installed;
+	
+	public FeatureMTO(String id, String name, String namespace, String version, String description, String details, boolean hasVersion, boolean hidden, boolean installed) {
 		super();
 		this.id = id;
 		this.name = name;
+		this.namespace = namespace;
+		this.version = version;
 		this.description = description;
 		this.details = details;
 		this.hasVersion = hasVersion;
 		this.hidden = hidden;
+		this.installed = installed;
 	}
 	public String getId() {
 		return id;
@@ -36,6 +43,13 @@ public class FeatureMTO implements Serializable {
 	public String getName() {
 		return name;
 	}
+	public String getNamespace() {
+		return namespace;
+	}
+	public String getVersion() {
+		return version;
+	}
+	
 	public String getDescription() {
 		return description;
 	}
@@ -48,11 +62,14 @@ public class FeatureMTO implements Serializable {
 	public boolean isHidden() {
 		return hidden;
 	}
+	public boolean isInstalled() {
+		return installed;
+	}
 	@Override
 	public String toString() {
-		return "FeatureMTO [id=" + id + ", name=" + name + ", description=" + description + ", details=" + details
-				+ ", hasVersion=" + hasVersion + ", hidden=" + hidden + "]";
+		return "FeatureMTO [id=" + id + ", name=" + name + ", namespace=" + namespace + ", version=" + version
+				+ ", description=" + description + ", details=" + details + ", hasVersion=" + hasVersion + ", hidden="
+				+ hidden + ", installed=" + installed + "]";
 	}
-	
 	
 }

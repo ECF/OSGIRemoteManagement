@@ -91,7 +91,7 @@ public class BundleNode extends AbstractBundlesNode {
 	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 		if (adapter == IPropertySource.class)
-			return new BundlePropertySource(getManifest());
+			return new FeaturePropertySource(getManifest());
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 

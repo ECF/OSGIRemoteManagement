@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" immediate="true" name="org.eclipse.ecf.mgmt.karaf.features.eclipse.ui.RemoteKarafFeaturesInstaller">
+   <reference bind="bindContainerManager" cardinality="1..1" interface="org.eclipse.ecf.core.IContainerManager" name="ContainerManager" policy="static" unbind="unbindContainerManager"/>
+   <reference bind="bindKarafFeaturesInstaller" cardinality="0..1" interface="org.eclipse.ecf.mgmt.karaf.features.KarafFeaturesInstallerAsync" name="KarafFeaturesInstaller" policy="dynamic" unbind="unbindKarafFeaturesInstaller"/>
+   <implementation class="org.eclipse.ecf.mgmt.karaf.features.eclipse.ui.RemoteKarafFeaturesInstaller"/>
+</scr:component>

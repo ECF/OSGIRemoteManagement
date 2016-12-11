@@ -467,4 +467,24 @@ public class RemoteBundlesView extends AbstractBundlesView {
 		}
 	}
 
+	@Override
+	protected void uninstallBundlesAction(BundleNode[] bns) {
+		if (bns.length > 0) {
+			for (int i = 0; i < bns.length; i++) {
+				final boolean last = i == (bns.length - 1);
+				RemoteBundleManagerNode rbn = findRemoteBundleManagerForBundleNode(bns[0]);
+				if (rbn != null)
+					rbn.getBundleManager().uninstallBundleAsync(bns[i].getId()).whenComplete((status, exception) -> {
+						if (exception != null) {
+							System.out.println("Remote error");
+							exception.printStackTrace();
+						} else if (!status.isOK()) {
+							System.out.println("Remote status error: " + status.getMessage());
+						} else if (last)
+							refresh(rbn);
+					});
+			}
+		}
+	}
+
 }
