@@ -16,7 +16,6 @@ import java.util.Map;
 
 import org.eclipse.ecf.mgmt.PropertiesUtil;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.dto.BundleDTO;
 
 public class BundleMTO implements Serializable {
 
@@ -25,9 +24,7 @@ public class BundleMTO implements Serializable {
 	public static BundleMTO createMTO(Bundle bundle) {
 		if (bundle == null)
 			return null;
-		return new BundleMTO(bundle.adapt(BundleDTO.class),
-				PropertiesUtil.convertHeadersToMap(bundle.getHeaders()),
-				bundle.getLocation());
+		return new BundleMTO(bundle);
 	}
 
 	public static BundleMTO[] createMTOs(Bundle[] bundles) {
@@ -45,16 +42,15 @@ public class BundleMTO implements Serializable {
 	private final Map<String, String> manifest;
 	private final String location;
 
-	BundleMTO(BundleDTO bundleDTO, Map<String, String> manifest, String location) {
-		this.id = bundleDTO.id;
-		this.lastModified = bundleDTO.lastModified;
-		this.state = bundleDTO.state;
-		this.symbolicName = bundleDTO.symbolicName;
-		this.version = bundleDTO.version;
-		this.manifest = manifest;
-		this.location = location;
+	BundleMTO(Bundle bundle) {
+		this.id = bundle.getBundleId();
+		this.lastModified = bundle.getLastModified();
+		this.state = bundle.getState();
+		this.symbolicName = bundle.getSymbolicName();
+		this.version = bundle.getVersion().toString();
+		this.manifest = PropertiesUtil.convertHeadersToMap(bundle.getHeaders());
+		this.location = bundle.getLocation();
 	}
-
 	public long getId() {
 		return id;
 	}

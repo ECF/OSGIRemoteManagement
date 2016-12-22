@@ -186,7 +186,7 @@ public class BundleManager extends AbstractManager implements IBundleManager {
 			notify = new ArrayList<IBundleEventHandlerAsync>(behs);
 		}
 		for(IBundleEventHandlerAsync beh: notify) 
-			beh.handleBundleEventAsync(new BundleEventMTO(event.getOrigin().getBundleId(), event.getType(), getBundle(event.getBundle().getBundleId())));
+			beh.handleBundleEventAsync(new BundleEventMTO(event.getOrigin().getBundleId(), event.getType(), BundleMTO.createMTO(event.getBundle())));
 	}
 	
 	protected BundleListener localBundleListener = new BundleListener() {

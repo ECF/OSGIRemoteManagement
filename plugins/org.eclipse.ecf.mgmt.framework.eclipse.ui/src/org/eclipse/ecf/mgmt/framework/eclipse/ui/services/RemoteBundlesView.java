@@ -63,7 +63,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PlatformUI;
-import org.osgi.framework.BundleEvent;
+import org.osgi.framework.Bundle;
 import org.osgi.service.remoteserviceadmin.RemoteServiceAdmin;
 
 public class RemoteBundlesView extends AbstractBundlesView {
@@ -293,12 +293,11 @@ public class RemoteBundlesView extends AbstractBundlesView {
 							if (bundleNode != null)
 								// remove old one
 								managerNode.removeChild(bundleNode);
-							if (bundleEvent.getType() != BundleEvent.UNINSTALLED) {
+							if (bMTO.getState() != Bundle.UNINSTALLED) {
 								// Create new one and add
-								managerNode.addChild(createBundleNode(bMTO.getId(),
-										bMTO.getLastModified(), bMTO.getState(),
-										bMTO.getSymbolicName(), bMTO.getVersion(),
-										bMTO.getManifest(), bMTO.getLocation()));
+								managerNode.addChild(createBundleNode(bMTO.getId(), bMTO.getLastModified(),
+										bMTO.getState(), bMTO.getSymbolicName(), bMTO.getVersion(), bMTO.getManifest(),
+										bMTO.getLocation()));
 							}
 							v.expandToLevel(2);
 							v.refresh();

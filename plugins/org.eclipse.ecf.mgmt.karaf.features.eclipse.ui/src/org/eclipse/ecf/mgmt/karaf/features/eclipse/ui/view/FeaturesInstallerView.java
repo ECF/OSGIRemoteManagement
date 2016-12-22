@@ -276,7 +276,8 @@ public class FeaturesInstallerView extends ViewPart {
 							try {
 								FeaturesInstallerView.this.getSite().getWorkbenchWindow().getActivePage()
 										.showView("org.eclipse.pde.runtime.LogView");
-							} catch (Exception e) {}
+							} catch (Exception e) {
+							}
 						}
 					}
 				});
@@ -352,8 +353,14 @@ public class FeaturesInstallerView extends ViewPart {
 		viewer.getControl().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				getKarafFeaturesInstallerRoot().removeServiceManagerNode(rsRef);
-				viewer.refresh();
+				TreeViewer v = getTreeViewer();
+				if (v == null)
+					return;
+				FeaturesRootNode frn = getKarafFeaturesInstallerRoot();
+				if (frn != null) {
+					frn.removeServiceManagerNode(rsRef);
+					v.refresh();
+				}
 			}
 		});
 	}
@@ -453,7 +460,10 @@ public class FeaturesInstallerView extends ViewPart {
 	}
 
 	protected FeatureNode findFeatureNode(String featureId) {
-		AbstractFeaturesNode[] features = getKarafFeaturesInstallerRoot().getChildren();
+		FeaturesRootNode frn = getKarafFeaturesInstallerRoot();
+		if (frn == null)
+			return null;
+		AbstractFeaturesNode[] features = frn.getChildren();
 		for (AbstractFeaturesNode afn : features) {
 			if (afn instanceof FeatureNode) {
 				FeatureNode sn = (FeatureNode) afn;
@@ -465,7 +475,10 @@ public class FeaturesInstallerView extends ViewPart {
 	}
 
 	protected FeaturesRootNode getKarafFeaturesInstallerRoot() {
-		return getContentProvider().getKarafFeaturesInstallerRoot();
+		FeaturesContentProvider fcp = getContentProvider();
+		if (fcp == null)
+			return null;
+		return fcp.getKarafFeaturesInstallerRoot();
 	}
 
 	protected Tree getUndisposedTree() {
@@ -506,10 +519,12 @@ public class FeaturesInstallerView extends ViewPart {
 				if (tv == null)
 					return;
 				FeaturesRootNode srn = getKarafFeaturesInstallerRoot();
-				for (FeatureNode sn : sns)
-					srn.addChild(sn);
-				tv.setExpandedState(getKarafFeaturesInstallerRoot(), true);
-				tv.refresh();
+				if (srn != null) {
+					for (FeatureNode sn : sns)
+						srn.addChild(sn);
+					tv.setExpandedState(getKarafFeaturesInstallerRoot(), true);
+					tv.refresh();
+				}
 			}
 		});
 	}
@@ -521,11 +536,15 @@ public class FeaturesInstallerView extends ViewPart {
 	protected String getTitleSummary() {
 		Tree tree = getUndisposedTree();
 		String type = "services";
-		int total = getKarafFeaturesInstallerRoot().getChildren().length;
-		if (tree == null)
-			return NLS.bind("Filter matched {0} of {1} {2}.", (new String[] { "0", "0", type })); //$NON-NLS-1$ //$NON-NLS-2$
-		return NLS.bind("Filter matched {0} of {1} {2}.",
-				(new String[] { Integer.toString(tree.getItemCount()), Integer.toString(total), type }));
+		FeaturesRootNode frn = getKarafFeaturesInstallerRoot();
+		if (frn != null) {
+			int total = frn.getChildren().length;
+			if (tree == null)
+				return NLS.bind("Filter matched {0} of {1} {2}.", (new String[] { "0", "0", type })); //$NON-NLS-1$ //$NON-NLS-2$
+			return NLS.bind("Filter matched {0} of {1} {2}.",
+					(new String[] { Integer.toString(tree.getItemCount()), Integer.toString(total), type }));
+		} else
+			return "";
 	}
 
 }

@@ -6,7 +6,7 @@
       <view
             category="org.eclipse.ecf.remoteservice.ui.rsgroup"
             class="org.eclipse.ecf.mgmt.karaf.features.eclipse.ui.view.FeaturesInstallerView"
-            icon="platform:/plugin/org.eclipse.ecf.remoteservice.ui/icons/obj16/int_obj.gif"
+            icon="icons/karaf.png"
             id="org.eclipse.ecf.mgmt.karaf.features.eclipse.ui.view.FeaturesInstallerView"
             name="Karaf Features"
             restorable="true">
