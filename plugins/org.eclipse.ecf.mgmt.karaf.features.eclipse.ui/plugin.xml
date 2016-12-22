@@ -67,4 +67,17 @@
          </adapter>
       </factory>
   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.ecf.remoteservices.ui.RemoteServicePerspective">
+         <view
+               id="org.eclipse.ecf.mgmt.karaf.features.eclipse.ui.view.FeaturesInstallerView"
+               minimized="false"
+               ratio="0.4f"
+               relationship="bottom"
+               relative="org.eclipse.ecf.remoteserviceadmin.ui.views.RSAView">
+         </view>
+      </perspectiveExtension>
+   </extension>
 </plugin>
