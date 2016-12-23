@@ -10,9 +10,14 @@ import org.eclipse.ecf.core.IContainer;
 import org.eclipse.ecf.mgmt.consumer.util.IRemoteServiceListener;
 import org.eclipse.ecf.mgmt.consumer.util.RemoteServiceEvent;
 import org.eclipse.ecf.mgmt.consumer.util.RemoteServiceHolder;
-import org.eclipse.ecf.mgmt.karaf.features.KarafFeaturesInstallerAsync;
+import org.eclipse.ecf.mgmt.karaf.features.FeatureEventMTO;
+import org.eclipse.ecf.mgmt.karaf.features.FeatureMTO;
+import org.eclipse.ecf.mgmt.karaf.features.FeaturesInstallerAsync;
+import org.eclipse.ecf.mgmt.karaf.features.RepositoryEventMTO;
 import org.eclipse.ecf.mgmt.karaf.features.RepositoryMTO;
 import org.eclipse.ecf.mgmt.karaf.features.eclipse.ui.Activator;
+import org.eclipse.ecf.mgmt.karaf.features.eclipse.ui.FeaturesInstallerHandler;
+import org.eclipse.ecf.mgmt.karaf.features.eclipse.ui.KarafFeaturesListener;
 import org.eclipse.ecf.mgmt.karaf.features.eclipse.ui.RemoteKarafFeaturesInstaller;
 import org.eclipse.ecf.mgmt.karaf.features.eclipse.ui.view.model.AbstractFeaturesNode;
 import org.eclipse.ecf.mgmt.karaf.features.eclipse.ui.view.model.FeatureNode;
@@ -27,6 +32,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ITreeSelection;
@@ -35,7 +41,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
-import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -297,6 +302,66 @@ public class FeaturesInstallerView extends ViewPart {
 		getSite().registerContextMenu(menuMgr, viewer);
 	}
 
+	class FeaturesInstallerHandlerDelegate implements FeaturesInstallerHandler {
+		@Override
+		public void handleFeatureEvent(IRemoteServiceID rsID, final FeatureEventMTO featureEvent) {
+			runUi(new Runnable() {
+				@Override
+				public void run() {
+					final TreeViewer v = getTreeViewer();
+					if (v == null)
+						return;
+					FeaturesNode managerNode = getKarafFeaturesInstallerRoot().getFeaturesNode(rsID);
+					if (managerNode != null) {
+						FeatureMTO fMTO = featureEvent.getFeatureMTO();
+						if (fMTO != null) {
+							FeatureNode featureNode = managerNode.getFeatureNode(fMTO.getId());
+							if (featureNode != null) {
+								RepositoryNode rn = (RepositoryNode) featureNode.getParent();
+								if (rn != null) 
+									rn.removeChild(featureNode);
+									rn.addChild(new FeatureNode(fMTO));
+								}
+							}
+						}
+						v.expandToLevel(3);
+						v.refresh();
+					}
+			});
+		}
+
+		private void runUi(Runnable r) {
+			final TreeViewer v = getTreeViewer();
+			if (v != null && !v.getControl().isDisposed()) 
+				v.getControl().getDisplay().asyncExec(r);
+			
+		}
+		@Override
+		public void handleRepoEvent(IRemoteServiceID rsID, RepositoryEventMTO repoEvent) {
+			runUi(new Runnable() {
+				@Override
+				public void run() {
+					final TreeViewer v = getTreeViewer();
+					if (v == null)
+						return;
+					FeaturesNode managerNode = getKarafFeaturesInstallerRoot().getFeaturesNode(rsID);
+					if (managerNode != null) {
+						RepositoryMTO rMTO = repoEvent.getRepositoryMTO();
+						if (rMTO != null) {
+							RepositoryNode repoNode = managerNode.getRepositoryNode(rMTO.getUri());
+							if (repoNode != null) 
+								managerNode.removeChild(repoNode);
+							if (repoEvent.getType() != RepositoryEventMTO.REMOVED) 
+								managerNode.addChild(new RepositoryNode(rMTO));
+						}
+						v.expandToLevel(3);
+						v.refresh();
+					}
+				}
+			});
+		}
+	};
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -312,10 +377,13 @@ public class FeaturesInstallerView extends ViewPart {
 		makeActions();
 		hookContextMenu();
 
-		Collection<RemoteServiceHolder<KarafFeaturesInstallerAsync>> existing = RemoteKarafFeaturesInstaller
-				.getInstance().addListener(rsListener, KarafFeaturesInstallerAsync.class);
-		for (RemoteServiceHolder<KarafFeaturesInstallerAsync> rh : existing)
-			addRemoteServiceManager(rh.getRemoteService(), rh.getRemoteServiceReference());
+		Collection<RemoteServiceHolder<FeaturesInstallerAsync>> existing = RemoteKarafFeaturesInstaller
+				.getInstance().addListener(rsListener, FeaturesInstallerAsync.class);
+		for (RemoteServiceHolder<FeaturesInstallerAsync> rh : existing) {
+			IRemoteServiceReference rsReference = rh.getRemoteServiceReference();
+			addRemoteServiceManager(rh.getRemoteService(), rsReference);
+			KarafFeaturesListener.addDelegate(rsReference.getID(), new FeaturesInstallerHandlerDelegate());
+		}
 	}
 
 	@Override
@@ -332,17 +400,21 @@ public class FeaturesInstallerView extends ViewPart {
 		@Override
 		public void handleEvent(RemoteServiceEvent e) {
 			int type = e.getType();
-			RemoteServiceHolder<KarafFeaturesInstallerAsync> h = e
-					.getRemoteServiceHolder(KarafFeaturesInstallerAsync.class);
-			if (type == RemoteServiceEvent.ADDED)
-				addRemoteServiceManager(h.getRemoteService(), h.getRemoteServiceReference());
-			else if (type == RemoteServiceEvent.REMOVED)
-				removeRemoteServiceManager(h.getRemoteServiceReference());
+			RemoteServiceHolder<FeaturesInstallerAsync> h = e
+					.getRemoteServiceHolder(FeaturesInstallerAsync.class);
+			if (type == RemoteServiceEvent.ADDED) {
+				IRemoteServiceReference ref = h.getRemoteServiceReference();
+				addRemoteServiceManager(h.getRemoteService(), ref);
+				KarafFeaturesListener.addDelegate(ref.getID(), new FeaturesInstallerHandlerDelegate());
+			} else if (type == RemoteServiceEvent.REMOVED) {
+				IRemoteServiceReference ref = h.getRemoteServiceReference();
+				removeRemoteServiceManager(ref);
+				KarafFeaturesListener.removeDelegate(ref.getID());
+			}
 		}
-
 	};
 
-	void addRemoteServiceManager(final KarafFeaturesInstallerAsync s, final IRemoteServiceReference rsRef) {
+	void addRemoteServiceManager(final FeaturesInstallerAsync s, final IRemoteServiceReference rsRef) {
 		update(s, rsRef, null);
 	}
 
@@ -365,7 +437,7 @@ public class FeaturesInstallerView extends ViewPart {
 		});
 	}
 
-	private void update(final KarafFeaturesInstallerAsync s, final IRemoteServiceReference rsRef,
+	private void update(final FeaturesInstallerAsync s, final IRemoteServiceReference rsRef,
 			final FeaturesNode node) {
 		final TreeViewer viewer = getTreeViewer();
 		if (viewer == null)
@@ -379,7 +451,7 @@ public class FeaturesInstallerView extends ViewPart {
 						logAndShowError("Exception using remote service reference=" + rsRef, exception);
 					else {
 						FeaturesNode managerNode = (node == null)
-								? getKarafFeaturesInstallerRoot().getServiceManagerNode(rsRef, s) : node;
+								? getKarafFeaturesInstallerRoot().getFeaturesNode(rsRef, s) : node;
 						managerNode.clearChildren();
 						for (RepositoryMTO srMTO : result)
 							managerNode.addChild(new RepositoryNode(srMTO));
@@ -399,6 +471,7 @@ public class FeaturesInstallerView extends ViewPart {
 	public void dispose() {
 		super.dispose();
 		RemoteKarafFeaturesInstaller.getInstance().removeListener(rsListener);
+		KarafFeaturesListener.removeDelegates();
 		this.viewer = null;
 		this.contentProvider = null;
 	}

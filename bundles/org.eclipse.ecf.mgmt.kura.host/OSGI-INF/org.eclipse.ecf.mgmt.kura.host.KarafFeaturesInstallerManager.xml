@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" immediate="true" name="org.eclipse.ecf.mgmt.kura.host.KarafFeaturesInstallerManager">
    <service>
-      <provide interface="org.eclipse.ecf.mgmt.karaf.features.KarafFeaturesInstaller"/>
+      <provide interface="org.eclipse.ecf.mgmt.karaf.features.FeaturesInstaller"/>
    </service>
+   <reference bind="bindFeaturesListener" cardinality="0..n" interface="org.eclipse.ecf.mgmt.karaf.features.FeaturesListenerAsync" name="FeaturesListener" policy="dynamic" unbind="unbindFeaturesListener"/>
    <reference bind="bindFeaturesService" cardinality="1..1" interface="org.apache.karaf.features.FeaturesService" name="FeaturesService" policy="static" unbind="unbindFeaturesService"/>
    <implementation class="org.eclipse.ecf.mgmt.kura.host.KarafFeaturesInstallerManager"/>
 </scr:component>

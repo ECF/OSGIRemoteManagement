@@ -79,7 +79,15 @@ public class ServiceManager extends AbstractManager implements IServiceManager {
 	private ServiceListener serviceListener = new ServiceListener() {
 		@Override
 		public void serviceChanged(ServiceEvent event) {
-			fireServiceChangedEvent(event);
+			List<IServiceEventHandlerAsync> notify = null;
+			synchronized (sehs) {
+				notify = new ArrayList<IServiceEventHandlerAsync>(sehs);
+			}
+			ServiceReferenceMTO mto = getServiceReference(
+					(Long) event.getServiceReference().getProperty(org.osgi.framework.Constants.SERVICE_ID));
+			if (mto != null)
+				for (IServiceEventHandlerAsync beh : notify)
+					beh.handleServiceEventAsync(new ServiceEventMTO(event.getType(), mto));
 		}
 	};
 

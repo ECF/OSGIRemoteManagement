@@ -1,19 +1,21 @@
 package org.eclipse.ecf.mgmt.karaf.features.eclipse.ui.view.model;
 
-import org.eclipse.ecf.mgmt.karaf.features.KarafFeaturesInstallerAsync;
+import java.net.URI;
+
+import org.eclipse.ecf.mgmt.karaf.features.FeaturesInstallerAsync;
 import org.eclipse.ecf.remoteservice.IRemoteServiceReference;
 
 public class FeaturesNode extends AbstractFeaturesNode {
 
 	private final IRemoteServiceReference managerRef;
-	private final KarafFeaturesInstallerAsync rsaManager;
+	private final FeaturesInstallerAsync rsaManager;
 
-	public FeaturesNode(IRemoteServiceReference managerRef, KarafFeaturesInstallerAsync rsaManager) {
+	public FeaturesNode(IRemoteServiceReference managerRef, FeaturesInstallerAsync rsaManager) {
 		this.managerRef = managerRef;
 		this.rsaManager = rsaManager;
 	}
 
-	public KarafFeaturesInstallerAsync getKarafFeaturesInstaller() {
+	public FeaturesInstallerAsync getKarafFeaturesInstaller() {
 		return this.rsaManager;
 	}
 
@@ -29,4 +31,30 @@ public class FeaturesNode extends AbstractFeaturesNode {
 		return getManagerContainer() + ":" + this.managerRef.getID().getContainerRelativeID();
 	}
 
+	public RepositoryNode getRepositoryNode(URI repoURI) {
+		for(AbstractFeaturesNode bn: getChildren()) {
+			if (bn instanceof RepositoryNode) {
+				RepositoryNode repoNode = (RepositoryNode) bn;
+				if (repoNode.getUri().equals(repoURI))
+					return repoNode;
+			}
+		}
+		return null;
+	}
+
+	public FeatureNode getFeatureNode(String fId) {
+		for(AbstractFeaturesNode bn: getChildren()) {
+			if (bn instanceof RepositoryNode) {
+				RepositoryNode repoNode = (RepositoryNode) bn;
+				for(AbstractFeaturesNode rn: repoNode.getChildren()) {
+					if (rn instanceof FeatureNode) {
+						FeatureNode fn = (FeatureNode) rn;
+						if (fn.getId().equals(fId))
+							return fn;
+					}
+				}
+			}
+		}
+		return null;
+	}
 }

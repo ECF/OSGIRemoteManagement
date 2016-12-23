@@ -8,8 +8,10 @@ import java.util.Properties;
 import org.eclipse.ecf.core.IContainerManager;
 import org.eclipse.ecf.mgmt.framework.IBundleEventHandler;
 import org.eclipse.ecf.mgmt.framework.IBundleManager;
+import org.eclipse.ecf.mgmt.framework.IServiceEventHandler;
 import org.eclipse.ecf.mgmt.framework.IServiceManager;
-import org.eclipse.ecf.mgmt.karaf.features.KarafFeaturesInstaller;
+import org.eclipse.ecf.mgmt.karaf.features.FeaturesInstaller;
+import org.eclipse.ecf.mgmt.karaf.features.FeaturesListener;
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.ServiceExporterCallbackImporter;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -25,7 +27,7 @@ public class ManagerExporter extends ServiceExporterCallbackImporter {
 
 	private ServiceReference<IBundleManager> bmRef;
 	private ServiceReference<IServiceManager> smRef;
-	private ServiceReference<KarafFeaturesInstaller> fiRef;
+	private ServiceReference<FeaturesInstaller> fiRef;
 	
 	@Reference
 	public void bindRemoteServiceAdmin(RemoteServiceAdmin a) {
@@ -64,11 +66,11 @@ public class ManagerExporter extends ServiceExporterCallbackImporter {
 	}
 
 	@Reference
-	void bindKarafFeaturesInstallerManager(ServiceReference<KarafFeaturesInstaller> r) {
+	void bindKarafFeaturesInstallerManager(ServiceReference<FeaturesInstaller> r) {
 		this.fiRef = r;
 	}
 	
-	void unbindKarafFeaturesInstallerManager(ServiceReference<KarafFeaturesInstaller> r) {
+	void unbindKarafFeaturesInstallerManager(ServiceReference<FeaturesInstaller> r) {
 		this.fiRef = null;
 	}
 	
@@ -80,6 +82,8 @@ public class ManagerExporter extends ServiceExporterCallbackImporter {
 	public void activate(BundleContext c) throws Exception {
 		super.activate(c);
 		addExportedServiceCallback(bmRef, IBundleEventHandler.class);
+		addExportedServiceCallback(smRef, IServiceEventHandler.class);
+		addExportedServiceCallback(fiRef, FeaturesListener.class);
 		Map<String,Object> props = createRemoteServiceProperties();
 		Collection<ExportRegistration> regs = getRSA().exportService(bmRef, props);
 		bmReg = regs.iterator().next();

@@ -8,6 +8,7 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.karaf.features.eclipse.ui.view.model;
 
+import org.eclipse.ecf.mgmt.karaf.features.eclipse.ui.Activator;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 public class FeatureNodeWorkbenchAdapter extends AbstractFeaturesWorkbenchAdapter {
@@ -15,12 +16,15 @@ public class FeatureNodeWorkbenchAdapter extends AbstractFeaturesWorkbenchAdapte
 	@Override
 	public String getLabel(Object object) {
 		FeatureNode kfn = (FeatureNode) object;
-		return kfn.getName()+"/"+kfn.getVersion();
+		return kfn.getName() + "/" + kfn.getVersion();
 	}
 
 	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
-		return null;
+		FeatureNode kfn = (FeatureNode) object;
+		Activator a = Activator.getDefault();
+		return kfn.isInstalled() ? a.getIconDescriptor("/icons/feature_inst.png")
+				: a.getIconDescriptor("/icons/feature_noinst.png");
 	}
 
 }

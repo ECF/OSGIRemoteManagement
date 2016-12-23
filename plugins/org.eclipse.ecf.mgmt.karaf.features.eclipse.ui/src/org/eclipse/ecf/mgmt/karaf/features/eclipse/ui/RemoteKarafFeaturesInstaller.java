@@ -4,57 +4,87 @@ import org.eclipse.ecf.core.IContainer;
 import org.eclipse.ecf.core.IContainerManager;
 import org.eclipse.ecf.core.identity.ID;
 import org.eclipse.ecf.mgmt.consumer.util.RemoteServiceComponent;
-import org.eclipse.ecf.mgmt.karaf.features.KarafFeaturesInstallerAsync;
+import org.eclipse.ecf.mgmt.karaf.features.FeaturesInstallerAsync;
+import org.eclipse.ecf.mgmt.karaf.features.FeaturesListener;
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin.ImportReference;
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.ICallbackRegistrar;
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.ServiceImporterCallbackExporter;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.service.remoteserviceadmin.RemoteServiceAdmin;
+import org.osgi.service.remoteserviceadmin.RemoteServiceAdminEvent;
+import org.osgi.service.remoteserviceadmin.RemoteServiceAdminListener;
 
 @Component(immediate = true)
-public class RemoteKarafFeaturesInstaller extends RemoteServiceComponent {
+public class RemoteKarafFeaturesInstaller extends RemoteServiceComponent implements RemoteServiceAdminListener {
 
 	private IContainerManager containerManager;
-
-	public RemoteKarafFeaturesInstaller() {
-		super();
-	}
-
+	private ServiceImporterCallbackExporter importer;
 	private static RemoteKarafFeaturesInstaller instance;
 
 	public static RemoteKarafFeaturesInstaller getInstance() {
 		return instance;
 	}
 
-	@Activate
-	public void activate() throws Exception {
-		super.activate();
+	public RemoteKarafFeaturesInstaller() {
+		super();
+		this.importer = new ServiceImporterCallbackExporter();
 		instance = this;
+	}
+	
+	@Activate
+	public void activate(BundleContext context) throws Exception {
+		super.activate();
+		this.importer.activate(context);
+		this.importer.addImportedServiceCallback(FeaturesInstallerAsync.class, new ICallbackRegistrar() {
+			@Override
+			public ServiceRegistration<?> registerCallback(ImportReference importReference) throws Exception {
+				return context.registerService(FeaturesListener.class, new KarafFeaturesListener(importReference), null);
+			}});
 	}
 
 	@Deactivate
 	public void deactivate() {
+		this.importer.removeImportedServiceCallback(FeaturesInstallerAsync.class);
+		this.importer.deactivate();
 		super.deactivate();
 		instance = null;
 	}
 
+	
 	@Reference(cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC)
-	void bindKarafFeaturesInstaller(KarafFeaturesInstallerAsync fi) {
-		addServiceHolder(KarafFeaturesInstallerAsync.class, fi);
+	void bindKarafFeaturesInstaller(FeaturesInstallerAsync fi) {
+		addServiceHolder(FeaturesInstallerAsync.class, fi);
 	}
 
-	void unbindKarafFeaturesInstaller(KarafFeaturesInstallerAsync fi) {
-		removeServiceHolder(KarafFeaturesInstallerAsync.class, fi);
+	void unbindKarafFeaturesInstaller(FeaturesInstallerAsync fi) {
+		removeServiceHolder(FeaturesInstallerAsync.class, fi);
 	}
 
 	@Reference
-	void bindContainerManager(IContainerManager cm) {
-		this.containerManager = cm;
+	void bindContainerManager(IContainerManager c) {
+		this.importer.bindContainerManager(c);
+		this.containerManager = c;
 	}
 
-	void unbindContainerManager(IContainerManager cm) {
+	void unbindContainerManager(IContainerManager c) {
+		this.importer.unbindContainerManager(c);
 		this.containerManager = null;
+	}
+
+	@Reference
+	void bindRemoteServiceAdmin(RemoteServiceAdmin rsa) {
+		this.importer.bindRemoteServiceAdmin(rsa);
+	}
+
+	void unbindRemoteServiceAdmin(RemoteServiceAdmin rsa) {
+		this.importer.unbindRemoteServiceAdmin(rsa);
 	}
 
 	public IContainer getContainerForID(ID containerID) {
@@ -66,5 +96,10 @@ public class RemoteKarafFeaturesInstaller extends RemoteServiceComponent {
 					return c;
 			}
 		return null;
+	}
+
+	@Override
+	public void remoteAdminEvent(RemoteServiceAdminEvent event) {
+		this.importer.remoteAdminEvent(event);
 	}
 }
