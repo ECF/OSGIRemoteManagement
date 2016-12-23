@@ -151,8 +151,6 @@ public class FeaturesInstallerView extends ViewPart {
 						if (exception != null)
 							logAndShowError("Remote Karaf Feature Installer could not install feature " + node.getId(),
 									exception);
-						else
-							refresh(managerNode);
 					});
 		}
 	}
@@ -167,8 +165,6 @@ public class FeaturesInstallerView extends ViewPart {
 							logAndShowError(
 									"Remote Karaf Feature Installer could not uninstall feature " + node.getId(),
 									exception);
-						else
-							refresh(managerNode);
 					});
 		}
 	}
@@ -182,8 +178,6 @@ public class FeaturesInstallerView extends ViewPart {
 						if (exception != null)
 							logAndShowError("Remote Karaf Feature Installer could not remove repo " + repoNode.getUri(),
 									exception);
-						else
-							refresh(managerNode);
 					});
 		}
 	}
@@ -220,8 +214,6 @@ public class FeaturesInstallerView extends ViewPart {
 				managerNode.getKarafFeaturesInstaller().addRepositoryAsync(uri).whenComplete((v, exception) -> {
 					if (exception != null)
 						logAndShowError("Remote Karaf Feature Installer could not add repo " + uri, exception);
-					else
-						refresh(managerNode);
 				});
 			}
 		}
@@ -324,7 +316,6 @@ public class FeaturesInstallerView extends ViewPart {
 								}
 							}
 						}
-						v.expandToLevel(3);
 						v.refresh();
 					}
 			});
@@ -354,7 +345,6 @@ public class FeaturesInstallerView extends ViewPart {
 							if (repoEvent.getType() != RepositoryEventMTO.REMOVED) 
 								managerNode.addChild(new RepositoryNode(rMTO));
 						}
-						v.expandToLevel(3);
 						v.refresh();
 					}
 				}
@@ -455,7 +445,7 @@ public class FeaturesInstallerView extends ViewPart {
 						managerNode.clearChildren();
 						for (RepositoryMTO srMTO : result)
 							managerNode.addChild(new RepositoryNode(srMTO));
-						viewer.expandToLevel(3);
+						viewer.expandToLevel(2);
 						viewer.refresh();
 					}
 				}
