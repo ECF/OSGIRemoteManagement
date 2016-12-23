@@ -113,15 +113,9 @@ public class FeaturesInstallerHost extends AbstractManager implements FeaturesIn
 				notify = new ArrayList<FeaturesListenerAsync>(kfls);
 			}
 			RepositoryMTO rmto = createRepositoryMTO(event.getRepository());
-			try {
-				
 			for(FeaturesListenerAsync kfl: notify) 
 				kfl.handleRepoEventAsync(new RepositoryEventMTO(getRepositoryEventType(event), rmto, event.isReplay()));
-			} catch (Exception e) {
-				e.printStackTrace();
-				e.printStackTrace();
-			}
-			}
+		}
 	};
 	
 	protected void bindFeaturesService(FeaturesService featuresService) {
