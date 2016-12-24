@@ -11,6 +11,7 @@ package org.eclipse.ecf.mgmt.framework.eclipse.ui.services.model;
 import org.eclipse.ecf.mgmt.framework.IServiceManagerAsync;
 import org.eclipse.ecf.remoteservice.IRemoteServiceReference;
 import org.eclipse.ecf.remoteservice.ui.serviceview.model.AbstractServicesNode;
+import org.eclipse.ecf.remoteservice.ui.serviceview.model.ServiceNode;
 
 public class RemoteServiceManagerNode extends AbstractServicesNode {
 
@@ -36,5 +37,16 @@ public class RemoteServiceManagerNode extends AbstractServicesNode {
 
 	public String getName() {
 		return getManagerContainer() + ":" + this.managerRef.getID().getContainerRelativeID();
+	}
+
+	public ServiceNode getServiceNode(long id) {
+		for(AbstractServicesNode sn: getChildren()) {
+			if (sn instanceof ServiceNode) {
+				ServiceNode serviceNode = (ServiceNode) sn;
+				if (serviceNode.getServiceId() == id)
+					return serviceNode;
+			}
+		}
+		return null;
 	}
 }

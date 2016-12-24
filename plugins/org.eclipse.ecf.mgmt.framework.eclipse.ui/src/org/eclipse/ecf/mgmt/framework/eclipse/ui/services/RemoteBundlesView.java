@@ -354,11 +354,9 @@ public class RemoteBundlesView extends AbstractBundlesView {
 						RemoteBundleManagerNode managerNode = (node == null)
 								? getRootNode().getBundleManagerNode(rsRef, s) : node;
 						managerNode.clearChildren();
-						for (BundleMTO bMTO : result) {
-							BundleNode bn = createBundleNode(bMTO.getId(), bMTO.getLastModified(), bMTO.getState(),
-									bMTO.getSymbolicName(), bMTO.getVersion(), bMTO.getManifest(), bMTO.getLocation());
-							managerNode.addChild(bn);
-						}
+						for (BundleMTO bMTO : result)
+							managerNode.addChild(createBundleNode(bMTO.getId(), bMTO.getLastModified(), bMTO.getState(),
+									bMTO.getSymbolicName(), bMTO.getVersion(), bMTO.getManifest(), bMTO.getLocation()));
 						viewer.expandToLevel(2);
 						viewer.refresh();
 					}

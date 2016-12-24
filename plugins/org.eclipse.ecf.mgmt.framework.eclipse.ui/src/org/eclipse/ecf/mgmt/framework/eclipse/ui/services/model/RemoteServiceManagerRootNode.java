@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.ecf.mgmt.framework.IServiceManagerAsync;
+import org.eclipse.ecf.remoteservice.IRemoteServiceID;
 import org.eclipse.ecf.remoteservice.IRemoteServiceReference;
 import org.eclipse.ecf.remoteservice.ui.serviceview.model.ServicesRootNode;
 
@@ -37,6 +38,17 @@ public class RemoteServiceManagerRootNode extends ServicesRootNode {
 			return managerNode;
 		}
 	}
+
+	public RemoteServiceManagerNode getServiceManagerNode(IRemoteServiceID rsID) {
+		synchronized (managers) {
+			for(IRemoteServiceReference rsRef: managers.keySet()) {
+				if (rsID.equals(rsRef.getID()))
+					return managers.get(rsRef);
+			}
+			return null;
+		}
+	}
+	
 
 	public void removeServiceManagerNode(IRemoteServiceReference rsRef) {
 		synchronized (managers) {

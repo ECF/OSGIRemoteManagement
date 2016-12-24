@@ -19,10 +19,17 @@ import org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.ICallbackRegist
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.ServiceImporterCallbackExporter;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.service.remoteserviceadmin.RemoteServiceAdmin;
 import org.osgi.service.remoteserviceadmin.RemoteServiceAdminEvent;
 import org.osgi.service.remoteserviceadmin.RemoteServiceAdminListener;
 
+@Component(immediate=true)
 public class RemoteBundleManagerComponent extends RemoteServiceComponent implements RemoteServiceAdminListener {
 
 	private static RemoteBundleManagerComponent instance;
@@ -38,6 +45,7 @@ public class RemoteBundleManagerComponent extends RemoteServiceComponent impleme
 		importer = new ServiceImporterCallbackExporter();
 	}
 
+	@Activate
 	public void activate(final BundleContext context) throws Exception {
 		super.activate();
 		this.importer.activate(context);
@@ -48,6 +56,7 @@ public class RemoteBundleManagerComponent extends RemoteServiceComponent impleme
 			}});
 	}
 	
+	@Deactivate
 	public void deactivate() {
 		this.importer.removeImportedServiceCallback(IBundleManagerAsync.class);
 		this.importer.deactivate();
@@ -58,6 +67,7 @@ public class RemoteBundleManagerComponent extends RemoteServiceComponent impleme
 		return this.importer.getContainerConnectedToID(id);
 	}
 	
+	@Reference
 	void bindContainerManager(IContainerManager c) {
 		this.importer.bindContainerManager(c);
 	}
@@ -65,7 +75,8 @@ public class RemoteBundleManagerComponent extends RemoteServiceComponent impleme
 	void unbindContainerManager(IContainerManager c) {
 		this.importer.unbindContainerManager(c);
 	}
-
+	
+	@Reference
 	void bindRemoteServiceAdmin(RemoteServiceAdmin rsa) {
 		this.importer.bindRemoteServiceAdmin(rsa);
 	}
@@ -74,6 +85,7 @@ public class RemoteBundleManagerComponent extends RemoteServiceComponent impleme
 		this.importer.unbindRemoteServiceAdmin(rsa);
 	}
 
+	@Reference(policy=ReferencePolicy.DYNAMIC,cardinality=ReferenceCardinality.MULTIPLE)
 	void bindBundleManagerAsync(IBundleManagerAsync bm) {
 		addServiceHolder(IBundleManagerAsync.class, bm);
 	}
