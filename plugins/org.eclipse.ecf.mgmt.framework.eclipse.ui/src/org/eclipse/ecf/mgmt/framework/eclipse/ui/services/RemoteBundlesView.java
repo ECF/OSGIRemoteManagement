@@ -187,6 +187,8 @@ public class RemoteBundlesView extends AbstractBundlesView {
 									props.put("ecf.endpoint.id", "ecftcp://" + hostname + ":" + port + "/server");
 									ImportRegistration reg = (ImportRegistration) getRSA()
 											.importService(new EndpointDescription(props));
+									if (reg == null)
+										throw new NullPointerException("Import registration returned is null");
 									Throwable t = reg.getException();
 									if (t != null) {
 										results.forEach(r -> r.close());
