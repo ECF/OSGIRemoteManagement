@@ -102,12 +102,10 @@ public class ComponentMTO implements Serializable {
 			Long serviceId = (Long) sr.getProperty(Constants.SERVICE_ID);
 			if (serviceId == null)
 				continue;
-			else {
-				for (ServiceReferenceDTO dto : dtos) {
+			else 
+				for (ServiceReferenceDTO dto : dtos) 
 					if (serviceId.longValue() == dto.id)
 						return ServiceReferenceMTO.createMTO(dto);
-				}
-			}
 		}
 		return null;
 	}

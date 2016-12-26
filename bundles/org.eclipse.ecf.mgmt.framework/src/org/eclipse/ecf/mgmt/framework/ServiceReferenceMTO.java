@@ -10,16 +10,23 @@
 package org.eclipse.ecf.mgmt.framework;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.ecf.mgmt.PropertiesUtil;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
+import org.osgi.framework.ServiceReference;
 import org.osgi.framework.dto.ServiceReferenceDTO;
 
 public class ServiceReferenceMTO implements Serializable {
+
+	public static final byte EXPORTED = 1;
+	public static final byte IMPORTED = 2;
+	public static final byte LOCAL = 0;
 
 	private static final long serialVersionUID = -4088391130982105496L;
 
@@ -27,24 +34,55 @@ public class ServiceReferenceMTO implements Serializable {
 	private final long bundle;
 	private final Map<String, Object> properties;
 	private final long[] usingBundles;
+	private final int exportImportMode;
 
-	public static ServiceReferenceMTO createMTO(ServiceReferenceDTO dto) {
-		return new ServiceReferenceMTO(dto);
+	public static ServiceReferenceMTO createMTO(ServiceReferenceDTO dto, int exportImportMode) {
+		return new ServiceReferenceMTO(dto, exportImportMode);
 	}
 
-	public static ServiceReferenceMTO[] createMTOs(ServiceReferenceDTO[] dtos) {
-		List<ServiceReferenceMTO> results = new ArrayList<ServiceReferenceMTO>();
-		for (ServiceReferenceDTO dto : dtos)
-			results.add(createMTO(dto));
-		return results.toArray(new ServiceReferenceMTO[results.size()]);
+	private Map<String, Object> getMapFromProperties(ServiceReference<?> ref) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		for (String key : ref.getPropertyKeys())
+			result.put(key, ref.getProperty(key));
+		return result;
+	}
+
+	public static ServiceReferenceMTO createMTO(ServiceReference<?> ref, int exportImportMode) {
+		return new ServiceReferenceMTO(ref, exportImportMode);
+	}
+
+	public static ServiceReferenceMTO createMTO(ServiceReferenceDTO dto) {
+		return new ServiceReferenceMTO(dto, LOCAL);
+	}
+
+	public static long[] usingBundles(ServiceReference<?> ref) {
+		Bundle[] using = ref.getUsingBundles();
+		if (using == null)
+			return new long[0];
+		List<Bundle> bundles = Arrays.asList(using);
+		long[] results = new long[bundles.size()];
+		int i = 0;
+		for (Iterator<Bundle> it = bundles.iterator(); it.hasNext(); i++)
+			results[i] = it.next().getBundleId();
+		return results;
 	}
 
 	@SuppressWarnings("unchecked")
-	ServiceReferenceMTO(ServiceReferenceDTO srDTO) {
+	ServiceReferenceMTO(ServiceReference<?> ref, int exportImportMode) {
+		this.id = (Long) ref.getProperty(Constants.SERVICE_ID);
+		this.bundle = ref.getBundle().getBundleId();
+		this.properties = (Map<String, Object>) PropertiesUtil.convertMapToSerializableMap(getMapFromProperties(ref));
+		this.usingBundles = usingBundles(ref);
+		this.exportImportMode = exportImportMode;
+	}
+
+	@SuppressWarnings("unchecked")
+	ServiceReferenceMTO(ServiceReferenceDTO srDTO, int exportImportMode) {
 		this.id = srDTO.id;
 		this.bundle = srDTO.bundle;
 		this.properties = (Map<String, Object>) PropertiesUtil.convertMapToSerializableMap(srDTO.properties);
 		this.usingBundles = srDTO.usingBundles;
+		this.exportImportMode = exportImportMode;
 	}
 
 	public long getId() {
@@ -78,7 +116,11 @@ public class ServiceReferenceMTO implements Serializable {
 	@Override
 	public String toString() {
 		return "ServiceReferenceMTO [id=" + id + ", bundle=" + bundle + ", properties=" + properties + ", usingBundles="
-				+ Arrays.toString(usingBundles) + "]";
+				+ Arrays.toString(usingBundles) + ", exportImportMode=" + exportImportMode + "]";
+	}
+
+	public int getExportImportMode() {
+		return exportImportMode;
 	}
 
 }

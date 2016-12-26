@@ -18,14 +18,20 @@ import org.eclipse.ecf.mgmt.framework.IServiceManager;
 import org.eclipse.ecf.mgmt.framework.ServiceEventMTO;
 import org.eclipse.ecf.mgmt.framework.ServiceReferenceMTO;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
+import org.osgi.framework.ServiceReference;
 import org.osgi.framework.dto.ServiceReferenceDTO;
+import org.osgi.service.remoteserviceadmin.ExportReference;
+import org.osgi.service.remoteserviceadmin.ImportReference;
+import org.osgi.service.remoteserviceadmin.RemoteServiceAdminEvent;
+import org.osgi.service.remoteserviceadmin.RemoteServiceAdminListener;
 
-public class ServiceManager extends AbstractManager implements IServiceManager {
+public class ServiceManager extends AbstractManager implements IServiceManager, RemoteServiceAdminListener {
 
-	private static final Function<ServiceReferenceDTO, ServiceReferenceMTO> srmapper = srd -> {
-		return ServiceReferenceMTO.createMTO(srd);
+	private final Function<ServiceReferenceDTO, ServiceReferenceMTO> srmapper = srd -> {
+		return ServiceReferenceMTO.createMTO(srd, getServiceReferenceExportImportState(srd.id));
 	};
 
 	@Override
@@ -83,11 +89,16 @@ public class ServiceManager extends AbstractManager implements IServiceManager {
 			synchronized (sehs) {
 				notify = new ArrayList<IServiceEventHandlerAsync>(sehs);
 			}
-			ServiceReferenceMTO mto = getServiceReference(
-					(Long) event.getServiceReference().getProperty(org.osgi.framework.Constants.SERVICE_ID));
-			if (mto != null)
-				for (IServiceEventHandlerAsync beh : notify)
-					beh.handleServiceEventAsync(new ServiceEventMTO(event.getType(), mto));
+			int eventType = event.getType();
+			ServiceReference<?> ref = null;
+			ServiceReferenceMTO mto = null;
+			for (IServiceEventHandlerAsync beh : notify) {
+				if (ref == null)
+					ref = event.getServiceReference();
+				if (mto == null)
+					mto = ServiceReferenceMTO.createMTO(ref, getServiceReferenceExportImportState((Long) ref.getProperty(Constants.SERVICE_ID)));
+				beh.handleServiceEventAsync(new ServiceEventMTO(eventType, mto));
+			}
 		}
 	};
 
@@ -99,5 +110,19 @@ public class ServiceManager extends AbstractManager implements IServiceManager {
 	protected void deactivate() throws Exception {
 		getContext().removeServiceListener(serviceListener);
 		super.deactivate();
+	}
+
+	@Override
+	public void remoteAdminEvent(RemoteServiceAdminEvent event) {
+		ExportReference eRef = event.getExportReference();
+		ServiceReference<?> ref = null;
+		if (eRef != null) 
+			ref = eRef.getExportedService();
+		else {
+			ImportReference iRef = event.getImportReference();
+			ref = iRef.getImportedService();
+		}
+		if (ref != null)
+			serviceListener.serviceChanged(new ServiceEvent(ServiceEvent.MODIFIED,ref));
 	}
 }

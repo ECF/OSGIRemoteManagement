@@ -23,11 +23,11 @@ public class RemoteServiceManagerNode extends AbstractServicesNode {
 		this.rsaManager = rsaManager;
 	}
 
-	public IServiceManagerAsync getRemoteServiceAdminManager() {
+	public IServiceManagerAsync getRemoteServiceManager() {
 		return this.rsaManager;
 	}
 
-	public IRemoteServiceReference getRemoteServiceAdminManagerRef() {
+	public IRemoteServiceReference getRemoteServiceReference() {
 		return this.managerRef;
 	}
 

@@ -24,15 +24,21 @@ import org.eclipse.ecf.mgmt.framework.FrameworkMTO;
 import org.eclipse.ecf.mgmt.framework.ServiceReferenceMTO;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
+import org.osgi.framework.ServiceReference;
 import org.osgi.framework.dto.FrameworkDTO;
 import org.osgi.service.log.LogService;
+import org.osgi.service.remoteserviceadmin.ExportReference;
+import org.osgi.service.remoteserviceadmin.ImportReference;
+import org.osgi.service.remoteserviceadmin.RemoteServiceAdmin;
 
 public abstract class AbstractManager implements IAdaptable {
 
 	private BundleContext bundleContext;
 	private LogService logService;
 	private IAdapterManager adapterManager;
-
+	private RemoteServiceAdmin remoteServiceAdmin;
+	
 	protected BundleContext getContext() {
 		return bundleContext;
 	}
@@ -69,6 +75,14 @@ public abstract class AbstractManager implements IAdaptable {
 		this.bundleContext = null;
 	}
 
+	protected void bindRemoteServiceAdmin(RemoteServiceAdmin rsa) {
+		this.remoteServiceAdmin = rsa;
+	}
+	
+	protected void unbindRemoteServiceAdmin(RemoteServiceAdmin rsa) {
+		this.remoteServiceAdmin = null;
+	}
+	
 	protected IStatus createErrorStatus(String message, Throwable t) {
 		logError(message, t);
 		return new SerializableStatus(IStatus.ERROR, getContext().getBundle()
@@ -125,6 +139,31 @@ public abstract class AbstractManager implements IAdaptable {
 		return getFrameworkBundle().adapt(FrameworkDTO.class);
 	}
 
+	protected int getServiceReferenceExportImportState(long serviceId) {
+		RemoteServiceAdmin rsa = this.remoteServiceAdmin;
+		if (rsa == null) 
+			return ServiceReferenceMTO.LOCAL;
+		ServiceReference<?> ref = null;
+		for(ExportReference eRef: rsa.getExportedServices()) {
+			ServiceReference<?> sRef = eRef.getExportedService();
+			if (sRef != null && ((Long) sRef.getProperty(Constants.SERVICE_ID)) == serviceId) {
+				ref = sRef;
+				break;
+			}
+		}
+		if (ref == null) {
+			for(ImportReference iRef: rsa.getImportedEndpoints()) {
+				ServiceReference<?> sRef = iRef.getImportedService();
+				if (sRef != null && ((Long) sRef.getProperty(Constants.SERVICE_ID)) == serviceId) {
+					ref = sRef;
+					break;
+				}
+			}
+			return (ref == null)?ServiceReferenceMTO.LOCAL:ServiceReferenceMTO.IMPORTED;
+		} else 
+			return (ref == null)?ServiceReferenceMTO.LOCAL:ServiceReferenceMTO.EXPORTED;
+	}
+	
 	protected FrameworkMTO createFrameworkMTO() {
 		List<BundleMTO> bundleMTOs = selectAndMap(getAllBundles(), null, b -> {
 			return BundleMTO.createMTO(b);
@@ -132,7 +171,7 @@ public abstract class AbstractManager implements IAdaptable {
 		FrameworkDTO frameworkDTO = getFrameworkDTO();
 		List<ServiceReferenceMTO> srMTOs = selectAndMap(frameworkDTO.services,
 				null, srDTO -> {
-					return ServiceReferenceMTO.createMTO(srDTO);
+					return ServiceReferenceMTO.createMTO(srDTO, getServiceReferenceExportImportState(srDTO.id));
 				});
 		return new FrameworkMTO(bundleMTOs.toArray(new BundleMTO[bundleMTOs
 				.size()]), frameworkDTO.properties,

@@ -22,9 +22,11 @@ import org.eclipse.ecf.mgmt.framework.eclipse.ui.ServiceEventHandler;
 import org.eclipse.ecf.mgmt.framework.eclipse.ui.services.model.RemoteServiceManagerContentProvider;
 import org.eclipse.ecf.mgmt.framework.eclipse.ui.services.model.RemoteServiceManagerNode;
 import org.eclipse.ecf.mgmt.framework.eclipse.ui.services.model.RemoteServiceManagerRootNode;
+import org.eclipse.ecf.mgmt.framework.eclipse.ui.services.model.RemoteServiceNode;
 import org.eclipse.ecf.remoteservice.IRemoteServiceID;
 import org.eclipse.ecf.remoteservice.IRemoteServiceReference;
 import org.eclipse.ecf.remoteservice.ui.serviceview.AbstractServicesView;
+import org.eclipse.ecf.remoteservice.ui.serviceview.model.AbstractServicesContentProvider;
 import org.eclipse.ecf.remoteservice.ui.serviceview.model.AbstractServicesNode;
 import org.eclipse.ecf.remoteservice.ui.serviceview.model.RegisteringBundleIdNode;
 import org.eclipse.ecf.remoteservice.ui.serviceview.model.ServiceNode;
@@ -103,7 +105,8 @@ public class RemoteServicesView extends AbstractServicesView {
 	}
 
 	RemoteServiceManagerRootNode getRootNode() {
-		return (RemoteServiceManagerRootNode) getContentProvider().getServicesRoot();
+		AbstractServicesContentProvider c = getContentProvider();
+		return (c == null)?null:(RemoteServiceManagerRootNode) c.getServicesRoot();
 	}
 
 	protected void removeRemoteServiceManager(final IRemoteServiceReference rsRef) {
@@ -151,15 +154,15 @@ public class RemoteServicesView extends AbstractServicesView {
 	ServiceNode createServiceNode(ServiceReferenceMTO srMTO) {
 		long bundleId = srMTO.getBundle();
 		long[] usingBundleIds = srMTO.getUsingBundles();
-		ServiceNode sn = new ServiceNode(bundleId, usingBundleIds, srMTO.getProperties());
+		ServiceNode sn = new RemoteServiceNode(bundleId, usingBundleIds, srMTO.getProperties(),srMTO.getExportImportMode());
 		sn.addChild(new RegisteringBundleIdNode(bundleId));
 		sn.addChild(new UsingBundleIdsNode("Using Bundles", usingBundleIds));
 		return sn;
 	}
 
 	void refresh(RemoteServiceManagerNode rsManagerNode) {
-		updateRemoteServiceManager(rsManagerNode.getRemoteServiceAdminManager(),
-				rsManagerNode.getRemoteServiceAdminManagerRef(), rsManagerNode);
+		updateRemoteServiceManager(rsManagerNode.getRemoteServiceManager(),
+				rsManagerNode.getRemoteServiceReference(), rsManagerNode);
 	}
 
 	class ServiceEventHandlerDelegate implements IServiceEventHandlerDelegate {
@@ -170,7 +173,10 @@ public class RemoteServicesView extends AbstractServicesView {
 				v.getControl().getDisplay().asyncExec(new Runnable() {
 					@Override
 					public void run() {
-						RemoteServiceManagerNode managerNode = getRootNode().getServiceManagerNode(rsID);
+						RemoteServiceManagerRootNode rootNode = getRootNode();
+						if (rootNode == null)
+							return;
+						RemoteServiceManagerNode managerNode = rootNode.getServiceManagerNode(rsID);
 						if (managerNode != null) {
 							ServiceReferenceMTO srMTO = serviceEvent.getServiceReferenceMTO();
 							ServiceNode serviceNode = managerNode.getServiceNode(srMTO.getId());
