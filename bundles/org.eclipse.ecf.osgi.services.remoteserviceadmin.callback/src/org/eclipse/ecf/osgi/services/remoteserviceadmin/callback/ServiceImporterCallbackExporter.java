@@ -11,6 +11,7 @@ package org.eclipse.ecf.osgi.services.remoteserviceadmin.callback;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -42,10 +43,10 @@ public class ServiceImporterCallbackExporter extends CallbackSupport implements 
 		ExportableCallback(ICallbackRegistrar registrar) {
 			this.callbackRegistrar = registrar;
 			this.callbackRegistration = null;
-			this.callbackExportRegs = new HashMap<ImportReference, List<ExportRegistration>>();
+			this.callbackExportRegs = Collections.synchronizedMap(new HashMap<ImportReference, List<ExportRegistration>>());
 		}
 
-		synchronized boolean registerAndExportCallback(ImportReference importedServiceRef) throws Throwable {
+		boolean registerAndExportCallback(ImportReference importedServiceRef) throws Throwable {
 			if (importedServiceRef == null)
 				return false;
 			EndpointDescription ed = (EndpointDescription) importedServiceRef.getImportedEndpoint();
@@ -53,7 +54,8 @@ public class ServiceImporterCallbackExporter extends CallbackSupport implements 
 				return false;
 			// first look to see if we've already exported for this import
 			// reference
-			List<ExportRegistration> exportRegistrations = this.callbackExportRegs.get(importedServiceRef);
+			List<ExportRegistration> exportRegistrations = null;
+			exportRegistrations = this.callbackExportRegs.get(importedServiceRef);
 			if (exportRegistrations != null)
 				return false;
 			callbackRegistration = this.callbackRegistrar.registerCallback(importedServiceRef);
@@ -75,7 +77,7 @@ public class ServiceImporterCallbackExporter extends CallbackSupport implements 
 							exportRegistrations.add(exportReg);
 					}
 				}
-				if (exportRegistrations.size() > 0)
+				if (exportRegistrations.size() > 0) 
 					this.callbackExportRegs.put(importedServiceRef, exportRegistrations);
 				return true;
 			} catch (Throwable e) {
@@ -96,7 +98,7 @@ public class ServiceImporterCallbackExporter extends CallbackSupport implements 
 					}
 		}
 
-		synchronized void close(ImportReference importReference) {
+		void close(ImportReference importReference) {
 			List<ExportRegistration> exportRegs = this.callbackExportRegs.remove(importReference);
 			if (exportRegs != null)
 				closeRegistrations(exportRegs);
@@ -110,7 +112,7 @@ public class ServiceImporterCallbackExporter extends CallbackSupport implements 
 			}
 		}
 
-		synchronized void closeAll() {
+		void closeAll() {
 			Set<ImportReference> keys = new HashSet<ImportReference>(this.callbackExportRegs.keySet());
 			for (Iterator<ImportReference> i = keys.iterator(); i.hasNext();)
 				close(i.next());
@@ -128,25 +130,30 @@ public class ServiceImporterCallbackExporter extends CallbackSupport implements 
 	}
 
 	public void removeImportedServiceCallback(Class<?> importedServiceClass) {
+		ExportableCallback ecb = null;
 		synchronized (serviceCallbackMap) {
-			ExportableCallback ecb = serviceCallbackMap.remove(importedServiceClass);
-			if (ecb != null)
-				ecb.closeAll();
+			ecb = serviceCallbackMap.remove(importedServiceClass);
 		}
+		if (ecb != null)
+			ecb.closeAll();
 	}
 
 	ExportableCallback findExportableCallback(List<String> services, List<String> asyncServices) {
-		for (Class<?> c : serviceCallbackMap.keySet())
-			if (services.contains(c.getName()) || asyncServices.contains(c.getName()))
-				return serviceCallbackMap.get(c);
+		synchronized (serviceCallbackMap) {
+			for (Class<?> c : serviceCallbackMap.keySet())
+				if (services.contains(c.getName()) || asyncServices.contains(c.getName()))
+					return serviceCallbackMap.get(c);
+		}
 		return null;
 	}
 
 	ExportableCallback findExportableCallback(ImportReference importRef) {
-		for (ExportableCallback cb : serviceCallbackMap.values()) {
-			List<ExportRegistration> exportRegs = cb.callbackExportRegs.get(importRef);
-			if (exportRegs != null)
-				return cb;
+		synchronized (serviceCallbackMap) {
+			for (ExportableCallback cb : serviceCallbackMap.values()) {
+				List<ExportRegistration> exportRegs = cb.callbackExportRegs.get(importRef);
+				if (exportRegs != null)
+					return cb;
+			}
 		}
 		return null;
 	}
@@ -158,23 +165,22 @@ public class ServiceImporterCallbackExporter extends CallbackSupport implements 
 		if (t == null) {
 			ImportReference importRef = (ImportReference) event.getImportReference();
 			if (importRef != null) {
-				synchronized (serviceCallbackMap) {
+				ExportableCallback cb = null;
 					if (type == RemoteServiceAdminEvent.IMPORT_REGISTRATION) {
 						EndpointDescription ed = (EndpointDescription) importRef.getImportedEndpoint();
-						if (ed != null) {
-							ExportableCallback exportableCallback = findExportableCallback(ed.getInterfaces(),
-									ed.getAsyncInterfaces());
-							if (exportableCallback != null)
-								try {
-									exportableCallback.registerAndExportCallback(importRef);
-								} catch (Throwable e) {
-									logException("Could not export callback=" + exportableCallback, e);
-								}
+						if (ed != null)
+							cb = findExportableCallback(ed.getInterfaces(), ed.getAsyncInterfaces());
+					} else if (type == RemoteServiceAdminEvent.IMPORT_UNREGISTRATION) 
+						cb = findExportableCallback(importRef);
+				if (cb != null) {
+					if (type == RemoteServiceAdminEvent.IMPORT_REGISTRATION) {
+						try {
+							cb.registerAndExportCallback(importRef);
+						} catch (Throwable e) {
+							logException("Could not export callback=" + cb, e);
 						}
 					} else if (type == RemoteServiceAdminEvent.IMPORT_UNREGISTRATION) {
-						ExportableCallback cb = findExportableCallback(importRef);
-						if (cb != null)
-							cb.close(importRef);
+						cb.close(importRef);
 					}
 				}
 			}

@@ -125,11 +125,15 @@ public class ServiceExporterCallbackImporter extends CallbackSupport implements 
 	}
 
 	public void addExportedServiceCallback(ServiceReference<?> exportedServiceReference, Class<?> callbackClass) {
-		this.exportedServices.put(exportedServiceReference, new ExportedService(callbackClass));
+		synchronized (exportedServices) {
+			this.exportedServices.put(exportedServiceReference, new ExportedService(callbackClass));
+		}
 	}
 
 	public void removeExportedServiceCallback(ServiceReference<?> exportedServiceReference) {
-		this.exportedServices.remove(exportedServiceReference);
+		synchronized (exportedServices) {
+			this.exportedServices.remove(exportedServiceReference);
+		}
 	}
 
 	private ServiceRegistration<RemoteServiceAdminListener> listenerReg;
@@ -161,16 +165,18 @@ public class ServiceExporterCallbackImporter extends CallbackSupport implements 
 			if (exportRef != null) {
 				ServiceReference<?> svcRef = exportRef.getExportedService();
 				if (svcRef != null) {
+					ExportedService es = null;
 					synchronized (exportedServices) {
-						if (type == RemoteServiceAdminEvent.EXPORT_REGISTRATION) {
-							ExportedService es = exportedServices.get(svcRef);
-							if (es != null)
-								es.exportViaContainer(exportRef.getContainerID());
-						} else if (type == RemoteServiceAdminEvent.EXPORT_UNREGISTRATION) {
-							ExportedService es = exportedServices.remove(svcRef);
-							if (es != null)
-								es.unexportViaContainer();
-						}
+						if (type == RemoteServiceAdminEvent.EXPORT_REGISTRATION) 
+							es = exportedServices.get(svcRef);
+						else if (type == RemoteServiceAdminEvent.EXPORT_UNREGISTRATION) 
+							es = exportedServices.remove(svcRef);
+					}
+					if (es != null) {
+						if (type == RemoteServiceAdminEvent.EXPORT_REGISTRATION)
+							es.exportViaContainer(exportRef.getContainerID());
+						else if (type == RemoteServiceAdminEvent.EXPORT_UNREGISTRATION) 
+							es.unexportViaContainer();
 					}
 				}
 			}
