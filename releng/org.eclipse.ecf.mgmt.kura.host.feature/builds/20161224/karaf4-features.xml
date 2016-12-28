@@ -6,6 +6,7 @@
     <bundle>http://download.eclipse.org/equinox/drops/R-Neon.1-201609071200/org.eclipse.core.jobs_3.8.0.v20160509-0411.jar</bundle>
     <bundle>http://download.eclipse.org/equinox/drops/R-Neon.1-201609071200/org.eclipse.equinox.concurrent_1.1.0.v20130327-1442.jar</bundle>
     <feature>eventadmin</feature>
+    <feature>scr</feature>
 </feature>
 <feature name="ecf-remoteservices-core" version="3.13.3" description="ECF Core">
     <feature version="3.13.3">ecf-remoteservices-dependencies</feature>

@@ -70,4 +70,39 @@
       </array>
     </property>
   </endpoint-description>
+  <endpoint-description>
+    <property name="ecf.endpoint.id" value-type="String" value="tcp://iot.eclipse.org:1883/kura/remoteservices"/>
+    <property name="ecf.endpoint.id.ns" value-type="String" value="ecf.namespace.jmsid"/>
+    <property name="ecf.endpoint.ts" value-type="Long" value="1482958710492"/>
+    <property name="ecf.exported.async.interfaces" value-type="String" value="*"/>
+    <property name="ecf.rsvc.id" value-type="Long" value="0"/>
+    <property name="endpoint.framework.uuid" value-type="String" value="b2b07552-e260-413d-b7df-f1039eb8855b"/>
+    <property name="endpoint.id" value-type="String" value="46d32dde-8e3b-48e8-8b18-e0d9495750cd"/>
+    <property name="endpoint.package.version.org.eclipse.ecf.mgmt.karaf.features" value-type="String" value="1.0.0"/>
+    <property name="endpoint.service.id" value-type="Long" value="0"/>
+    <property name="objectClass" value-type="String">
+      <array>
+        <value>org.eclipse.ecf.mgmt.karaf.features.FeaturesInstaller</value>
+      </array>
+    </property>
+    <property name="remote.configs.supported" value-type="String">
+      <array>
+        <value>ecf.jms.mqtt.manager</value>
+      </array>
+    </property>
+    <property name="remote.intents.supported" value-type="String">
+      <array>
+        <value>passByValue</value>
+        <value>exactlyOnce</value>
+        <value>ordered</value>
+        <value>MQTT</value>
+      </array>
+    </property>
+    <property name="service.imported" value-type="String" value="true"/>
+    <property name="service.imported.configs" value-type="String">
+      <array>
+        <value>ecf.jms.mqtt.manager</value>
+      </array>
+    </property>
+  </endpoint-description>
 </endpoint-descriptions>
