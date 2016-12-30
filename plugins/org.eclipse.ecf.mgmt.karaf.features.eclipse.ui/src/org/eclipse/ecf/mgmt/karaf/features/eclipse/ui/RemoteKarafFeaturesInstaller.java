@@ -4,8 +4,8 @@ import org.eclipse.ecf.core.IContainer;
 import org.eclipse.ecf.core.IContainerManager;
 import org.eclipse.ecf.core.identity.ID;
 import org.eclipse.ecf.mgmt.consumer.util.RemoteServiceComponent;
-import org.eclipse.ecf.mgmt.karaf.features.FeaturesInstallerAsync;
-import org.eclipse.ecf.mgmt.karaf.features.FeaturesListener;
+import org.eclipse.ecf.mgmt.karaf.features.FeatureInstallManagerAsync;
+import org.eclipse.ecf.mgmt.karaf.features.FeatureInstallEventHandler;
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin.ImportReference;
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.ICallbackRegistrar;
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.ServiceImporterCallbackExporter;
@@ -42,16 +42,16 @@ public class RemoteKarafFeaturesInstaller extends RemoteServiceComponent impleme
 	public void activate(BundleContext context) throws Exception {
 		super.activate();
 		this.importer.activate(context);
-		this.importer.addImportedServiceCallback(FeaturesInstallerAsync.class, new ICallbackRegistrar() {
+		this.importer.addImportedServiceCallback(FeatureInstallManagerAsync.class, new ICallbackRegistrar() {
 			@Override
 			public ServiceRegistration<?> registerCallback(ImportReference importReference) throws Exception {
-				return context.registerService(FeaturesListener.class, new KarafFeaturesListener(importReference), null);
+				return context.registerService(FeatureInstallEventHandler.class, new KarafFeaturesListener(importReference), null);
 			}});
 	}
 
 	@Deactivate
 	public void deactivate() {
-		this.importer.removeImportedServiceCallback(FeaturesInstallerAsync.class);
+		this.importer.removeImportedServiceCallback(FeatureInstallManagerAsync.class);
 		this.importer.deactivate();
 		super.deactivate();
 		instance = null;
@@ -59,12 +59,12 @@ public class RemoteKarafFeaturesInstaller extends RemoteServiceComponent impleme
 
 	
 	@Reference(cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC)
-	void bindKarafFeaturesInstaller(FeaturesInstallerAsync fi) {
-		addServiceHolder(FeaturesInstallerAsync.class, fi);
+	void bindKarafFeaturesInstaller(FeatureInstallManagerAsync fi) {
+		addServiceHolder(FeatureInstallManagerAsync.class, fi);
 	}
 
-	void unbindKarafFeaturesInstaller(FeaturesInstallerAsync fi) {
-		removeServiceHolder(FeaturesInstallerAsync.class, fi);
+	void unbindKarafFeaturesInstaller(FeatureInstallManagerAsync fi) {
+		removeServiceHolder(FeatureInstallManagerAsync.class, fi);
 	}
 
 	@Reference

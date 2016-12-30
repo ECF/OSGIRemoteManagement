@@ -9,8 +9,10 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.karaf.features;
 
-public interface FeaturesListener {
+import java.util.concurrent.CompletableFuture;
 
-	void handleFeatureEvent(FeatureEventMTO event);
-	void handleRepoEvent(RepositoryEventMTO event);
+public interface FeatureInstallEventHandlerAsync {
+
+	CompletableFuture<Void> handleFeatureEventAsync(FeatureEventMTO event);
+	CompletableFuture<Void> handleRepoEventAsync(RepositoryEventMTO event);
 }

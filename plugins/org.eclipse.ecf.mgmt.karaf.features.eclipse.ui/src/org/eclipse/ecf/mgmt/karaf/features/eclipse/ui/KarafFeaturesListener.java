@@ -5,12 +5,12 @@ import java.util.Map;
 
 import org.eclipse.ecf.core.identity.ID;
 import org.eclipse.ecf.mgmt.karaf.features.FeatureEventMTO;
-import org.eclipse.ecf.mgmt.karaf.features.FeaturesListener;
+import org.eclipse.ecf.mgmt.karaf.features.FeatureInstallEventHandler;
 import org.eclipse.ecf.mgmt.karaf.features.RepositoryEventMTO;
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin.ImportReference;
 import org.eclipse.ecf.remoteservice.IRemoteServiceID;
 
-public class KarafFeaturesListener implements FeaturesListener {
+public class KarafFeaturesListener implements FeatureInstallEventHandler {
 
 	private static Map<IRemoteServiceID, FeaturesInstallerHandler> behs = new HashMap<IRemoteServiceID, FeaturesInstallerHandler>();
 	private ID containerID;

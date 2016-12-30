@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.ecf.mgmt.karaf.features.FeaturesInstallerAsync;
+import org.eclipse.ecf.mgmt.karaf.features.FeatureInstallManagerAsync;
 import org.eclipse.ecf.remoteservice.IRemoteServiceID;
 import org.eclipse.ecf.remoteservice.IRemoteServiceReference;
 
@@ -25,7 +25,7 @@ public class FeaturesRootNode extends AbstractFeaturesNode {
 			.synchronizedMap(new HashMap<IRemoteServiceReference, FeaturesNode>());
 
 	public FeaturesNode getFeaturesNode(IRemoteServiceReference rsRef,
-			FeaturesInstallerAsync rsaManager) {
+			FeatureInstallManagerAsync rsaManager) {
 		synchronized (managers) {
 			FeaturesNode managerNode = managers.get(rsRef);
 			if (managerNode == null) {

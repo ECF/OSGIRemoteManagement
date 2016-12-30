@@ -7,12 +7,13 @@
  * Contributors:
  *   Composent, Inc. - initial API and implementation
  ******************************************************************************/
-package org.eclipse.ecf.mgmt.karaf.features;
+package org.eclipse.ecf.mgmt.karaf.host;
 
-import java.util.concurrent.CompletableFuture;
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.DebugRemoteServiceAdminListener;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.remoteserviceadmin.RemoteServiceAdminListener;
 
-public interface FeaturesListenerAsync {
+@Component(immediate=true)
+public class RSADebug extends DebugRemoteServiceAdminListener implements RemoteServiceAdminListener {
 
-	CompletableFuture<Void> handleFeatureEventAsync(FeatureEventMTO event);
-	CompletableFuture<Void> handleRepoEventAsync(RepositoryEventMTO event);
 }

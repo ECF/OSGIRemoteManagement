@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * Copyright (c) 2016 Composent, Inc. and others. All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Composent, Inc. - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.ecf.mgmt.karaf.features.host;
 
 import java.net.URI;
@@ -23,46 +32,46 @@ import org.eclipse.ecf.mgmt.SerializationUtil;
 import org.eclipse.ecf.mgmt.framework.host.AbstractManager;
 import org.eclipse.ecf.mgmt.karaf.features.FeatureMTO;
 import org.eclipse.ecf.mgmt.karaf.features.FeatureEventMTO;
-import org.eclipse.ecf.mgmt.karaf.features.FeaturesInstaller;
-import org.eclipse.ecf.mgmt.karaf.features.FeaturesListenerAsync;
+import org.eclipse.ecf.mgmt.karaf.features.FeatureInstallManager;
+import org.eclipse.ecf.mgmt.karaf.features.FeatureInstallEventHandlerAsync;
 import org.eclipse.ecf.mgmt.karaf.features.RepositoryEventMTO;
 import org.eclipse.ecf.mgmt.karaf.features.RepositoryMTO;
 
-public class FeaturesInstallerHost extends AbstractManager implements FeaturesInstaller {
+public class FeatureInstallManagerHost extends AbstractManager implements FeatureInstallManager {
 
 	private FeaturesService featuresService;
 
-	protected List<FeaturesListenerAsync> kfls = new ArrayList<FeaturesListenerAsync>();
+	protected List<FeatureInstallEventHandlerAsync> kfls = new ArrayList<FeatureInstallEventHandlerAsync>();
 	
-	protected boolean addFeaturesListener(FeaturesListenerAsync async) {
+	protected boolean addFeaturesListener(FeatureInstallEventHandlerAsync async) {
 		synchronized (kfls) {
 			return kfls.add(async);
 		}
 	}
 	
-	protected boolean removeFeaturesListener(FeaturesListenerAsync async) {
+	protected boolean removeFeaturesListener(FeatureInstallEventHandlerAsync async) {
 		synchronized (kfls) {
 			return kfls.remove(async);
 		}
 	}
 	
 	protected void fireFeatureEvent(final FeatureEvent event) {
-		List<FeaturesListenerAsync> notify = null;
+		List<FeatureInstallEventHandlerAsync> notify = null;
 		synchronized (kfls) {
-			notify = new ArrayList<FeaturesListenerAsync>(kfls);
+			notify = new ArrayList<FeatureInstallEventHandlerAsync>(kfls);
 		}
 		FeatureMTO fmto = createFeatureMTO(event.getFeature());
-		for(FeaturesListenerAsync kfl: notify) 
+		for(FeatureInstallEventHandlerAsync kfl: notify) 
 			kfl.handleFeatureEventAsync(new FeatureEventMTO(getFeatureEventType(event), fmto, event.isReplay()));
 	}
 	
 	protected void fireRepoEvent(final RepositoryEvent event) {
-		List<FeaturesListenerAsync> notify = null;
+		List<FeatureInstallEventHandlerAsync> notify = null;
 		synchronized (kfls) {
-			notify = new ArrayList<FeaturesListenerAsync>(kfls);
+			notify = new ArrayList<FeatureInstallEventHandlerAsync>(kfls);
 		}
 		RepositoryMTO rmto = createRepositoryMTO(event.getRepository());
-		for(FeaturesListenerAsync kfl: notify) 
+		for(FeatureInstallEventHandlerAsync kfl: notify) 
 			kfl.handleRepoEventAsync(new RepositoryEventMTO(getRepositoryEventType(event), rmto, event.isReplay()));
 	}
 	
@@ -97,23 +106,23 @@ public class FeaturesInstallerHost extends AbstractManager implements FeaturesIn
 	protected FeaturesListener localFeaturesListener = new FeaturesListener() {
     	@Override
 		public void featureEvent(FeatureEvent event) {
-			List<FeaturesListenerAsync> notify = null;
+			List<FeatureInstallEventHandlerAsync> notify = null;
 			synchronized (kfls) {
-				notify = new ArrayList<FeaturesListenerAsync>(kfls);
+				notify = new ArrayList<FeatureInstallEventHandlerAsync>(kfls);
 			}
 			FeatureMTO fmto = createFeatureMTO(event.getFeature());
-			for(FeaturesListenerAsync kfl: notify) 
+			for(FeatureInstallEventHandlerAsync kfl: notify) 
 				kfl.handleFeatureEventAsync(new FeatureEventMTO(getFeatureEventType(event), fmto, event.isReplay()));
 		}
 
 		@Override
 		public void repositoryEvent(RepositoryEvent event) {
-			List<FeaturesListenerAsync> notify = null;
+			List<FeatureInstallEventHandlerAsync> notify = null;
 			synchronized (kfls) {
-				notify = new ArrayList<FeaturesListenerAsync>(kfls);
+				notify = new ArrayList<FeatureInstallEventHandlerAsync>(kfls);
 			}
 			RepositoryMTO rmto = createRepositoryMTO(event.getRepository());
-			for(FeaturesListenerAsync kfl: notify) 
+			for(FeatureInstallEventHandlerAsync kfl: notify) 
 				kfl.handleRepoEventAsync(new RepositoryEventMTO(getRepositoryEventType(event), rmto, event.isReplay()));
 		}
 	};

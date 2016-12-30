@@ -2,20 +2,20 @@ package org.eclipse.ecf.mgmt.karaf.features.eclipse.ui.view.model;
 
 import java.net.URI;
 
-import org.eclipse.ecf.mgmt.karaf.features.FeaturesInstallerAsync;
+import org.eclipse.ecf.mgmt.karaf.features.FeatureInstallManagerAsync;
 import org.eclipse.ecf.remoteservice.IRemoteServiceReference;
 
 public class FeaturesNode extends AbstractFeaturesNode {
 
 	private final IRemoteServiceReference managerRef;
-	private final FeaturesInstallerAsync rsaManager;
+	private final FeatureInstallManagerAsync rsaManager;
 
-	public FeaturesNode(IRemoteServiceReference managerRef, FeaturesInstallerAsync rsaManager) {
+	public FeaturesNode(IRemoteServiceReference managerRef, FeatureInstallManagerAsync rsaManager) {
 		this.managerRef = managerRef;
 		this.rsaManager = rsaManager;
 	}
 
-	public FeaturesInstallerAsync getKarafFeaturesInstaller() {
+	public FeatureInstallManagerAsync getKarafFeaturesInstaller() {
 		return this.rsaManager;
 	}
 

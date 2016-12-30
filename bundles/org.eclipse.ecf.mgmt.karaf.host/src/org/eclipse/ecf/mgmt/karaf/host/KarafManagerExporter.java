@@ -1,4 +1,13 @@
-package org.eclipse.ecf.mgmt.kura.host;
+/*******************************************************************************
+ * Copyright (c) 2016 Composent, Inc. and others. All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Composent, Inc. - initial API and implementation
+ ******************************************************************************/
+package org.eclipse.ecf.mgmt.karaf.host;
 
 import java.util.Collection;
 import java.util.Hashtable;
@@ -23,7 +32,7 @@ import org.osgi.service.remoteserviceadmin.ExportRegistration;
 import org.osgi.service.remoteserviceadmin.RemoteServiceAdmin;
 
 @Component(immediate = true)
-public class ManagerExporter extends ServiceExporterCallbackImporter {
+public class KarafManagerExporter extends ServiceExporterCallbackImporter {
 
 	private ServiceReference<IBundleManager> bmRef;
 	private ServiceReference<IServiceManager> smRef;

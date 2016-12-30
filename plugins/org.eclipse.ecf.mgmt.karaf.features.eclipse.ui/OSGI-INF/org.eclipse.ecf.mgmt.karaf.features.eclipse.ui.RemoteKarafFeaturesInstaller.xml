@@ -4,7 +4,7 @@
       <provide interface="org.osgi.service.remoteserviceadmin.RemoteServiceAdminListener"/>
    </service>
    <reference bind="bindContainerManager" cardinality="1..1" interface="org.eclipse.ecf.core.IContainerManager" name="ContainerManager" policy="static" unbind="unbindContainerManager"/>
-   <reference bind="bindKarafFeaturesInstaller" cardinality="0..1" interface="org.eclipse.ecf.mgmt.karaf.features.FeaturesInstallerAsync" name="KarafFeaturesInstaller" policy="dynamic" unbind="unbindKarafFeaturesInstaller"/>
+   <reference bind="bindKarafFeaturesInstaller" cardinality="0..1" interface="org.eclipse.ecf.mgmt.karaf.features.FeatureInstallManagerAsync" name="KarafFeaturesInstaller" policy="dynamic" unbind="unbindKarafFeaturesInstaller"/>
    <reference bind="bindRemoteServiceAdmin" cardinality="1..1" interface="org.osgi.service.remoteserviceadmin.RemoteServiceAdmin" name="RemoteServiceAdmin" policy="static" unbind="unbindRemoteServiceAdmin"/>
    <implementation class="org.eclipse.ecf.mgmt.karaf.features.eclipse.ui.RemoteKarafFeaturesInstaller"/>
 </scr:component>

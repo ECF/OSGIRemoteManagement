@@ -1,4 +1,13 @@
-package org.eclipse.ecf.mgmt.kura.host;
+/*******************************************************************************
+ * Copyright (c) 2016 Composent, Inc. and others. All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Composent, Inc. - initial API and implementation
+ ******************************************************************************/
+package org.eclipse.ecf.mgmt.karaf.host;
 
 import org.apache.karaf.features.FeaturesService;
 import org.eclipse.ecf.mgmt.karaf.features.FeatureInstallManager;
@@ -13,7 +22,7 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 @Component(immediate=true)
-public class KarafFeaturesInstallerManager extends FeatureInstallManagerHost implements FeatureInstallManager {
+public class KarafFeatureInstallManager extends FeatureInstallManagerHost implements FeatureInstallManager {
 
 	@Activate
 	protected void activate(BundleContext ctxt) throws Exception {

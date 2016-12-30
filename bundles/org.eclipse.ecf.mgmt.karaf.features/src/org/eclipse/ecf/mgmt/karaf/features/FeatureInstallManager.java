@@ -13,7 +13,7 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
-public interface FeaturesInstaller {
+public interface FeatureInstallManager {
 
     public static final int Option_NoFailOnFeatureNotFound = 0x0;
     public static final int Option_NoAutoRefreshManagedBundles = 0x1;

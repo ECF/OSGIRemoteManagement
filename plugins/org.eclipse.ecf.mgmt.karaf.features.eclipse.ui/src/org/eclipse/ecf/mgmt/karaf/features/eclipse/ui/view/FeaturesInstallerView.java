@@ -12,7 +12,7 @@ import org.eclipse.ecf.mgmt.consumer.util.RemoteServiceEvent;
 import org.eclipse.ecf.mgmt.consumer.util.RemoteServiceHolder;
 import org.eclipse.ecf.mgmt.karaf.features.FeatureEventMTO;
 import org.eclipse.ecf.mgmt.karaf.features.FeatureMTO;
-import org.eclipse.ecf.mgmt.karaf.features.FeaturesInstallerAsync;
+import org.eclipse.ecf.mgmt.karaf.features.FeatureInstallManagerAsync;
 import org.eclipse.ecf.mgmt.karaf.features.RepositoryEventMTO;
 import org.eclipse.ecf.mgmt.karaf.features.RepositoryMTO;
 import org.eclipse.ecf.mgmt.karaf.features.eclipse.ui.Activator;
@@ -367,9 +367,9 @@ public class FeaturesInstallerView extends ViewPart {
 		makeActions();
 		hookContextMenu();
 
-		Collection<RemoteServiceHolder<FeaturesInstallerAsync>> existing = RemoteKarafFeaturesInstaller
-				.getInstance().addListener(rsListener, FeaturesInstallerAsync.class);
-		for (RemoteServiceHolder<FeaturesInstallerAsync> rh : existing) {
+		Collection<RemoteServiceHolder<FeatureInstallManagerAsync>> existing = RemoteKarafFeaturesInstaller
+				.getInstance().addListener(rsListener, FeatureInstallManagerAsync.class);
+		for (RemoteServiceHolder<FeatureInstallManagerAsync> rh : existing) {
 			IRemoteServiceReference rsReference = rh.getRemoteServiceReference();
 			addRemoteServiceManager(rh.getRemoteService(), rsReference);
 			KarafFeaturesListener.addDelegate(rsReference.getID(), new FeaturesInstallerHandlerDelegate());
@@ -390,8 +390,8 @@ public class FeaturesInstallerView extends ViewPart {
 		@Override
 		public void handleEvent(RemoteServiceEvent e) {
 			int type = e.getType();
-			RemoteServiceHolder<FeaturesInstallerAsync> h = e
-					.getRemoteServiceHolder(FeaturesInstallerAsync.class);
+			RemoteServiceHolder<FeatureInstallManagerAsync> h = e
+					.getRemoteServiceHolder(FeatureInstallManagerAsync.class);
 			if (type == RemoteServiceEvent.ADDED) {
 				IRemoteServiceReference ref = h.getRemoteServiceReference();
 				addRemoteServiceManager(h.getRemoteService(), ref);
@@ -404,7 +404,7 @@ public class FeaturesInstallerView extends ViewPart {
 		}
 	};
 
-	void addRemoteServiceManager(final FeaturesInstallerAsync s, final IRemoteServiceReference rsRef) {
+	void addRemoteServiceManager(final FeatureInstallManagerAsync s, final IRemoteServiceReference rsRef) {
 		update(s, rsRef, null);
 	}
 
@@ -427,7 +427,7 @@ public class FeaturesInstallerView extends ViewPart {
 		});
 	}
 
-	private void update(final FeaturesInstallerAsync s, final IRemoteServiceReference rsRef,
+	private void update(final FeatureInstallManagerAsync s, final IRemoteServiceReference rsRef,
 			final FeaturesNode node) {
 		final TreeViewer viewer = getTreeViewer();
 		if (viewer == null)
