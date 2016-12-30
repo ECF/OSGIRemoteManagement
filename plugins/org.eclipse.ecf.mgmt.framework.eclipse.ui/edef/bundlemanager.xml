@@ -79,7 +79,7 @@
     <property name="endpoint.service.id" value-type="Long" value="0"/>
     <property name="objectClass" value-type="String">
       <array>
-        <value>org.eclipse.ecf.mgmt.karaf.features.FeaturesInstaller</value>
+        <value>org.eclipse.ecf.mgmt.karaf.features.FeatureInstallManager</value>
       </array>
     </property>
     <property name="remote.configs.supported" value-type="String">
