@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="org.eclipse.ecf.mgmt.karaf.features.eclipse.ui.FeaturesInstallContextFunction">
-   <property name="service.context.key" value="org.eclipse.ecf.mgmt.karaf.features.eclipse.ui.IKarafFeaturesInstaller"/>
-   <service>
-      <provide interface="org.eclipse.e4.core.contexts.IContextFunction"/>
-   </service>
-   <implementation class="org.eclipse.ecf.mgmt.karaf.features.eclipse.ui.FeaturesInstallContextFunction"/>
-</scr:component>
