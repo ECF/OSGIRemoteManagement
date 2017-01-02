@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2016 Composent, Inc. All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: Scott Lewis - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.ecf.mgmt.karaf.features.eclipse.ui.view.model;
 
 import java.net.URI;
@@ -32,7 +40,7 @@ public class FeaturesNode extends AbstractFeaturesNode {
 	}
 
 	public RepositoryNode getRepositoryNode(URI repoURI) {
-		for(AbstractFeaturesNode bn: getChildren()) {
+		for (AbstractFeaturesNode bn : getChildren()) {
 			if (bn instanceof RepositoryNode) {
 				RepositoryNode repoNode = (RepositoryNode) bn;
 				if (repoNode.getUri().equals(repoURI))
@@ -43,10 +51,10 @@ public class FeaturesNode extends AbstractFeaturesNode {
 	}
 
 	public FeatureNode getFeatureNode(String fId) {
-		for(AbstractFeaturesNode bn: getChildren()) {
+		for (AbstractFeaturesNode bn : getChildren()) {
 			if (bn instanceof RepositoryNode) {
 				RepositoryNode repoNode = (RepositoryNode) bn;
-				for(AbstractFeaturesNode rn: repoNode.getChildren()) {
+				for (AbstractFeaturesNode rn : repoNode.getChildren()) {
 					if (rn instanceof FeatureNode) {
 						FeatureNode fn = (FeatureNode) rn;
 						if (fn.getId().equals(fId))

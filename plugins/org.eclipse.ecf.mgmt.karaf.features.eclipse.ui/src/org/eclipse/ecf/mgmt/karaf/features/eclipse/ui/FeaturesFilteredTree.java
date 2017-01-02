@@ -6,8 +6,9 @@
  * 
  * Contributors: Scott Lewis - initial API and implementation
  ******************************************************************************/
-package org.eclipse.ecf.mgmt.karaf.features.eclipse.ui.view;
+package org.eclipse.ecf.mgmt.karaf.features.eclipse.ui;
 
+import org.eclipse.ecf.mgmt.karaf.features.eclipse.ui.view.FeaturesInstallerView;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -53,7 +54,6 @@ public class FeaturesFilteredTree extends FilteredTree {
 
 	protected void updateToolbar(boolean visible) {
 		super.updateToolbar(visible);
-
 		// update view title on viewer's toolbar update
 		featuresInstallerView.updateTitle();
 	}

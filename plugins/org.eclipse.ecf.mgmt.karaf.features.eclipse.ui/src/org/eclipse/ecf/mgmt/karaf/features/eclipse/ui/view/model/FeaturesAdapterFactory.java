@@ -22,7 +22,7 @@ public class FeaturesAdapterFactory implements IAdapterFactory {
 	private FeaturesNodeWorkbenchAdapter featuresInstallerAdapter = new FeaturesNodeWorkbenchAdapter();
 	private FeatureNodeWorkbenchAdapter featureAdapter = new FeatureNodeWorkbenchAdapter();
 	private RepositoryNodeWorkbenchAdapter repositoryAdapter = new RepositoryNodeWorkbenchAdapter();
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object getAdapter(Object adaptableObject, @SuppressWarnings("rawtypes") Class adapterType) {

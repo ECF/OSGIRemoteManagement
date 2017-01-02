@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2016 Composent, Inc. All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: Scott Lewis - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.ecf.mgmt.karaf.features.eclipse.ui;
 
 import org.eclipse.ecf.core.IContainer;
@@ -29,40 +37,42 @@ public class RemoteKarafFeaturesInstaller {
 	public RemoteKarafFeaturesInstaller() {
 		instance = this;
 	}
-	
+
 	private IImportableServiceCallbackAssociator importer;
 
 	@Reference
 	void bindCallbackAssociator(IImportableServiceCallbackAssociator ca) {
 		this.importer = ca;
 	}
+
 	void unbindCallbackAssociator(IImportableServiceCallbackAssociator ca) {
 		this.importer = null;
 	}
-	
+
 	private IRemoteServiceNotifier notifier;
-	
+
 	@Reference
 	void bindNotifier(IRemoteServiceNotifier n) {
 		this.notifier = n;
 	}
-	
+
 	void unbindNotifier(IRemoteServiceNotifier n) {
 		this.notifier = null;
 	}
-	
+
 	public IRemoteServiceNotifier getNotifier() {
 		return this.notifier;
 	}
-	
 
 	@Activate
 	public void activate(BundleContext context) throws Exception {
 		this.importer.associateCallbackRegistrar(FeatureInstallManagerAsync.class, new ICallbackRegistrar() {
 			@Override
 			public ServiceRegistration<?> registerCallback(ImportReference importReference) throws Exception {
-				return context.registerService(FeatureInstallEventHandler.class, new KarafFeaturesListener(importReference), null);
-			}});
+				return context.registerService(FeatureInstallEventHandler.class,
+						new KarafFeaturesListener(importReference), null);
+			}
+		});
 	}
 
 	@Deactivate
@@ -73,7 +83,6 @@ public class RemoteKarafFeaturesInstaller {
 		instance = null;
 	}
 
-	
 	@Reference(cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC)
 	void bindKarafFeaturesInstaller(FeatureInstallManagerAsync fi) {
 		this.notifier.addServiceHolder(FeatureInstallManagerAsync.class, fi);
@@ -84,7 +93,7 @@ public class RemoteKarafFeaturesInstaller {
 	}
 
 	public IContainer getContainerForID(ID containerID) {
-		return importer == null?null:importer.getContainerConnectedToID(containerID);
+		return importer == null ? null : importer.getContainerConnectedToID(containerID);
 	}
 
 }

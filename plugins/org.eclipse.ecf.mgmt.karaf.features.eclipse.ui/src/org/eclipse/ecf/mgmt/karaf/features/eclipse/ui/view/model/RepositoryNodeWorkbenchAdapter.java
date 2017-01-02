@@ -20,7 +20,7 @@ public class RepositoryNodeWorkbenchAdapter extends AbstractFeaturesWorkbenchAda
 	@Override
 	public String getLabel(Object object) {
 		RepositoryNode rn = (RepositoryNode) object;
-		return rn.getName()+"  "+rn.getUri();
+		return rn.getName() + "  " + rn.getUri();
 	}
 
 	@Override

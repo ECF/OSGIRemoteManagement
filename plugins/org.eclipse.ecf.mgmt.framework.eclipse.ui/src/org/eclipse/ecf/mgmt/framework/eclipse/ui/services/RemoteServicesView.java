@@ -85,15 +85,10 @@ public class RemoteServicesView extends AbstractServicesView {
 		public void handleEvent(RemoteServiceEvent e) {
 			int type = e.getType();
 			RemoteServiceHolder<IServiceManagerAsync> h = e.getRemoteServiceHolder(IServiceManagerAsync.class);
-			if (type == RemoteServiceEvent.ADDED) {
-				IRemoteServiceReference ref = h.getRemoteServiceReference();
-				addRemoteServiceManager(h.getRemoteService(), ref);
-				ServiceEventHandler.addDelegate(ref.getID(), new ServiceEventHandlerDelegate());
-			} else if (type == RemoteServiceEvent.REMOVED) {
-				IRemoteServiceReference ref = h.getRemoteServiceReference();
-				removeRemoteServiceManager(ref);
-				ServiceEventHandler.removeDelegates();
-			}
+			if (type == RemoteServiceEvent.ADDED)
+				addRemoteServiceManager(h.getRemoteService(), h.getRemoteServiceReference());
+			else if (type == RemoteServiceEvent.REMOVED)
+				removeRemoteServiceManager(h.getRemoteServiceReference());
 		}
 	};
 
@@ -106,10 +101,11 @@ public class RemoteServicesView extends AbstractServicesView {
 
 	RemoteServiceManagerRootNode getRootNode() {
 		AbstractServicesContentProvider c = getContentProvider();
-		return (c == null)?null:(RemoteServiceManagerRootNode) c.getServicesRoot();
+		return (c == null) ? null : (RemoteServiceManagerRootNode) c.getServicesRoot();
 	}
 
 	protected void removeRemoteServiceManager(final IRemoteServiceReference rsRef) {
+		ServiceEventHandler.removeDelegate(rsRef.getID());
 		TreeViewer viewer = getTreeViewer();
 		if (viewer == null)
 			return;
@@ -123,6 +119,7 @@ public class RemoteServicesView extends AbstractServicesView {
 	}
 
 	void addRemoteServiceManager(final IServiceManagerAsync s, final IRemoteServiceReference rsRef) {
+		ServiceEventHandler.addDelegate(rsRef.getID(), new ServiceEventHandlerDelegate());
 		updateRemoteServiceManager(s, rsRef, null);
 	}
 
@@ -154,15 +151,16 @@ public class RemoteServicesView extends AbstractServicesView {
 	ServiceNode createServiceNode(ServiceReferenceMTO srMTO) {
 		long bundleId = srMTO.getBundle();
 		long[] usingBundleIds = srMTO.getUsingBundles();
-		ServiceNode sn = new RemoteServiceNode(bundleId, usingBundleIds, srMTO.getProperties(),srMTO.getExportImportMode());
+		ServiceNode sn = new RemoteServiceNode(bundleId, usingBundleIds, srMTO.getProperties(),
+				srMTO.getExportImportMode());
 		sn.addChild(new RegisteringBundleIdNode(bundleId));
 		sn.addChild(new UsingBundleIdsNode("Using Bundles", usingBundleIds));
 		return sn;
 	}
 
 	void refresh(RemoteServiceManagerNode rsManagerNode) {
-		updateRemoteServiceManager(rsManagerNode.getRemoteServiceManager(),
-				rsManagerNode.getRemoteServiceReference(), rsManagerNode);
+		updateRemoteServiceManager(rsManagerNode.getRemoteServiceManager(), rsManagerNode.getRemoteServiceReference(),
+				rsManagerNode);
 	}
 
 	class ServiceEventHandlerDelegate implements IServiceEventHandlerDelegate {
@@ -197,13 +195,10 @@ public class RemoteServicesView extends AbstractServicesView {
 
 	@Override
 	protected void initializeServices() {
-		Collection<RemoteServiceHolder<IServiceManagerAsync>> existing = RemoteServiceManagerComponent.getInstance().
-				getNotifier().addListener(rsListener, IServiceManagerAsync.class);
-		for (RemoteServiceHolder<IServiceManagerAsync> rh : existing) {
-			IRemoteServiceReference ref = rh.getRemoteServiceReference();
-			addRemoteServiceManager(rh.getRemoteService(), ref);
-			ServiceEventHandler.addDelegate(ref.getID(), new ServiceEventHandlerDelegate());
-		}
+		Collection<RemoteServiceHolder<IServiceManagerAsync>> existing = RemoteServiceManagerComponent.getInstance()
+				.getNotifier().addListener(rsListener, IServiceManagerAsync.class);
+		for (RemoteServiceHolder<IServiceManagerAsync> rh : existing)
+			addRemoteServiceManager(rh.getRemoteService(), rh.getRemoteServiceReference());
 	}
 
 }

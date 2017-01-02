@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2016 Composent, Inc. All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: Scott Lewis - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.ecf.mgmt.karaf.features.eclipse.ui.view.model;
 
 import java.net.URI;
@@ -13,7 +21,7 @@ import org.eclipse.ui.views.properties.IPropertySource;
 public class RepositoryNode extends AbstractFeaturesNode {
 
 	private RepositoryMTO repositoryMTO;
-	
+
 	public URI getUri() {
 		return repositoryMTO.getUri();
 	}
@@ -21,16 +29,16 @@ public class RepositoryNode extends AbstractFeaturesNode {
 	public String getName() {
 		return repositoryMTO.getName();
 	}
-	
+
 	public RepositoryNode(RepositoryMTO mto) {
 		this.repositoryMTO = mto;
 		FeatureMTO[] features = mto.getFeatures();
-		for(int i=0; i < features.length; i++)
+		for (int i = 0; i < features.length; i++)
 			addChild(new FeatureNode(features[i]));
 	}
 
-	private Map<String,String> getRepositoryProperties() {
-		Map<String,String> result = new HashMap<String,String>();
+	private Map<String, String> getRepositoryProperties() {
+		Map<String, String> result = new HashMap<String, String>();
 		result.put("URI", getUri().toString());
 		result.put("Name", getName());
 		result.put("Repositories", Arrays.asList(repositoryMTO.getRepositories()).toString());

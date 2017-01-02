@@ -24,8 +24,7 @@ public class FeaturesRootNode extends AbstractFeaturesNode {
 	private Map<IRemoteServiceReference, FeaturesNode> managers = Collections
 			.synchronizedMap(new HashMap<IRemoteServiceReference, FeaturesNode>());
 
-	public FeaturesNode getFeaturesNode(IRemoteServiceReference rsRef,
-			FeatureInstallManagerAsync rsaManager) {
+	public FeaturesNode getFeaturesNode(IRemoteServiceReference rsRef, FeatureInstallManagerAsync rsaManager) {
 		synchronized (managers) {
 			FeaturesNode managerNode = managers.get(rsRef);
 			if (managerNode == null) {
@@ -39,7 +38,7 @@ public class FeaturesRootNode extends AbstractFeaturesNode {
 
 	public FeaturesNode getFeaturesNode(IRemoteServiceID rsID) {
 		synchronized (managers) {
-			for(IRemoteServiceReference rsRef: managers.keySet()) {
+			for (IRemoteServiceReference rsRef : managers.keySet()) {
 				if (rsID.equals(rsRef.getID()))
 					return managers.get(rsRef);
 			}
@@ -47,13 +46,12 @@ public class FeaturesRootNode extends AbstractFeaturesNode {
 		}
 	}
 
-	public void removeServiceManagerNode(IRemoteServiceReference rsRef) {
+	public void removeFeaturesInstallerNode(IRemoteServiceReference rsRef) {
 		synchronized (managers) {
 			FeaturesNode managerNode = managers.remove(rsRef);
 			if (managerNode != null)
 				removeChild(managerNode);
 		}
 	}
-
 
 }
