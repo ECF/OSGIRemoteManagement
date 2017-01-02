@@ -16,7 +16,7 @@ public class RemoteServiceEvent {
 	private final int eventType;
 	private final RemoteServiceHolder<?> holder;
 	
-	public RemoteServiceEvent(int type, RemoteServiceHolder<?> holder) {
+	RemoteServiceEvent(int type, RemoteServiceHolder<?> holder) {
 		this.eventType = type;
 		this.holder = holder;
 	}
@@ -34,4 +34,5 @@ public class RemoteServiceEvent {
 		Class<?> hc = this.holder.getServiceClass();
 		return (clazz.equals(hc))?(RemoteServiceHolder<T>) this.holder:null;
 	}
+	
 }

@@ -14,14 +14,13 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 
-import org.eclipse.ecf.core.IContainerManager;
 import org.eclipse.ecf.mgmt.framework.IBundleEventHandler;
 import org.eclipse.ecf.mgmt.framework.IBundleManager;
 import org.eclipse.ecf.mgmt.framework.IServiceEventHandler;
 import org.eclipse.ecf.mgmt.framework.IServiceManager;
-import org.eclipse.ecf.mgmt.karaf.features.FeatureInstallManager;
 import org.eclipse.ecf.mgmt.karaf.features.FeatureInstallEventHandler;
-import org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.ServiceExporterCallbackImporter;
+import org.eclipse.ecf.mgmt.karaf.features.FeatureInstallManager;
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.IExportableServiceCallbackAssociator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Activate;
@@ -29,33 +28,25 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.remoteserviceadmin.ExportRegistration;
-import org.osgi.service.remoteserviceadmin.RemoteServiceAdmin;
 
 @Component(immediate = true)
-public class KarafManagerExporter extends ServiceExporterCallbackImporter {
+public class KarafManagerExporter {
 
 	private ServiceReference<IBundleManager> bmRef;
 	private ServiceReference<IServiceManager> smRef;
 	private ServiceReference<FeatureInstallManager> fiRef;
 	
+	private IExportableServiceCallbackAssociator associator;
+	
 	@Reference
-	public void bindRemoteServiceAdmin(RemoteServiceAdmin a) {
-		super.bindRemoteServiceAdmin(a);
+	void bindAssociator(IExportableServiceCallbackAssociator a) {
+		this.associator = a;
 	}
-
-	public void unbindRemoteServiceAdmin(RemoteServiceAdmin a) {
-		super.unbindRemoteServiceAdmin(a);
+	
+	void unbindAssociator(IExportableServiceCallbackAssociator a) {
+		this.associator = null;
 	}
-
-	@Reference
-	public void bindContainerManager(IContainerManager cm) {
-		super.bindContainerManager(cm);
-	}
-
-	public void unbindContainerManager(IContainerManager cm) {
-		super.unbindContainerManager(cm);
-	}
-
+	
 	@Reference
 	void bindBundleManager(ServiceReference<IBundleManager> r) {
 		this.bmRef = r;
@@ -89,19 +80,18 @@ public class KarafManagerExporter extends ServiceExporterCallbackImporter {
 	
 	@Activate
 	public void activate(BundleContext c) throws Exception {
-		super.activate(c);
-		addExportedServiceCallback(bmRef, IBundleEventHandler.class);
-		addExportedServiceCallback(smRef, IServiceEventHandler.class);
-		addExportedServiceCallback(fiRef, FeatureInstallEventHandler.class);
+		associator.associateCallback(bmRef, IBundleEventHandler.class);
+		associator.associateCallback(smRef, IServiceEventHandler.class);
+		associator.associateCallback(fiRef, FeatureInstallEventHandler.class);
 		Map<String,Object> props = createRemoteServiceProperties();
-		Collection<ExportRegistration> regs = getRSA().exportService(bmRef, props);
+		Collection<ExportRegistration> regs = associator.getRSA().exportService(bmRef, props);
 		bmReg = regs.iterator().next();
 		Throwable t = bmReg.getException();
 		if (t != null) {
 			bmReg = null;
 			throw new RuntimeException("Could not export BundleManager service");
 		}
-		regs = getRSA().exportService(smRef, props);
+		regs = associator.getRSA().exportService(smRef, props);
 		smReg = regs.iterator().next();
 		t = smReg.getException();
 		if (t != null) {
@@ -110,7 +100,7 @@ public class KarafManagerExporter extends ServiceExporterCallbackImporter {
 			this.smReg = null;
 			throw new RuntimeException("Could not export ServiceManager service");
 		}
-		regs = getRSA().exportService(fiRef, props);
+		regs = associator.getRSA().exportService(fiRef, props);
 		fiReg = regs.iterator().next();
 		t = fiReg.getException();
 		if (t != null) {
@@ -138,7 +128,6 @@ public class KarafManagerExporter extends ServiceExporterCallbackImporter {
 			fiReg.close();
 			fiReg = null;
 		}
-		super.deactivate();
 	}
 
 	private static final String SERVICE_EXPORTED_CONFIGS = "service.exported.configs";

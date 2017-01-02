@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" immediate="true" name="org.eclipse.ecf.mgmt.framework.eclipse.ui.RemoteBundleManagerComponent">
-   <service>
-      <provide interface="org.osgi.service.remoteserviceadmin.RemoteServiceAdminListener"/>
-   </service>
    <reference bind="bindBundleManagerAsync" cardinality="0..n" interface="org.eclipse.ecf.mgmt.framework.IBundleManagerAsync" name="BundleManagerAsync" policy="dynamic" unbind="unbindBundleManagerAsync"/>
-   <reference bind="bindContainerManager" cardinality="1..1" interface="org.eclipse.ecf.core.IContainerManager" name="ContainerManager" policy="static" unbind="unbindContainerManager"/>
-   <reference bind="bindRemoteServiceAdmin" cardinality="1..1" interface="org.osgi.service.remoteserviceadmin.RemoteServiceAdmin" name="RemoteServiceAdmin" policy="static" unbind="unbindRemoteServiceAdmin"/>
+   <reference bind="bindCallbackAssociator" cardinality="1..1" interface="org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.IImportableServiceCallbackAssociator" name="CallbackAssociator" policy="static" unbind="unbindCallbackAssociator"/>
+   <reference bind="bindNotifier" cardinality="1..1" interface="org.eclipse.ecf.mgmt.consumer.util.IRemoteServiceNotifier" name="Notifier" policy="static" unbind="unbindNotifier"/>
    <implementation class="org.eclipse.ecf.mgmt.framework.eclipse.ui.RemoteBundleManagerComponent"/>
 </scr:component>

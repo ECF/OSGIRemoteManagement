@@ -136,9 +136,10 @@
          <view
                id="org.eclipse.ecf.mgmt.framework.eclipse.ui.RemoteBundlesView"
                minimized="false"
-               ratio="0.65f"
-               relationship="top"
-               relative="org.eclipse.ecf.remoteserviceadmin.ui.views.EndpointDiscoveryView">
+               ratio="1.0f"
+               relationship="stack"
+               relative="org.eclipse.ui.editorss"
+               visible="true">
          </view>
       </perspectiveExtension>
    </extension>
@@ -150,9 +151,9 @@
          <view
                id="org.eclipse.ecf.mgmt.framework.eclipse.ui.RemoteServicesView"
                minimized="false"
-               ratio="0.5f"
-               relationship="top"
-               relative="org.eclipse.ecf.remoteservice.ui.serviceview.ServiceView">
+               ratio="1.0f"
+               relationship="stack"
+               relative="org.eclipse.ui.editorss">
          </view>
       </perspectiveExtension>
    </extension>

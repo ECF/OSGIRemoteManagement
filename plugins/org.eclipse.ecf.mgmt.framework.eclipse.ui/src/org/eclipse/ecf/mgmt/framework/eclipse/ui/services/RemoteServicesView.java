@@ -100,7 +100,7 @@ public class RemoteServicesView extends AbstractServicesView {
 	@Override
 	public void dispose() {
 		ServiceEventHandler.removeDelegates();
-		RemoteServiceManagerComponent.getInstance().removeListener(rsListener);
+		RemoteServiceManagerComponent.getInstance().getNotifier().removeListener(rsListener);
 		super.dispose();
 	}
 
@@ -197,8 +197,8 @@ public class RemoteServicesView extends AbstractServicesView {
 
 	@Override
 	protected void initializeServices() {
-		Collection<RemoteServiceHolder<IServiceManagerAsync>> existing = RemoteServiceManagerComponent.getInstance()
-				.addListener(rsListener, IServiceManagerAsync.class);
+		Collection<RemoteServiceHolder<IServiceManagerAsync>> existing = RemoteServiceManagerComponent.getInstance().
+				getNotifier().addListener(rsListener, IServiceManagerAsync.class);
 		for (RemoteServiceHolder<IServiceManagerAsync> rh : existing) {
 			IRemoteServiceReference ref = rh.getRemoteServiceReference();
 			addRemoteServiceManager(rh.getRemoteService(), ref);

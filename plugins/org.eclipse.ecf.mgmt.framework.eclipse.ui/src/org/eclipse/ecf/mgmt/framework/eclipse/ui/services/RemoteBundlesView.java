@@ -316,7 +316,7 @@ public class RemoteBundlesView extends AbstractBundlesView {
 			reg.close();
 		});
 		BundleEventHandler.removeDelegates();
-		RemoteServiceManagerComponent.getInstance().removeListener(rsListener);
+		RemoteServiceManagerComponent.getInstance().getNotifier().removeListener(rsListener);
 		super.dispose();
 	}
 
@@ -409,8 +409,8 @@ public class RemoteBundlesView extends AbstractBundlesView {
 
 	@Override
 	protected void initializeBundles() {
-		Collection<RemoteServiceHolder<IBundleManagerAsync>> existing = RemoteBundleManagerComponent.getInstance()
-				.addListener(rsListener, IBundleManagerAsync.class);
+		Collection<RemoteServiceHolder<IBundleManagerAsync>> existing = RemoteBundleManagerComponent.getInstance().
+				getNotifier().addListener(rsListener, IBundleManagerAsync.class);
 		for (RemoteServiceHolder<IBundleManagerAsync> rh : existing) {
 			IRemoteServiceReference rsReference = rh.getRemoteServiceReference();
 			addRemoteBundleManager(rh.getRemoteService(), rsReference);

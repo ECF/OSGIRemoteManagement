@@ -9,9 +9,9 @@
 package org.eclipse.ecf.mgmt.rsa.internal.eclipse.ui;
 
 import org.eclipse.ecf.mgmt.rsa.IRemoteServiceAdminManagerAsync;
-import org.eclipse.ecf.mgmt.consumer.util.RemoteServiceComponent;
+import org.eclipse.ecf.mgmt.consumer.util.RemoteServiceNotifier;
 
-public class RSAManagerComponent extends RemoteServiceComponent {
+public class RSAManagerComponent extends RemoteServiceNotifier {
 
 	private static RSAManagerComponent instance;
 	

@@ -13,6 +13,6 @@ import org.osgi.framework.ServiceRegistration;
 
 public interface ICallbackRegistrar {
 
-	ServiceRegistration<?> registerCallback(ImportReference importReference) throws Exception;
+	ServiceRegistration<?> registerCallback(ImportReference importedServiceReference) throws Exception;
 	
 }

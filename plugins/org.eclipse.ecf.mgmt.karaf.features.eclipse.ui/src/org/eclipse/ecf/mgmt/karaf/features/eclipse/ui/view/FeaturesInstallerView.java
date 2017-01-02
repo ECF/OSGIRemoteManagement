@@ -11,8 +11,8 @@ import org.eclipse.ecf.mgmt.consumer.util.IRemoteServiceListener;
 import org.eclipse.ecf.mgmt.consumer.util.RemoteServiceEvent;
 import org.eclipse.ecf.mgmt.consumer.util.RemoteServiceHolder;
 import org.eclipse.ecf.mgmt.karaf.features.FeatureEventMTO;
-import org.eclipse.ecf.mgmt.karaf.features.FeatureMTO;
 import org.eclipse.ecf.mgmt.karaf.features.FeatureInstallManagerAsync;
+import org.eclipse.ecf.mgmt.karaf.features.FeatureMTO;
 import org.eclipse.ecf.mgmt.karaf.features.RepositoryEventMTO;
 import org.eclipse.ecf.mgmt.karaf.features.RepositoryMTO;
 import org.eclipse.ecf.mgmt.karaf.features.eclipse.ui.Activator;
@@ -368,7 +368,7 @@ public class FeaturesInstallerView extends ViewPart {
 		hookContextMenu();
 
 		Collection<RemoteServiceHolder<FeatureInstallManagerAsync>> existing = RemoteKarafFeaturesInstaller
-				.getInstance().addListener(rsListener, FeatureInstallManagerAsync.class);
+				.getInstance().getNotifier().addListener(rsListener, FeatureInstallManagerAsync.class);
 		for (RemoteServiceHolder<FeatureInstallManagerAsync> rh : existing) {
 			IRemoteServiceReference rsReference = rh.getRemoteServiceReference();
 			addRemoteServiceManager(rh.getRemoteService(), rsReference);
@@ -460,7 +460,7 @@ public class FeaturesInstallerView extends ViewPart {
 	@Override
 	public void dispose() {
 		super.dispose();
-		RemoteKarafFeaturesInstaller.getInstance().removeListener(rsListener);
+		RemoteKarafFeaturesInstaller.getInstance().getNotifier().removeListener(rsListener);
 		KarafFeaturesListener.removeDelegates();
 		this.viewer = null;
 		this.contentProvider = null;
