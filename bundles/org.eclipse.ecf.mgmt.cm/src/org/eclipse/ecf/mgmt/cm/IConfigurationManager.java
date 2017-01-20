@@ -15,11 +15,11 @@ import org.eclipse.core.runtime.IStatus;
 
 public interface IConfigurationManager {
 
-	ConfigurationMTO createFactoryConfiguration(String factoryPid);
-	ConfigurationMTO createFactoryConfiguration(String factoryPid, String location);
-	ConfigurationMTO getConfiguration(String pid);
-	ConfigurationMTO getConfiguration(String pid, String location);
-	ConfigurationMTO[] listConfigurations(String filter);
+	ConfigurationMTO createFactoryConfiguration(String factoryPid) throws Exception;
+	ConfigurationMTO createFactoryConfiguration(String factoryPid, String location) throws Exception;
+	ConfigurationMTO getConfiguration(String pid) throws Exception;
+	ConfigurationMTO getConfiguration(String pid, String location) throws Exception;
+	ConfigurationMTO[] listConfigurations(String filter) throws Exception;
 	
 	IStatus update(String id);
 	IStatus update(String id, Dictionary<String,?> properties);

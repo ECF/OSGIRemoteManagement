@@ -51,6 +51,10 @@ public class ServiceReferenceMTO implements Serializable {
 		return new ServiceReferenceMTO(ref, exportImportMode);
 	}
 
+	public static ServiceReferenceMTO createMTO(ServiceReference<?> ref) {
+		return createMTO(ref, LOCAL);
+	}
+	
 	public static ServiceReferenceMTO createMTO(ServiceReferenceDTO dto) {
 		return new ServiceReferenceMTO(dto, LOCAL);
 	}
