@@ -122,6 +122,5 @@
 		<module>../../bundles/org.eclipse.ecf.mgmt.scr.host</module>
 		<module>../../bundles/org.eclipse.ecf.mgmt.sharedobject</module>
 		<module>../../bundles/org.eclipse.ecf.mgmt.sharedobject.host</module>
-		<module>../../plugins/org.eclipse.ecf.mgmt.rsa.discovery.ui</module>
 	</modules>
 </project>
