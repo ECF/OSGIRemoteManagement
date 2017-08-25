@@ -2,15 +2,15 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ECF Remote SCR Management API
 Bundle-SymbolicName: org.eclipse.ecf.mgmt.scr
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 2.0.0.qualifier
 Bundle-Vendor: Eclipse.org - ECF
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Import-Package: org.apache.felix.scr;version="1.6.0",
- org.eclipse.ecf.mgmt;version="1.0.0",
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: org.eclipse.ecf.mgmt;version="1.0.0",
  org.eclipse.ecf.mgmt.framework;version="1.0.0",
  org.osgi.framework,
  org.osgi.framework.dto,
- org.osgi.service.component;version="1.2.2"
+ org.osgi.service.component;version="1.2.2",
+ org.osgi.service.component.runtime.dto
 Require-Bundle: org.eclipse.equinox.common
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.ecf.mgmt.scr;version="1.0.0"

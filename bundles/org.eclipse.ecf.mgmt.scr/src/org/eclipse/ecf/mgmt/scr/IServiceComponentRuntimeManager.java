@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Composent, Inc. and others. All rights reserved. This
+ * Copyright (c) 2017 Composent, Inc. and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -15,16 +15,18 @@ import org.eclipse.core.runtime.IStatus;
  * Service component runtime manager service interface.
  * 
  */
-public interface ISCRManager {
+public interface IServiceComponentRuntimeManager {
 
-	ComponentMTO[] getComponents(long bundleId);
+	ComponentConfigurationMTO[] getComponentConfigurations(ComponentId componentId);
 
-	ComponentMTO getComponent(long componentId);
+	ComponentDescriptionMTO getComponentDescription(ComponentId componentId);
 
-	ComponentMTO[] getComponents();
+	ComponentDescriptionMTO[] getComponentDescriptions(long[] componentId);
 
-	IStatus enable(long id);
+	boolean isComponentEnabled(ComponentId componentId);
 
-	IStatus disable(long id);
+	IStatus enableComponent(ComponentId componentId);
+
+	IStatus disableComponent(ComponentId componentId);
 
 }
