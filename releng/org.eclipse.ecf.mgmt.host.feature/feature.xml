@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.ecf.mgmt.host.feature"
       label="ECF Remote Management Service Host Feature"
-      version="1.0.0.qualifier"
+      version="2.0.0.qualifier"
       provider-name="%providerName">
 
    <description url="http://www.eclipse.org/ecf">
@@ -10,7 +10,7 @@
    </description>
 
    <copyright>
-######################################################################
+      ######################################################################
 # Copyright (c) 2016 Composent, Inc. and others. All rights reserved.
 # This program and the accompanying materials are made available 
 # under the terms of the Eclipse Public License v1.0 which 
@@ -26,7 +26,7 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.ecf.mgmt.feature" version="1.0.0" match="compatible"/>
+      <import feature="org.eclipse.ecf.mgmt.feature" version="2.0.0" match="compatible"/>
    </requires>
 
    <plugin
