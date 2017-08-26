@@ -292,6 +292,8 @@
 		<module>../../bundles/org.eclipse.ecf.mgmt.scr.host</module>
 		<module>../../bundles/org.eclipse.ecf.mgmt.sharedobject</module>
 		<module>../../bundles/org.eclipse.ecf.mgmt.sharedobject.host</module>
+		<module>../../bundles/org.eclipse.ecf.mgmt.metatype</module>
+		<module>../../bundles/org.eclipse.ecf.mgmt.metatype.host</module>
 	    <module>../../releng/org.eclipse.ecf.mgmt.releng.target</module>
 		<module>../../releng/org.eclipse.ecf.mgmt.feature</module>
 	    <module>../../releng/org.eclipse.ecf.mgmt.host.feature</module>
