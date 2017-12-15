@@ -322,7 +322,6 @@
 	    <module>
 	    	../../bundles/org.eclipse.ecf.mgmt.karaf.features.host
 	    </module>
-	    <module>../org.eclipse.ecf.mgmt.karaf.host.feature</module>
 	    <module>../../bundles/org.eclipse.ecf.mgmt.kura.host</module>
 	    <module>../org.eclipse.ecf.mgmt.kura.host.feature</module>
 	    <module>
