@@ -5,8 +5,10 @@ Bundle-SymbolicName: org.eclipse.ecf.mgmt.framework.eclipse.ui;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.ecf.mgmt.framework.eclipse.ui.Activator
 Bundle-Vendor: Eclipse.org - ECF
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.swt,
+ org.eclipse.jface,
+ org.eclipse.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.ecf.core;version="3.0.0",
