@@ -1,11 +1,11 @@
-# Although this looks like it does nothing,
-# a default behavior in Travis CI is to
-# call "mvn install...", so this is actually
-# enough to build the project
-#
-# https://docs.travis-ci.com/user/languages/java/
-#
 language: java
-
 jdk:
-  - oraclejdk8
+- oraclejdk8
+deploy:
+  provider: releases
+  api_key:
+    secure: hI+H5Kr7dlQIS92OaNqnL5g9NeAqSPLzexNzjBeP3QguWInzlFH6S25gLvwZISDbvkTWi8NdZ2S3HQ2aIT1X1ZH9Cav/qpyBHVeFS/YKdyUrMRdeWc3NSlEOMVQgiRnu4U5RisoUjPiZqt5YvatwfFZfB3t5eQfYEvt1bZXY4Yc=
+  file_glob: true
+  file: builds/*
+  on:
+    repo: ECF/OSGIRemoteManagement

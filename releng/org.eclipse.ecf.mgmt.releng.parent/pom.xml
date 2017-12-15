@@ -297,5 +297,42 @@
 	    <module>../../releng/org.eclipse.ecf.mgmt.releng.target</module>
 		<module>../../releng/org.eclipse.ecf.mgmt.feature</module>
 	    <module>../../releng/org.eclipse.ecf.mgmt.host.feature</module>
-	</modules>
+	    <module>../../bundles/org.eclipse.ecf.mgmt.cm</module>
+	    <module>../../bundles/org.eclipse.ecf.mgmt.cm.host</module>
+	    <module>
+	    	../org.eclipse.ecf.mgmt.consumer.eclipse.feature
+	    </module>
+	    <module>
+	    	../../bundles/org.eclipse.ecf.mgmt.consumer.util
+	    </module>
+	    <module>../org.eclipse.ecf.mgmt.eclipse.feature</module>
+	    <module>
+	    	../../plugins/org.eclipse.ecf.mgmt.framework.eclipse.ui
+	    </module>
+	    <module>../../test/org.eclipse.ecf.mgmt.framework.test</module>
+	    <module>../../plugins/org.eclipse.ecf.mgmt.host.eclipse</module>
+	    <module>../org.eclipse.ecf.mgmt.host.eclipse.feature</module>
+	    <module>../../bundles/org.eclipse.ecf.mgmt.host.karaf</module>
+	    <module>
+	    	../../bundles/org.eclipse.ecf.mgmt.karaf.features
+	    </module>
+	    <module>
+	    	../../plugins/org.eclipse.ecf.mgmt.karaf.features.eclipse.ui
+	    </module>
+	    <module>
+	    	../../bundles/org.eclipse.ecf.mgmt.karaf.features.host
+	    </module>
+	    <module>../org.eclipse.ecf.mgmt.karaf.host.feature</module>
+	    <module>../../bundles/org.eclipse.ecf.mgmt.kura.host</module>
+	    <module>../org.eclipse.ecf.mgmt.kura.host.feature</module>
+	    <module>
+	    	../../bundles/org.eclipse.ecf.osgi.services.remoteserviceadmin.callback
+	    </module>
+	    <module>
+	    	../../plugins/org.eclipse.ecf.remoteservice.ui.bundleview
+	    </module>
+	    <module>
+	    	../../plugins/org.eclipse.ecf.remoteservice.ui.serviceview
+	    </module>
+</modules>
 </project>

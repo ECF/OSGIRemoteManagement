@@ -9,9 +9,7 @@
 		<relativePath>../../releng/org.eclipse.ecf.mgmt.releng.parent</relativePath>
 	</parent>
 
-	<groupId>org.eclipse.ecf.mgmt.releng.parent</groupId>
 	<artifactId>org.eclipse.ecf.mgmt.p2</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
 	<packaging>eclipse-plugin</packaging>
 
 </project>
