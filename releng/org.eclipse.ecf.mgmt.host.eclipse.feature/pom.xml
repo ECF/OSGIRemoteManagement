@@ -9,7 +9,7 @@
 		<relativePath>../../releng/org.eclipse.ecf.mgmt.releng.parent</relativePath>
 	</parent>
 
-	<artifactId>org.eclipse.ecf.host.eclipse.feature</artifactId>
+	<artifactId>org.eclipse.ecf.mgmt.host.eclipse.feature</artifactId>
 	<packaging>eclipse-feature</packaging>
 
 	</project>
