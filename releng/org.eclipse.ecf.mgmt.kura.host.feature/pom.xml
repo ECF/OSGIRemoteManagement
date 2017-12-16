@@ -9,7 +9,7 @@
 		<relativePath>../../releng/org.eclipse.ecf.mgmt.releng.parent</relativePath>
 	</parent>
 
-	<artifactId>org.eclipse.ecf.mgmt.karaf.host.feature</artifactId>
+	<artifactId>org.eclipse.ecf.mgmt.kura.host.feature</artifactId>
 	<packaging>eclipse-feature</packaging>
 
 </project>
