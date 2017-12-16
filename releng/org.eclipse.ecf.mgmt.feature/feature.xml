@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.ecf.mgmt.feature"
       label="ECF Remote Management API Feature"
-      version="2.0.0.qualifier"
+      version="2.1.0.qualifier"
       provider-name="%providerName">
 
    <description url="http://www.eclipse.org/ecf">
@@ -118,6 +118,13 @@
 
    <plugin
          id="org.eclipse.ecf.mgmt.metatype"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.ecf.mgmt.cm"
          download-size="0"
          install-size="0"
          version="0.0.0"
