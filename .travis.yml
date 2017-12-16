@@ -1,11 +1,3 @@
 language: java
 jdk:
 - oraclejdk8
-deploy:
-  provider: releases
-  api_key:
-    secure: hI+H5Kr7dlQIS92OaNqnL5g9NeAqSPLzexNzjBeP3QguWInzlFH6S25gLvwZISDbvkTWi8NdZ2S3HQ2aIT1X1ZH9Cav/qpyBHVeFS/YKdyUrMRdeWc3NSlEOMVQgiRnu4U5RisoUjPiZqt5YvatwfFZfB3t5eQfYEvt1bZXY4Yc=
-  file_glob: true
-  file: builds/*
-  on:
-    repo: ECF/OSGIRemoteManagement
