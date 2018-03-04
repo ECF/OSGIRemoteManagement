@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="Py4j Provider Oxygen Target" sequenceNumber="55">
+<?pde version="3.8"?><target name="Py4j Provider Oxygen Target" sequenceNumber="57">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.emf.sdk.feature.group" version="2.13.0.v20170609-0928"/>
@@ -12,7 +12,7 @@
 </location>
 <location path="${project_loc:org.eclipse.ecf.mgmt.releng.target}/karaf/" type="Directory"/>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.ecf.provider.jms.feature.feature.group" version="2.6.0.201712171126"/>
+<unit id="org.eclipse.ecf.provider.jms.feature.feature.group" version="2.7.0.201803011626"/>
 <repository location="https://raw.githubusercontent.com/ECF/JMS/master/build"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
@@ -23,7 +23,7 @@
 <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20170516192513/repository"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.ecf.provider.jms.mqtt.feature.feature.group" version="1.2.0.201712171136"/>
+<unit id="org.eclipse.ecf.provider.jms.mqtt.feature.feature.group" version="1.2.1.201803041209"/>
 <repository location="https://raw.githubusercontent.com/ECF/Mqtt-Provider/master/build"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
