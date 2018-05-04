@@ -2,8 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ECF Remote P2 Management API
 Bundle-SymbolicName: org.eclipse.ecf.mgmt.p2
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.1.qualifier
 Bundle-Vendor: Eclipse.org - ECF
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.ecf.mgmt.p2;version="1.0.0"
+Automatic-Module-Name: org.eclipse.ecf.mgmt.p2

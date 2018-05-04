@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" immediate="true" name="org.eclipse.ecf.mgmt.karaf.host.KarafManagerExporter">
-   <reference bind="bindAssociator" cardinality="1..1" interface="org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.IExportableServiceCallbackAssociator" name="Associator" policy="static" unbind="unbindAssociator"/>
+   <reference bind="bindAssociator" cardinality="1..1" interface="org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.ExportCallbackAssociator" name="Associator" policy="static" unbind="unbindAssociator"/>
    <reference bind="bindBundleManager" cardinality="1..1" interface="org.eclipse.ecf.mgmt.framework.IBundleManager" name="BundleManager" policy="static" unbind="unbindBundleManager"/>
    <reference bind="bindKarafFeaturesInstallerManager" cardinality="1..1" interface="org.eclipse.ecf.mgmt.karaf.features.FeatureInstallManager" name="KarafFeaturesInstallerManager" policy="static" unbind="unbindKarafFeaturesInstallerManager"/>
+   <reference bind="bindRemoteServiceAdmin" interface="org.osgi.service.remoteserviceadmin.RemoteServiceAdmin" name="RemoteServiceAdmin" unbind="unbindRemoteServiceAdmin"/>
    <reference bind="bindServiceManager" cardinality="1..1" interface="org.eclipse.ecf.mgmt.framework.IServiceManager" name="ServiceManager" policy="static" unbind="unbindServiceManager"/>
    <implementation class="org.eclipse.ecf.mgmt.karaf.host.KarafManagerExporter"/>
 </scr:component>

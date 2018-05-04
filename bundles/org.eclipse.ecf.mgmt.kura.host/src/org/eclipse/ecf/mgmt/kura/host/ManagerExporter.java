@@ -11,7 +11,8 @@ import org.eclipse.ecf.mgmt.framework.IServiceEventHandler;
 import org.eclipse.ecf.mgmt.framework.IServiceManager;
 import org.eclipse.ecf.mgmt.karaf.features.FeatureInstallEventHandler;
 import org.eclipse.ecf.mgmt.karaf.features.FeatureInstallManager;
-import org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.IExportableServiceCallbackAssociator;
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.ExportCallbackAssociation;
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.ExportCallbackAssociator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Activate;
@@ -19,22 +20,38 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.remoteserviceadmin.ExportRegistration;
+import org.osgi.service.remoteserviceadmin.RemoteServiceAdmin;
 
 @Component(immediate = true)
 public class ManagerExporter {
 
+	private RemoteServiceAdmin rsa;
+	
 	private ServiceReference<IBundleManager> bmRef;
 	private ServiceReference<IServiceManager> smRef;
 	private ServiceReference<FeatureInstallManager> fiRef;
 	
-	private IExportableServiceCallbackAssociator associator;
+	private ExportCallbackAssociator associator;
 	
 	@Reference
-	void bindAssociator(IExportableServiceCallbackAssociator a) {
+	void bindRemoteServiceAdmin(RemoteServiceAdmin rsa) {
+		this.rsa = rsa;
+	}
+	
+	void unbindRemoteServiceAdmin(RemoteServiceAdmin rsa) {
+		this.rsa = null;
+	}
+	
+	RemoteServiceAdmin getRemoteServiceAdmin() {
+		return this.rsa;
+	}
+	
+	@Reference
+	void bindAssociator(ExportCallbackAssociator a) {
 		this.associator = a;
 	}
 	
-	void unbindAssociator(IExportableServiceCallbackAssociator a) {
+	void unbindAssociator(ExportCallbackAssociator a) {
 		this.associator = null;
 	}
 	
@@ -69,20 +86,24 @@ public class ManagerExporter {
 	private ExportRegistration smReg;
 	private ExportRegistration fiReg;
 	
+	private ExportCallbackAssociation bmEca;
+	private ExportCallbackAssociation smEca;
+	private ExportCallbackAssociation fiEca;
+	
 	@Activate
 	public void activate(BundleContext c) throws Exception {
-		associator.associateCallback(bmRef, IBundleEventHandler.class);
-		associator.associateCallback(smRef, IServiceEventHandler.class);
-		associator.associateCallback(fiRef, FeatureInstallEventHandler.class);
+		bmEca = associator.associateExportableWithCallback(bmRef, IBundleEventHandler.class);
+		smEca = associator.associateExportableWithCallback(smRef, IServiceEventHandler.class);
+		fiEca = associator.associateExportableWithCallback(fiRef, FeatureInstallEventHandler.class);
 		Map<String,Object> props = createRemoteServiceProperties();
-		Collection<ExportRegistration> regs = associator.getRSA().exportService(bmRef, props);
+		Collection<ExportRegistration> regs = getRemoteServiceAdmin().exportService(bmRef, props);
 		bmReg = regs.iterator().next();
 		Throwable t = bmReg.getException();
 		if (t != null) {
 			bmReg = null;
 			throw new RuntimeException("Could not export BundleManager service");
 		}
-		regs = associator.getRSA().exportService(smRef, props);
+		regs = getRemoteServiceAdmin().exportService(smRef, props);
 		smReg = regs.iterator().next();
 		t = smReg.getException();
 		if (t != null) {
@@ -91,7 +112,7 @@ public class ManagerExporter {
 			this.smReg = null;
 			throw new RuntimeException("Could not export ServiceManager service");
 		}
-		regs = associator.getRSA().exportService(fiRef, props);
+		regs = getRemoteServiceAdmin().exportService(fiRef, props);
 		fiReg = regs.iterator().next();
 		t = fiReg.getException();
 		if (t != null) {
@@ -107,6 +128,18 @@ public class ManagerExporter {
 
 	@Deactivate
 	public void deactivate() {
+		if (bmEca != null) {
+			bmEca.disassociate();
+			bmEca = null;
+		}
+		if (smEca != null) {
+			smEca.disassociate();
+			smEca = null;
+		}
+		if (fiEca != null) {
+			fiEca.disassociate();
+			fiEca = null;
+		}
 		if (bmReg != null) {
 			bmReg.close();
 			bmReg = null;

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ECF Remote Management Metatype Host
 Bundle-SymbolicName: org.eclipse.ecf.mgmt.metatype.host
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.1.qualifier
 Bundle-Vendor: Eclipse.org - ECF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: org.eclipse.ecf.mgmt.framework.host;version="1.0.0",
@@ -10,3 +10,4 @@ Import-Package: org.eclipse.ecf.mgmt.framework.host;version="1.0.0",
  org.osgi.framework;version="1.8.0",
  org.osgi.service.metatype
 Require-Bundle: org.eclipse.equinox.common;bundle-version="3.8.0"
+Automatic-Module-Name: org.eclipse.ecf.mgmt.metatype.host

@@ -6,7 +6,7 @@
  * 
  * Contributors: Scott Lewis - initial API and implementation
  ******************************************************************************/
-package org.eclipse.ecf.osgi.services.remoteserviceadmin.callback;
+package org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.impl;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -19,6 +19,8 @@ import org.eclipse.ecf.osgi.services.remoteserviceadmin.EndpointDescription;
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteConstants;
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin.ExportReference;
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin.ImportRegistration;
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.ExportCallbackAssociation;
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.ExportCallbackAssociator;
 import org.eclipse.ecf.remoteservice.IRemoteServiceContainerAdapter;
 import org.eclipse.ecf.remoteservice.IRemoteServiceID;
 import org.eclipse.ecf.remoteservice.IRemoteServiceListener;
@@ -37,10 +39,12 @@ import org.osgi.service.remoteserviceadmin.RemoteServiceAdminEvent;
 import org.osgi.service.remoteserviceadmin.RemoteServiceAdminListener;
 
 @Component(immediate=true)
-public class ExportableServiceCallbackAssociator extends AbstractServiceCallbackAssociator implements RemoteServiceAdminListener, IExportableServiceCallbackAssociator {
+public class ExportCallbackAssociatorImpl extends AbstractCallbackAssociator implements RemoteServiceAdminListener, ExportCallbackAssociator {
 
-	protected class CallbackAssociation {
+	
+	protected class CallbackAssociation implements ExportCallbackAssociation {
 
+		protected ServiceReference<?> exportableServiceReference;
 		protected Class<?> callbackClass;
 		protected IContainer exportingContainer;
 		protected ImportRegistration importRegistration;
@@ -53,7 +57,7 @@ public class ExportableServiceCallbackAssociator extends AbstractServiceCallback
 					if (event instanceof IRemoteServiceRegisteredEvent) {
 						if (importRegistration == null) {
 							try {
-								importRegistration = (ImportRegistration) getRSA().importService(
+								importRegistration = (ImportRegistration) getRemoteServiceAdmin().importService(
 										new EndpointDescription(createImportProperties(event.getReference())));
 								if (importRegistration == null)
 									throw new RuntimeException("Callback import registration returned is null");
@@ -79,7 +83,8 @@ public class ExportableServiceCallbackAssociator extends AbstractServiceCallback
 			}
 		}
 
-		protected CallbackAssociation(Class<?> callbackClass) {
+		protected CallbackAssociation(ServiceReference<?> exportableServiceReference, Class<?> callbackClass) {
+			this.exportableServiceReference = exportableServiceReference;
 			this.callbackClass = callbackClass;
 			this.listener = new CallbackAssociationRemoteServiceListener();
 		}
@@ -126,6 +131,19 @@ public class ExportableServiceCallbackAssociator extends AbstractServiceCallback
 			return result;
 		}
 
+		public Class<?> getCallbackServiceInterface() {
+			return this.callbackClass;
+		}
+		
+		public ServiceReference<?> getExportableServiceReference() {
+			return this.exportableServiceReference;
+		}
+		
+		@Override
+		public void disassociate() {
+			removeAssociatedCallback(this.exportableServiceReference);
+		}
+
 	}
 
 	@Reference
@@ -148,15 +166,23 @@ public class ExportableServiceCallbackAssociator extends AbstractServiceCallback
 	
 	private Map<ServiceReference<?>, CallbackAssociation> callbackAssociations;
 
-	public Class<?> associateCallback(ServiceReference<?> exportableServiceReference, Class<?> callbackClass) {
-		CallbackAssociation es = null;
+	public ExportCallbackAssociation associateExportableWithCallback(ServiceReference<?> exportableServiceReference, Class<?> callbackClass) {
+		CallbackAssociation ca = null;
 		synchronized (callbackAssociations) {
-			es = this.callbackAssociations.put(exportableServiceReference, new CallbackAssociation(callbackClass));
+			ca = callbackAssociations.get(exportableServiceReference);
+			if (ca != null) {
+				Class<?> cc = ca.getCallbackServiceInterface();
+				if (!callbackClass.equals(cc))
+					throw new RuntimeException("exportableServiceReference="+exportableServiceReference+" already associated with callbackServiceInterface="+cc.getName());
+			} else {
+				ca = new CallbackAssociation(exportableServiceReference, callbackClass);
+				this.callbackAssociations.put(exportableServiceReference, ca);
+			}
 		}
-		return (es == null)?null:es.callbackClass;
+		return ca;
 	}
 
-	public Class<?> getAssociatedCallback(ServiceReference<?> exportedServiceReference) {
+	protected Class<?> getAssociatedCallback(ServiceReference<?> exportedServiceReference) {
 		CallbackAssociation es = null;
 		synchronized (callbackAssociations) {
 			es = this.callbackAssociations.get(exportedServiceReference);
@@ -164,12 +190,10 @@ public class ExportableServiceCallbackAssociator extends AbstractServiceCallback
 		return (es == null)?null:es.callbackClass;
 	}
 	
-	public Class<?> unassociateCallback(ServiceReference<?> exportedServiceReference) {
-		CallbackAssociation es = null;
+	protected void removeAssociatedCallback(ServiceReference<?> exportedServiceReference) {
 		synchronized (callbackAssociations) {
-			es = this.callbackAssociations.remove(exportedServiceReference);
+			this.callbackAssociations.remove(exportedServiceReference);
 		}
-		return (es == null)?null:es.callbackClass;
 	}
 
 	@Activate

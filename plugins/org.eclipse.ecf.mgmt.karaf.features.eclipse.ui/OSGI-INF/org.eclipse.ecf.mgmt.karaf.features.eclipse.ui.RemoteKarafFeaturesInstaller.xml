@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" immediate="true" name="org.eclipse.ecf.mgmt.karaf.features.eclipse.ui.RemoteKarafFeaturesInstaller">
-   <reference bind="bindCallbackAssociator" cardinality="1..1" interface="org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.IImportableServiceCallbackAssociator" name="CallbackAssociator" policy="static" unbind="unbindCallbackAssociator"/>
+   <reference bind="bindCallbackAssociator" cardinality="1..1" interface="org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.ImportCallbackAssociator" name="CallbackAssociator" policy="static" unbind="unbindCallbackAssociator"/>
+   <reference bind="bindContainerManager" interface="org.eclipse.ecf.core.IContainerManager" name="ContainerManager" unbind="unbindContainerManager"/>
    <reference bind="bindKarafFeaturesInstaller" cardinality="0..1" interface="org.eclipse.ecf.mgmt.karaf.features.FeatureInstallManagerAsync" name="KarafFeaturesInstaller" policy="dynamic" unbind="unbindKarafFeaturesInstaller"/>
    <reference bind="bindNotifier" cardinality="1..1" interface="org.eclipse.ecf.mgmt.consumer.util.IRemoteServiceNotifier" name="Notifier" policy="static" unbind="unbindNotifier"/>
    <implementation class="org.eclipse.ecf.mgmt.karaf.features.eclipse.ui.RemoteKarafFeaturesInstaller"/>

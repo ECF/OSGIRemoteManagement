@@ -12,4 +12,5 @@
 	<artifactId>org.eclipse.ecf.mgmt.framework.eclipse.ui</artifactId>
 	<packaging>eclipse-plugin</packaging>
 
+	<version>1.1.0-SNAPSHOT</version>
 </project>

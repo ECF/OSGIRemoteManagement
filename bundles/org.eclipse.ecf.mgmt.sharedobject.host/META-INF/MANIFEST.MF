@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ECF Remote SharedObject Managment Service Host
 Bundle-SymbolicName: org.eclipse.ecf.mgmt.sharedobject.host
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.1.qualifier
 Bundle-Vendor: Eclipse.org - ECF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.equinox.common
@@ -18,3 +18,4 @@ Import-Package: org.eclipse.ecf.core;version="3.0.0",
  org.osgi.framework
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.ecf.mgmt.sharedobject.host;version="1.0.0"
+Automatic-Module-Name: org.eclipse.ecf.mgmt.sharedobject.host

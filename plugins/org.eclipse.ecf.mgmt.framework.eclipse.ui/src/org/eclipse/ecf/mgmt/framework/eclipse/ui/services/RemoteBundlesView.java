@@ -394,13 +394,15 @@ public class RemoteBundlesView extends AbstractBundlesView {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			IContainer c = RemoteBundleManagerComponent.getInstance().getContainerForID(rsID.getContainerID());
-			if (c != null)
+			IContainer[] cs = RemoteBundleManagerComponent.getInstance().getContainersForConnectedID(rsID.getContainerID());
+			if (cs != null) {
+				for(IContainer c: cs)
 				try {
 					c.disconnect();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+			}
 		}
 	}
 

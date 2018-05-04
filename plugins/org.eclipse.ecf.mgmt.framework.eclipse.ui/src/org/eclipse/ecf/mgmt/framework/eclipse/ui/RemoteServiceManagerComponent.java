@@ -12,8 +12,9 @@ import org.eclipse.ecf.mgmt.consumer.util.IRemoteServiceNotifier;
 import org.eclipse.ecf.mgmt.framework.IServiceEventHandler;
 import org.eclipse.ecf.mgmt.framework.IServiceManagerAsync;
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin.ImportReference;
-import org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.ICallbackRegistrar;
-import org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.IImportableServiceCallbackAssociator;
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.CallbackRegistrar;
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.ImportCallbackAssociation;
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.ImportCallbackAssociator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
@@ -36,13 +37,13 @@ public class RemoteServiceManagerComponent {
 		instance = this;
 	}
 	
-	private IImportableServiceCallbackAssociator importer;
+	private ImportCallbackAssociator importer;
 
 	@Reference
-	void bindCallbackAssociator(IImportableServiceCallbackAssociator ca) {
+	void bindCallbackAssociator(ImportCallbackAssociator ca) {
 		this.importer = ca;
 	}
-	void unbindCallbackAssociator(IImportableServiceCallbackAssociator ca) {
+	void unbindCallbackAssociator(ImportCallbackAssociator ca) {
 		this.importer = null;
 	}
 	
@@ -61,9 +62,11 @@ public class RemoteServiceManagerComponent {
 		return this.notifier;
 	}
 	
+	private ImportCallbackAssociation ica;
+	
     @Activate
     public void activate(BundleContext context) throws Exception {
- 		this.importer.associateCallbackRegistrar(IServiceManagerAsync.class, new ICallbackRegistrar() {
+ 		ica = this.importer.associateCallbackRegistrar(IServiceManagerAsync.class, new CallbackRegistrar() {
 			@Override
 			public ServiceRegistration<?> registerCallback(ImportReference importReference) throws Exception {
 				return context.registerService(IServiceEventHandler.class, new ServiceEventHandler(importReference), null);
@@ -72,7 +75,10 @@ public class RemoteServiceManagerComponent {
     
     @Deactivate
 	public void deactivate() {
-		this.importer.unassociateCallbackRegistrar(IServiceManagerAsync.class);
+    	if (ica != null) {
+    		ica.disassociate();
+    		ica = null;
+    	}
 		this.importer = null;
 		this.notifier = null;
 		instance = null;

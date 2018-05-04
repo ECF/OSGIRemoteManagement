@@ -236,13 +236,15 @@ public class FeaturesInstallerView extends ViewPart {
 	void disconnect(FeaturesNode managerNode) {
 		IRemoteServiceReference rsRef = managerNode.getKarafFeaturesInstallerRef();
 		IRemoteServiceID rsID = rsRef.getID();
-		IContainer c = RemoteKarafFeaturesInstaller.getInstance().getContainerForID(rsID.getContainerID());
-		if (c != null)
-			try {
-				c.disconnect();
-			} catch (Exception e) {
-				logAndShowError("Remote Karaf Feature Install could not connect using reference " + rsRef, e);
-			}
+		IContainer[] cs = RemoteKarafFeaturesInstaller.getInstance().getContainersForConnectedID(rsID.getContainerID());
+		if (cs != null) {
+			for (IContainer c : cs)
+				try {
+					c.disconnect();
+				} catch (Exception e) {
+					logAndShowError("Remote Karaf Feature Install could not connect using reference " + rsRef, e);
+				}
+		}
 	}
 
 	private FeaturesNode getSelectedFeaturesNode() {

@@ -6,7 +6,7 @@
  * 
  * Contributors: Scott Lewis - initial API and implementation
  ******************************************************************************/
-package org.eclipse.ecf.osgi.services.remoteserviceadmin.callback;
+package org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.impl;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -26,7 +26,7 @@ import org.osgi.framework.wiring.BundleCapability;
 import org.osgi.framework.wiring.BundleRevision;
 import org.osgi.service.remoteserviceadmin.RemoteServiceAdmin;
 
-public class AbstractServiceCallbackAssociator {
+public class AbstractCallbackAssociator {
 
 	public static final String ECF_RSA_PROP_PREFIX = "ecf.x.rsa.";
 	
@@ -46,7 +46,7 @@ public class AbstractServiceCallbackAssociator {
 		this.rsa = null;
 	}
 
-	public RemoteServiceAdmin getRSA() {
+	protected RemoteServiceAdmin getRemoteServiceAdmin() {
 		return rsa;
 	}
 
@@ -58,12 +58,12 @@ public class AbstractServiceCallbackAssociator {
 		this.containerManager = null;
 	}
 
-	public ContainerTypeDescription getContainerTypeDescription(ID containerID) {
+	protected ContainerTypeDescription getContainerTypeDescription(ID containerID) {
 		IContainerManager cm = getContainerManager();
 		return (cm != null)?cm.getContainerTypeDescription(containerID):null;
 	}
 	
-	public IContainer getContainerConnectedToID(ID id) {
+	protected IContainer getContainerConnectedToID(ID id) {
 		for (IContainer c : getContainerManager().getAllContainers()) {
 			ID targetID = c.getConnectedID();
 			if (targetID != null && targetID.equals(id))

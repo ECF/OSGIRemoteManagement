@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ECF Remote Framework Management Eclipse UI
 Bundle-SymbolicName: org.eclipse.ecf.mgmt.framework.eclipse.ui;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Bundle-Activator: org.eclipse.ecf.mgmt.framework.eclipse.ui.Activator
 Bundle-Vendor: Eclipse.org - ECF
 Require-Bundle: org.eclipse.core.runtime,

@@ -12,4 +12,5 @@
 	<artifactId>org.eclipse.ecf.mgmt.sharedobject.host</artifactId>
 	<packaging>eclipse-plugin</packaging>
 
+	<version>1.0.1-SNAPSHOT</version>
 </project>

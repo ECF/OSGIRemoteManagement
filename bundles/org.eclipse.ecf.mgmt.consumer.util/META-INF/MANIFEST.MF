@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ECF Remote Management Consumer Util API
 Bundle-SymbolicName: org.eclipse.ecf.mgmt.consumer.util
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.1.qualifier
 Bundle-Vendor: Eclipse.org - ECF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
@@ -13,3 +13,4 @@ Import-Package: org.eclipse.ecf.core.identity;version="3.2.0",
 Require-Bundle: org.eclipse.equinox.common
 Export-Package: org.eclipse.ecf.mgmt.consumer.util;version="1.0.0"
 Service-Component: OSGI-INF/org.eclipse.ecf.mgmt.consumer.util.RemoteServiceNotifier.xml
+Automatic-Module-Name: org.eclipse.ecf.mgmt.consumer.util

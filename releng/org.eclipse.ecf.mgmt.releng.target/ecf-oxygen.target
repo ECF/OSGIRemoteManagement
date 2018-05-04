@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="Py4j Provider Oxygen Target" sequenceNumber="57">
+<?pde version="3.8"?><target name="Remote Management Oxygen Target" sequenceNumber="59">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.ecf.provider.jms.feature.feature.group" version="2.8.0.201803161637"/>
+<repository location="https://raw.githubusercontent.com/ECF/JMS/master/build"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.emf.sdk.feature.group" version="2.13.0.v20170609-0928"/>
+<unit id="org.eclipse.equinox.sdk.feature.group" version="3.13.4.v20180322-2228"/>
+<unit id="org.eclipse.platform.ide" version="4.7.3.M20180330-0640"/>
+<unit id="org.eclipse.platform.sdk" version="4.7.3.M20180330-0640"/>
+<unit id="org.eclipse.rcp.feature.group" version="4.7.3.v20180330-0640"/>
+<unit id="org.eclipse.rcp.source.feature.group" version="4.7.3.v20180330-0640"/>
+<unit id="org.eclipse.sdk.ide" version="4.7.3.M20180330-0640"/>
 <repository location="http://download.eclipse.org/releases/oxygen"/>
 </location>
 <location path="${project_loc:org.eclipse.ecf.mgmt.releng.target}/karaf/" type="Directory"/>
@@ -10,21 +20,12 @@
 <unit id="org.eclipse.license.feature.group" version="1.0.1.v20140414-1359"/>
 <repository location="http://download.eclipse.org/cbi/updates/license/1.0.1.v20140414-1359"/>
 </location>
-<location path="${project_loc:org.eclipse.ecf.mgmt.releng.target}/karaf/" type="Directory"/>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.ecf.provider.jms.feature.feature.group" version="2.7.0.201803011626"/>
-<repository location="https://raw.githubusercontent.com/ECF/JMS/master/build"/>
-</location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.slf4j.api" version="1.7.10.v20170428-1633"/>
 <unit id="org.slf4j.api.source" version="1.7.10.v20170428-1633"/>
 <unit id="org.slf4j.log4j" version="1.7.2.v20130115-1340"/>
 <unit id="org.slf4j.log4j.source" version="1.7.2.v20130115-1340"/>
 <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20170516192513/repository"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.ecf.provider.jms.mqtt.feature.feature.group" version="1.2.1.201803041209"/>
-<repository location="https://raw.githubusercontent.com/ECF/Mqtt-Provider/master/build"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="com.sun.syndication" version="0.9.0.v200803061811"/>
@@ -60,13 +61,8 @@
 <repository location="http://download.eclipse.org/rt/ecf/3.13.8/site.p2"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.equinox.sdk.feature.group" version="3.13.1.v20170928-1405"/>
-<unit id="org.eclipse.platform.ide" version="4.7.1.M20171009-0410"/>
-<unit id="org.eclipse.platform.sdk" version="4.7.1.M20171009-0410"/>
-<unit id="org.eclipse.rcp.feature.group" version="4.7.1.v20171009-0410"/>
-<unit id="org.eclipse.rcp.source.feature.group" version="4.7.1.v20171009-0410"/>
-<unit id="org.eclipse.sdk.ide" version="4.7.1.M20171009-0410"/>
-<repository location="http://download.eclipse.org/eclipse/updates/4.7"/>
+<unit id="org.eclipse.ecf.provider.jms.mqtt.feature.feature.group" version="1.2.1.201803041209"/>
+<repository location="https://raw.githubusercontent.com/ECF/Mqtt-Provider/master/build"/>
 </location>
 </locations>
 </target>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" immediate="true" name="org.eclipse.ecf.mgmt.framework.eclipse.ui.RemoteServiceManagerComponent">
-   <reference bind="bindCallbackAssociator" cardinality="1..1" interface="org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.IImportableServiceCallbackAssociator" name="CallbackAssociator" policy="static" unbind="unbindCallbackAssociator"/>
+   <reference bind="bindCallbackAssociator" cardinality="1..1" interface="org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.ImportCallbackAssociator" name="CallbackAssociator" policy="static" unbind="unbindCallbackAssociator"/>
    <reference bind="bindNotifier" cardinality="1..1" interface="org.eclipse.ecf.mgmt.consumer.util.IRemoteServiceNotifier" name="Notifier" policy="static" unbind="unbindNotifier"/>
    <reference bind="bindServicesManagerAsync" cardinality="0..n" interface="org.eclipse.ecf.mgmt.framework.IServiceManagerAsync" name="ServicesManagerAsync" policy="dynamic" unbind="unbindServicesManagerAsync"/>
    <implementation class="org.eclipse.ecf.mgmt.framework.eclipse.ui.RemoteServiceManagerComponent"/>

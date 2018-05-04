@@ -8,13 +8,11 @@
  ******************************************************************************/
 package org.eclipse.ecf.osgi.services.remoteserviceadmin.callback;
 
-import org.eclipse.ecf.core.IContainer;
-import org.eclipse.ecf.core.identity.ID;
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin.ImportReference;
+import org.osgi.framework.ServiceRegistration;
 
-public interface IImportableServiceCallbackAssociator {
+public interface CallbackRegistrar {
 
-	ICallbackRegistrar associateCallbackRegistrar(Class<?> importedServiceClass, ICallbackRegistrar registrar);
-	ICallbackRegistrar getAssociatedRegistrar(Class<?> importedServiceClass);
-	ICallbackRegistrar unassociateCallbackRegistrar(Class<?> importedServiceClass);
-	IContainer getContainerConnectedToID(ID connectedToID);
+	ServiceRegistration<?> registerCallback(ImportReference importedServiceReference) throws Exception;
+	
 }

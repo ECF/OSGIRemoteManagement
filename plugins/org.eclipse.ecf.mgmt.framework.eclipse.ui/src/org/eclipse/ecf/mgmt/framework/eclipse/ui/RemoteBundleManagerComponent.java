@@ -8,14 +8,19 @@
  ******************************************************************************/
 package org.eclipse.ecf.mgmt.framework.eclipse.ui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.ecf.core.IContainer;
+import org.eclipse.ecf.core.IContainerManager;
 import org.eclipse.ecf.core.identity.ID;
 import org.eclipse.ecf.mgmt.consumer.util.IRemoteServiceNotifier;
 import org.eclipse.ecf.mgmt.framework.IBundleEventHandler;
 import org.eclipse.ecf.mgmt.framework.IBundleManagerAsync;
 import org.eclipse.ecf.osgi.services.remoteserviceadmin.RemoteServiceAdmin.ImportReference;
-import org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.ICallbackRegistrar;
-import org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.IImportableServiceCallbackAssociator;
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.CallbackRegistrar;
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.ImportCallbackAssociation;
+import org.eclipse.ecf.osgi.services.remoteserviceadmin.callback.ImportCallbackAssociator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
@@ -38,13 +43,13 @@ public class RemoteBundleManagerComponent {
 		instance = this;
 	}
 	
-	private IImportableServiceCallbackAssociator importer;
+	private ImportCallbackAssociator importer;
 
 	@Reference
-	void bindCallbackAssociator(IImportableServiceCallbackAssociator ca) {
+	void bindCallbackAssociator(ImportCallbackAssociator ca) {
 		this.importer = ca;
 	}
-	void unbindCallbackAssociator(IImportableServiceCallbackAssociator ca) {
+	void unbindCallbackAssociator(ImportCallbackAssociator ca) {
 		this.importer = null;
 	}
 	
@@ -63,9 +68,11 @@ public class RemoteBundleManagerComponent {
 		return this.notifier;
 	}
 	
+	private ImportCallbackAssociation ica;
+	
 	@Activate
 	public void activate(final BundleContext context) throws Exception {
-		this.importer.associateCallbackRegistrar(IBundleManagerAsync.class, new ICallbackRegistrar() {
+		ica = this.importer.associateCallbackRegistrar(IBundleManagerAsync.class, new CallbackRegistrar() {
 			@Override
 			public ServiceRegistration<?> registerCallback(ImportReference importReference) throws Exception {
 				return context.registerService(IBundleEventHandler.class, new BundleEventHandler(importReference), null);
@@ -74,16 +81,38 @@ public class RemoteBundleManagerComponent {
 	
 	@Deactivate
 	public void deactivate() {
-		this.importer.unassociateCallbackRegistrar(IBundleManagerAsync.class);
+		if (ica != null) {
+			ica.disassociate();
+			ica = null;
+		}
 		this.importer = null;
 		this.notifier = null;
 		instance = null;
 	}
 	
-	public IContainer getContainerForID(ID id) {
-		return importer == null?null:importer.getContainerConnectedToID(id);
+	private IContainerManager containerManager;
+	
+	@Reference
+	void bindContainerManager(IContainerManager cm) {
+		this.containerManager = cm;
 	}
 	
+	void unbindContainerManager(IContainerManager cm) {
+		this.containerManager = null;
+	}
+	
+	public IContainer[] getContainersForConnectedID(ID connectedID) {
+		List<IContainer> result = new ArrayList<IContainer>();
+		if (containerManager != null) {
+			for(IContainer c: containerManager.getAllContainers()) {
+				ID cID = c.getConnectedID();
+				if (cID != null && cID.equals(connectedID))
+					result.add(c);
+			}
+		}
+		return result.toArray(new IContainer[result.size()]);
+	}
+
 	@Reference(policy=ReferencePolicy.DYNAMIC,cardinality=ReferenceCardinality.MULTIPLE)
 	void bindBundleManagerAsync(IBundleManagerAsync bm) {
 		this.notifier.addServiceHolder(IBundleManagerAsync.class, bm);

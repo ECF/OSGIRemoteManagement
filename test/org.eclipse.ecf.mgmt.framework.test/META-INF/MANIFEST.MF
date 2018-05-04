@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Framework Management API Test
 Bundle-SymbolicName: org.eclipse.ecf.mgmt.framework.test;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.1.qualifier
 Bundle-Vendor: Eclipse.org - ECF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.junit;bundle-version="4.11.0",
@@ -11,3 +11,4 @@ Import-Package: org.osgi.framework;version="1.8.0",
  org.osgi.util.tracker;version="1.5.1"
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.ecf.mgmt.framework.test.Activator
+Automatic-Module-Name: org.eclipse.ecf.mgmt.framework.test

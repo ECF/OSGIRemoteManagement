@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ECF Remote Management Karaf Host
 Bundle-SymbolicName: org.eclipse.ecf.mgmt.host.karaf
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.1.qualifier
 Bundle-Activator: org.eclipse.ecf.mgmt.host.karaf.Activator
 Bundle-Vendor: Eclipse.org - ECF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
@@ -19,3 +19,4 @@ Import-Package: org.eclipse.ecf.core.identity,
  org.osgi.util.tracker;version="1.5.1"
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.equinox.common
+Automatic-Module-Name: org.eclipse.ecf.mgmt.host.karaf

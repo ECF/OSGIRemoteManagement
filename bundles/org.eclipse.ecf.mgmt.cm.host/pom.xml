@@ -12,4 +12,5 @@
 	<artifactId>org.eclipse.ecf.mgmt.cm.host</artifactId>
 	<packaging>eclipse-plugin</packaging>
 
-	</project>
+	<version>1.0.1-SNAPSHOT</version>
+</project>

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ECF OSGi Services Eclipse UI
 Bundle-SymbolicName: org.eclipse.ecf.remoteservice.ui.serviceview;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.1.qualifier
 Bundle-Vendor: Eclipse.org - ECF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.eclipse.ecf.remoteservice.ui;bundle-version="3.3.0",
@@ -18,3 +18,4 @@ Export-Package: org.eclipse.ecf.remoteservice.ui.serviceview;version="1.0.0",
  org.eclipse.ecf.remoteservice.ui.serviceview.model;version="1.0.0"
 Service-Component: OSGI-INF/rsadiscovery.xml
 Bundle-Activator: org.eclipse.ecf.remoteservice.ui.internal.serviceview.Activator
+Automatic-Module-Name: org.eclipse.ecf.remoteservice.ui.serviceview

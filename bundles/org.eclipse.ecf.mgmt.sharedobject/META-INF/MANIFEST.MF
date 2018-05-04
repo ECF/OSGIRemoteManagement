@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ECF Remote SharedObject Management API
 Bundle-SymbolicName: org.eclipse.ecf.mgmt.sharedobject
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.1.qualifier
 Bundle-Vendor: Eclipse.org - ECF
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Import-Package: org.eclipse.ecf.mgmt;version="1.0.0",
@@ -10,3 +10,4 @@ Import-Package: org.eclipse.ecf.mgmt;version="1.0.0",
 Require-Bundle: org.eclipse.equinox.common
 Export-Package: org.eclipse.ecf.mgmt.sharedobject;version="1.0.0"
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: org.eclipse.ecf.mgmt.sharedobject

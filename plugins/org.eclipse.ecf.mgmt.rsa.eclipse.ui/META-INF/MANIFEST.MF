@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ECF Remote RSA Management Eclipse UI
 Bundle-SymbolicName: org.eclipse.ecf.mgmt.rsa.eclipse.ui;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.1.qualifier
 Bundle-Vendor: Eclipse.org-ECF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.ecf.remoteservice.ui;bundle-version="3.3.0",
@@ -21,3 +21,4 @@ Import-Package: org.eclipse.ecf.core.identity;version="3.2.0",
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
 Service-Component: OSGI-INF/rsamanager.xml
+Automatic-Module-Name: org.eclipse.ecf.mgmt.rsa.eclipse.ui
